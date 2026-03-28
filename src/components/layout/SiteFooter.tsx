@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
+import { footerCopy } from "@/lib/copy";
 
 const sections = [
   {
@@ -42,10 +43,7 @@ export function SiteFooter() {
             <Link href="/" className="font-display text-2xl font-semibold text-slate-900">
               Марс<span className="text-red-600">Медиа</span>
             </Link>
-            <p className="mt-4 max-w-md text-slate-600 leading-relaxed">
-              Цифровой медиа-портал: ежедневные новости, экспертные статьи, аналитика, интервью и видео — в
-              одной редакционной среде.
-            </p>
+            <p className="mt-4 max-w-md text-slate-600 leading-relaxed">{footerCopy.blurb}</p>
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-medium">
               <Link href="https://t.me" className="text-sky-700 hover:underline" target="_blank" rel="noreferrer">
                 Telegram
@@ -88,7 +86,7 @@ export function SiteFooter() {
         <div className="mt-10 flex flex-col gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} МарсМедиа. Все права защищены.</p>
           <Link href="/kontakty" className="text-slate-600 hover:text-slate-900">
-            Связаться с редакцией
+            {footerCopy.contactCta}
           </Link>
         </div>
       </div>

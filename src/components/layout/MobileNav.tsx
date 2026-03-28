@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IconClose, IconMenu } from "@/components/icons";
+import { mobileNavCopy } from "@/lib/copy";
 import { cn } from "@/lib/cn";
 
 type Item = { href: string; label: string };
@@ -82,7 +83,7 @@ export function MobileNav({ items }: { items: Item[] }) {
             onClick={() => setOpen(false)}
             className="mt-2 rounded-xl bg-red-600 px-3 py-3 text-center text-base font-semibold text-white hover:bg-red-700 focus-ring"
           >
-            Подписаться
+            {mobileNavCopy.subscribe}
           </Link>
         </nav>
       </div>

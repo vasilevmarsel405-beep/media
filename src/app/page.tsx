@@ -1,65 +1,318 @@
 import Image from "next/image";
+import Link from "next/link";
+import { PostCard } from "@/components/cards/PostCard";
+import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
+import { NewsletterBlock } from "@/components/NewsletterBlock";
+import { SectionHeading } from "@/components/SectionHeading";
+import { IconPlay } from "@/components/icons";
+import {
+  featuredHero,
+  popularPosts,
+  posts,
+  postsByKind,
+  rubrics,
+  secondaryHero,
+  specialProjects,
+  urgentFeed,
+} from "@/lib/content";
+import { homeCopy } from "@/lib/copy";
+import { formatDateTime, formatTime } from "@/lib/format";
+import { postHref } from "@/lib/routes";
 
-export default function Home() {
+export default function HomePage() {
+  const hero = featuredHero();
+  const sec = secondaryHero();
+  const heroHref = postHref(hero);
+  const videoDigest = postsByKind("video")[0];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      <HomeTrendingTicker />
+
+      <section className="relative border-b border-slate-200/80 mars-hero-mesh mars-noise">
+        <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
+          <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
+            <article className="mars-hero-frame mars-reveal flex flex-col overflow-hidden bg-slate-950 shadow-2xl">
+              <Link
+                href={heroHref}
+                className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
+              >
+                <Image
+                  src={hero.image}
+                  alt=""
+                  fill
+                  priority
+                  className="object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
+                  sizes="(max-width:1024px) 100vw, 68vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
+              </Link>
+              <div className="relative flex flex-1 flex-col justify-end bg-gradient-to-b from-slate-950 via-slate-950 to-black px-6 pb-9 pt-8 sm:px-10 sm:pb-11 sm:pt-10">
+                <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/70">
+                  <span className="rounded-md bg-white/10 px-2.5 py-1 text-white ring-1 ring-white/15 backdrop-blur">
+                    {hero.homeBadge ?? "Материал дня"}
+                  </span>
+                  {hero.readMin ? (
+                    <span className="rounded-md bg-red-600/90 px-2.5 py-1 text-white shadow-lg shadow-red-900/30">
+                      {hero.readMin} мин · без воды
+                    </span>
+                  ) : null}
+                  <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
+                </div>
+                <Link href={heroHref}>
+                  <h1 className="font-display mt-5 max-w-[22ch] text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+                    {hero.title}
+                  </h1>
+                </Link>
+                <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 sm:text-lg">{hero.lead}</p>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <Link
+                    href={heroHref}
+                    className="focus-ring inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-red-600 via-rose-500 to-orange-500 px-6 py-3 text-sm font-bold text-white shadow-[0_12px_40px_-8px_rgba(225,29,72,0.65)] transition hover:brightness-110"
+                  >
+                    {hero.homeCta ?? "Читать сейчас"}
+                    <span aria-hidden>→</span>
+                  </Link>
+                  {videoDigest ? (
+                    <Link
+                      href={`/video/${videoDigest.slug}`}
+                      className="focus-ring inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur hover:bg-white/15"
+                    >
+                      <IconPlay className="h-4 w-4" />
+                      Видео-дайджест
+                    </Link>
+                  ) : null}
+                </div>
+              </div>
+            </article>
+
+            <div className="flex flex-col gap-5 lg:justify-center">
+              <div>
+                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-red-600">
+                  {homeCopy.heroAsideEyebrow}
+                </p>
+                <h2 className="font-display mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+                  {homeCopy.heroAsideTitle}
+                </h2>
+                <p className="mt-2 text-sm text-slate-600">{homeCopy.heroAsideSub}</p>
+              </div>
+              <div className="flex flex-col gap-4">
+                {sec.map((p) => (
+                  <PostCard key={p.slug} post={p} variant="horizontal" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+        <SectionHeading
+          title={homeCopy.sections.urgent.title}
+          subtitle={homeCopy.sections.urgent.subtitle}
+          href="/novosti"
+          actionLabel={homeCopy.sections.urgent.action}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {urgentFeed().map((p) => (
+            <PostCard key={p.slug} post={p} variant="compact" />
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </div>
+
+      <div className="border-y border-slate-200/80 bg-white/70 shadow-[inset_0_1px_0_rgb(255_255_255/0.8)] backdrop-blur-sm">
+        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+          <SectionHeading title={homeCopy.sections.now.title} subtitle={homeCopy.sections.now.subtitle} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.slice(0, 6).map((p) => (
+              <PostCard key={p.slug} post={p} />
+            ))}
+          </div>
         </div>
-      </main>
+      </div>
+
+      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+        <SectionHeading
+          title={homeCopy.sections.picks.title}
+          subtitle={homeCopy.sections.picks.subtitle}
+          href="/stati"
+          actionLabel={homeCopy.sections.picks.action}
+        />
+        <div className="grid gap-6 lg:grid-cols-2">
+          {postsByKind("article").map((p) => (
+            <PostCard key={p.slug} post={p} />
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200/80 bg-white/80">
+        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+          <SectionHeading
+            title={homeCopy.sections.analytics.title}
+            subtitle={homeCopy.sections.analytics.subtitle}
+            href="/analitika"
+            actionLabel={homeCopy.sections.analytics.action}
+          />
+          <div className="grid gap-6 md:grid-cols-2">
+            {postsByKind("analytics").map((p) => (
+              <article
+                key={p.slug}
+                className="card-hover group rounded-3xl border border-sky-200/80 bg-gradient-to-br from-sky-50 via-white to-white p-8 shadow-[0_20px_50px_-28px_rgb(14_165_233/0.35)]"
+              >
+                <Link href={`/analitika/${p.slug}`} className="block">
+                  <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-sky-700">
+                    Глубокий разбор
+                  </p>
+                  <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-sky-950">
+                    {p.title}
+                  </h3>
+                  <p className="mt-3 text-slate-600 leading-relaxed">{p.lead}</p>
+                  <span className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-sky-800">
+                    {homeCopy.sections.analytics.cardCta}
+                  </span>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+        <SectionHeading
+          title={homeCopy.sections.interviews.title}
+          subtitle={homeCopy.sections.interviews.subtitle}
+          href="/intervyu"
+          actionLabel={homeCopy.sections.interviews.action}
+        />
+        <div className="grid gap-6 lg:grid-cols-2">
+          {postsByKind("interview").map((p) => (
+            <PostCard key={p.slug} post={p} />
+          ))}
+        </div>
+      </div>
+
+      <div className="border-y border-slate-900/20 bg-slate-950 text-white">
+        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+          <SectionHeading
+            title={homeCopy.sections.video.title}
+            subtitle={homeCopy.sections.video.subtitle}
+            href="/video"
+            actionLabel={homeCopy.sections.video.action}
+            variant="dark"
+          />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {postsByKind("video").map((p) => (
+              <Link
+                key={p.slug}
+                href={`/video/${p.slug}`}
+                className="group relative overflow-hidden rounded-2xl bg-slate-900 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.65)] ring-1 ring-white/10 transition hover:ring-red-500/40"
+              >
+                <div className="relative aspect-video">
+                  <Image
+                    src={p.image}
+                    alt=""
+                    fill
+                    className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
+                    sizes="400px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-slate-900 shadow-2xl transition group-hover:scale-110">
+                      <IconPlay className="ml-1 h-7 w-7" />
+                    </span>
+                  </div>
+                  {p.durationLabel ? (
+                    <span className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2 py-1 text-xs font-bold text-white">
+                      {p.durationLabel}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-bold leading-snug text-white">{p.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-white/75">{p.lead}</p>
+                  <time className="mt-3 block text-xs text-white/50" dateTime={p.publishedAt}>
+                    {formatDateTime(p.publishedAt)}
+                  </time>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+        <SectionHeading title={homeCopy.sections.popular.title} subtitle={homeCopy.sections.popular.subtitle} />
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {popularPosts().map((p) => (
+            <PostCard key={`pop-${p.slug}`} post={p} />
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200/80 bg-white/80">
+        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+          <SectionHeading
+            title={homeCopy.sections.topics.title}
+            subtitle={homeCopy.sections.topics.subtitle}
+            href="/rubriki"
+            actionLabel={homeCopy.sections.topics.action}
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {rubrics.map((r) => (
+              <Link
+                key={r.slug}
+                href={`/rubriki/${r.slug}`}
+                className="group relative overflow-hidden rounded-2xl ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-lg"
+              >
+                <div className="relative aspect-[4/3]">
+                  <Image
+                    src={r.cover}
+                    alt=""
+                    fill
+                    className="object-cover transition duration-500 group-hover:scale-[1.06]"
+                    sizes="300px"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                  <span className="absolute bottom-4 left-4 font-display text-xl font-bold text-white">{r.name}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[1400px] px-4 pb-16 sm:px-6 lg:px-10">
+        <SectionHeading
+          title={homeCopy.sections.projects.title}
+          subtitle={homeCopy.sections.projects.subtitle}
+          href="/specproekty"
+          actionLabel={homeCopy.sections.projects.action}
+        />
+        <div className="grid gap-6 lg:grid-cols-2">
+          {specialProjects.map((s) => (
+            <Link
+              key={s.slug}
+              href={`/specproekty/${s.slug}`}
+              className="card-hover overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-md"
+            >
+              <div className="relative aspect-[21/9]">
+                <Image src={s.cover} alt="" fill className="object-cover" sizes="(max-width:1024px) 100vw, 50vw" />
+              </div>
+              <div className="p-8">
+                <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-red-600">{s.dek}</p>
+                <h3 className="font-display mt-2 text-2xl font-bold text-slate-900">{s.title}</h3>
+                <p className="mt-3 text-slate-600">{s.lead}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t border-slate-200/80 bg-gradient-to-b from-white to-slate-100/90">
+        <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-10">
+          <NewsletterBlock />
+        </div>
+      </div>
     </div>
   );
 }

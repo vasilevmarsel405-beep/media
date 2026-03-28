@@ -58,6 +58,10 @@ export interface Post {
   keyPoints?: string[];
   toc?: TocItem[];
   timecodes?: { t: string; label: string }[];
+  /** Короткий ярлык на главной (герой) */
+  homeBadge?: string;
+  /** Текст основной кнопки на главной */
+  homeCta?: string;
 }
 
 export interface SpecialProject {
