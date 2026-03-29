@@ -7,6 +7,7 @@
 /* Липкий TopBar + шапка: якоря и фокус не прячутся под верхним краем */
 html {
   scroll-padding-top: 5.75rem;
+  overflow-x: clip;
 }
 
 @media (min-width: 640px) {
@@ -143,6 +144,15 @@ html {
 
 body {
   font-family: var(--font-sans-body), system-ui, sans-serif;
+  overflow-x: clip;
+}
+
+/* Вырезы iPhone: контент не упирается в край экрана */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+  }
 }
 
 .font-display {
@@ -240,6 +250,7 @@ body {
 
 .mars-marquee {
   animation: mars-marquee 42s linear infinite;
+  flex-wrap: nowrap;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -248,19 +259,32 @@ body {
   }
 }
 
+/* При «уменьшить движение»: не ломать строку в столбец — горизонтальный скролл одной полосы */
 @media (prefers-reduced-motion: reduce) {
+  .mars-ticker-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
   .mars-marquee {
     animation: none;
-    flex-wrap: wrap;
-    width: 100% !important;
-    justify-content: center;
-    gap: 0.75rem 1.25rem;
+    width: max-content;
+    max-width: none;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
   }
 }
 
 .mask-linear-fade {
   -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
   mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
+.mars-ticker-viewport {
+  overscroll-behavior-x: contain;
 }
 
 .mars-pulse-dot {

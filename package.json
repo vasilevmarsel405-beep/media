@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "secrets:check": "node scripts/check-no-secrets.mjs",
+    "env:check": "node scripts/check-env-production.mjs",
     "postinstall": "node scripts/postinstall-native-bindings.mjs"
   },
   "dependencies": {

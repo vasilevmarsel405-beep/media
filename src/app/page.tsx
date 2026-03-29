@@ -42,8 +42,8 @@ export default async function HomePage() {
       <section className="relative overflow-hidden mars-hero-mesh">
         <HeroGradualBlur />
         <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
-            <article className="mars-hero-frame mars-reveal flex flex-col overflow-hidden bg-slate-950 shadow-2xl">
+          <div className="grid min-w-0 gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
+            <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col overflow-hidden bg-slate-950 shadow-2xl">
               <Link
                 href={heroHref}
                 className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
@@ -96,7 +96,7 @@ export default async function HomePage() {
               </div>
             </article>
 
-            <div className="flex flex-col gap-5 lg:justify-center">
+            <div className="flex min-w-0 flex-col gap-5 lg:justify-center">
               <div>
                 <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-mars-accent">
                   {homeCopy.heroAsideEyebrow}

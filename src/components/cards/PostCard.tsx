@@ -24,8 +24,8 @@ export function PostCard({
 
   if (variant === "horizontal") {
     return (
-      <article className="card-hover group flex gap-4 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
-        <Link href={href} className="relative aspect-[4/3] w-36 shrink-0 overflow-hidden rounded-xl sm:w-44">
+      <article className="card-hover group flex min-w-0 max-w-full gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm sm:gap-4">
+        <Link href={href} className="relative aspect-[4/3] w-[7.5rem] shrink-0 overflow-hidden rounded-xl sm:w-36 md:w-44">
           <Image
             src={post.image}
             alt={postCoverImageAlt(post.title)}

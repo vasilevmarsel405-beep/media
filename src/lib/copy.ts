@@ -31,9 +31,6 @@ export const metaCopy = {
 } as const;
 
 export const topBarCopy = {
-  live: "эфир",
-  /** Показатель в шапке (диапазон и смена — см. `top-bar-online-display.ts`). */
-  online: "Сейчас на сайте",
   tagline: "Меньше шума, больше смысла за ту же минуту",
   lang: "Русский",
   subscription: "Рассылка",

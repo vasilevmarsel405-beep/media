@@ -52,6 +52,8 @@ npm run dev
 
 Короткая пошаговая инструкция (URL, заголовки, готовый JSON для теста): [`docs/MAKE-KAK-ZAPUSTIT.md`](docs/MAKE-KAK-ZAPUSTIT.md).
 
+**Свой VPS (не Vercel):** те же переменные, что в `.env.local`, положите в **`.env.production`** в каталоге приложения на сервере — см. [`docs/VPS-ENV.ru.md`](docs/VPS-ENV.ru.md). Проверка: `npm run env:check`.
+
 ### Что уже сделано в коде
 
 - Эндпоинт **`POST /api/webhooks/make`** принимает JSON, пишет материалы в Redis, сбрасывает кеш страниц (`revalidatePath` / `revalidateTag`).

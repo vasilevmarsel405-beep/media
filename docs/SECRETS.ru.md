@@ -36,4 +36,4 @@ npm run secrets:check
 
 ## Хостинг
 
-Секреты только в **Environment Variables** провайдера, не в репозитории.
+Секреты только в **Environment Variables** провайдера или в **`.env.production`** на VPS, не в репозитории. Свой сервер: [`VPS-ENV.ru.md`](VPS-ENV.ru.md). Проверка: `npm run env:check`.
