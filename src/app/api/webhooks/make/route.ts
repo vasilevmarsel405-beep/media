@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { authorById, rubricBySlug, tagBySlug } from "@/lib/content";
 import { timingSafeStringEqual } from "@/lib/security/timingSafe";
 import { makeIngestBodySchema, normalizeIngestToPost } from "@/lib/post-ingest-schema";
@@ -66,8 +66,12 @@ export async function POST(request: Request) {
 
   if (body.action === "delete") {
     const removed = await deleteRemotePost(body.slug);
-    revalidateAfterPostChange(null, { slugDeleted: body.slug });
-    return NextResponse.json({ ok: true, deleted: removed, slug: body.slug });
+    const deletedSlug = body.slug;
+    /** Ревалидация кеша Next — долго при многих путях; не блокируем ответ (иначе nginx → 504). */
+    after(() => {
+      revalidateAfterPostChange(null, { slugDeleted: deletedSlug });
+    });
+    return NextResponse.json({ ok: true, deleted: removed, slug: deletedSlug });
   }
 
   const post = normalizeIngestToPost(body.post);
@@ -76,7 +80,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: refErr }, { status: 400 });
   }
   await upsertRemotePost(post);
-  revalidateAfterPostChange(post);
+  after(() => {
+    revalidateAfterPostChange(post);
+  });
 
   return NextResponse.json({
     ok: true,
