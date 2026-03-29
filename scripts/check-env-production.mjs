@@ -52,6 +52,7 @@ const optional = [
   "YANDEX_METRIKA_OAUTH_TOKEN",
   "NEXT_PUBLIC_IMAGE_REMOTE_HOSTS",
   "YOUTUBE_DATA_API_KEY",
+  "POSTS_FEED_MODE",
 ];
 
 const missing = required.filter((k) => !merged[k]?.trim());

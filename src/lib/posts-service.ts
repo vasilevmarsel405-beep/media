@@ -30,15 +30,29 @@ function mergeBySlug(remote: Post[], local: Post[]): Post[] {
   return Array.from(map.values());
 }
 
-async function loadMergedPosts(): Promise<Post[]> {
+/** См. POSTS_FEED_MODE в .env — по умолчанию мерж статики и облака. */
+function isRemoteOnlyFeed(): boolean {
+  const m = process.env.POSTS_FEED_MODE?.trim().toLowerCase();
+  return m === "remote_only" || m === "remote-only";
+}
+
+async function loadPostsForFeed(): Promise<Post[]> {
   const remote = await readRemotePostsRaw();
+  if (isRemoteOnlyFeed()) {
+    const normalized = remote.map(normalizePostAuthor);
+    return sortPostsByPublishedDesc(normalized);
+  }
   const merged = mergeBySlug(remote, staticPosts);
   const normalized = merged.map(normalizePostAuthor);
   return sortPostsByPublishedDesc(normalized);
 }
 
-/** Все посты: статика из репозитория + записи из Redis (Make / API). */
-export const getAllPosts = unstable_cache(loadMergedPosts, ["merged-posts-v2"], {
+/**
+ * Все посты для ленты сайта.
+ * - По умолчанию: статика из репозитория + Redis/Make, облако перезаписывает совпадающие slug.
+ * - `POSTS_FEED_MODE=remote_only` — только облако (кодовые демо-материалы на сайте не показываются).
+ */
+export const getAllPosts = unstable_cache(loadPostsForFeed, ["posts-feed-v1", process.env.POSTS_FEED_MODE ?? ""], {
   tags: ["posts"],
 });
 
@@ -101,19 +115,21 @@ export async function searchPosts(q: string): Promise<Post[]> {
 }
 
 /** Герой: явный homeHero, затем pinned, затем самый свежий материал. */
-export async function getFeaturedHero(): Promise<Post> {
+export async function getFeaturedHero(): Promise<Post | null> {
   const all = await getAllPosts();
+  if (all.length === 0) return null;
   const manualHero = all.filter((p) => p.homeHero);
   if (manualHero.length) return manualHero[0];
   const pinned = all.filter((p) => p.pinned);
   if (pinned.length) return pinned[0];
-  return all[0] ?? staticPosts[0];
+  return all[0];
 }
 
 /** Свежие материалы всех типов в колонку справа от героя (кроме текущего героя). */
 export async function getSecondaryHero(): Promise<Post[]> {
   const all = await getAllPosts();
   const hero = await getFeaturedHero();
+  if (!hero) return all.slice(0, 4);
   return all.filter((p) => p.slug !== hero.slug).slice(0, 4);
 }
 

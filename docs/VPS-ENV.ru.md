@@ -31,6 +31,8 @@ nano /var/www/cryptomars/.env.production
 
 Опционально: `NEXT_PUBLIC_YANDEX_METRIKA_ID`, `YANDEX_METRIKA_OAUTH_TOKEN`, `NEXT_PUBLIC_IMAGE_REMOTE_HOSTS`, после стабильного HTTPS — `ENABLE_HSTS=1`.
 
+**Только облачные материалы на сайте (без демо из кода):** в `.env.production` добавьте `POSTS_FEED_MODE=remote_only`, затем перезапуск с `--update-env`. По умолчанию лента — статика из репозитория плюс Redis, облако перезаписывает совпадающие slug.
+
 **Автозаполнение видео из YouTube в админке** — на VPS обязательно продублируйте ключ (его нет в Git, только у вас локально в `.env.local`):
 
 | Переменная | Зачем |

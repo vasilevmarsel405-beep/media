@@ -1,21 +1,14 @@
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-import { AdminDeletePostButton } from "@/components/admin/AdminDeletePostButton";
-import { postHref } from "@/lib/routes";
+import { AdminPostsTable } from "@/components/admin/AdminPostsTable";
 import { getAdminPostsList } from "@/lib/admin-posts-list";
 import { getPostsStorageMode, isRemotePostsConfigured } from "@/lib/redis-posts";
 
-const kindRu: Record<string, string> = {
-  news: "Новость",
-  article: "Статья",
-  analytics: "Аналитика",
-  interview: "Интервью",
-  video: "Видео",
-};
-
 export default async function AdminPostsPage() {
   const rows = await getAdminPostsList();
+  const remoteRows = rows.filter((r) => r.source === "remote");
+  const hiddenStaticCount = rows.length - remoteRows.length;
   const store = getPostsStorageMode();
   const canMutate = isRemotePostsConfigured();
 
@@ -54,54 +47,20 @@ export default async function AdminPostsPage() {
         </div>
       ) : null}
 
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-slate-900/40">
-        <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500">
-            <tr>
-              <th className="px-4 py-3">Заголовок</th>
-              <th className="px-4 py-3">Тип</th>
-              <th className="px-4 py-3">Источник</th>
-              <th className="px-4 py-3">Slug</th>
-              <th className="px-4 py-3" />
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map(({ post, source }) => (
-              <tr key={post.slug} className="border-b border-white/5 last:border-0">
-                <td className="px-4 py-3">
-                  <Link href={postHref(post)} className="font-medium text-slate-200 hover:text-white">
-                    {post.title}
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-slate-400">{kindRu[post.kind] ?? post.kind}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={
-                      source === "remote"
-                        ? "rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-semibold text-emerald-300"
-                        : "rounded-md bg-slate-600/40 px-2 py-0.5 text-xs font-semibold text-slate-400"
-                    }
-                  >
-                    {source === "remote" ? "Облако" : "Код"}
-                  </span>
-                </td>
-                <td className="px-4 py-3 font-mono text-xs text-slate-500">{post.slug}</td>
-                <td className="px-4 py-3 text-right">
-                  <div className="flex justify-end gap-3">
-                    <Link
-                      href={`/admin/posts/${encodeURIComponent(post.slug)}/edit`}
-                      className="text-xs font-semibold text-mars-accent hover:underline"
-                    >
-                      {canMutate ? "Изменить" : "Просмотр"}
-                    </Link>
-                    {canMutate && source === "remote" ? <AdminDeletePostButton slug={post.slug} /> : null}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {hiddenStaticCount > 0 ? (
+        <div className="rounded-xl border border-slate-600/30 bg-slate-800/35 px-4 py-3 text-sm text-slate-300">
+          Скрыто кодовых материалов: <strong className="text-white">{hiddenStaticCount}</strong>. Они не удалены и продолжают
+          работать на сайте, но не показываются в этой таблице.
+        </div>
+      ) : null}
+
+      {canMutate ? (
+        <AdminPostsTable rows={remoteRows} />
+      ) : (
+        <div className="rounded-xl border border-white/10 bg-slate-900/40 px-4 py-6 text-sm text-slate-400">
+          Редактирование отключено: нет удалённого хранилища. Для массового удаления подключите Upstash Redis.
+        </div>
+      )}
     </div>
   );
 }

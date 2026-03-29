@@ -29,15 +29,15 @@ export default async function HomePage() {
   const allPosts = await getAllPosts();
   const hero = await getFeaturedHero();
   const sec = await getSecondaryHero();
-  const heroHref = postHref(hero);
+  const heroHref = hero ? postHref(hero) : "/novosti";
   const urgentList = await getUrgentFeed();
   const popular = await getPopularPosts();
   const articles = await getPostsByKind("article");
   const analyticsList = await getPostsByKind("analytics");
   const interviews = await getPostsByKind("interview");
   const videos = await getPostsByKind("video");
-  const heroVideoHref = hero.homeVideoUrl?.trim() ?? "";
-  const heroVideoLabel = hero.homeVideoLabel?.trim() || "Видео-дайджест";
+  const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
+  const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
 
   return (
     <div>
@@ -48,61 +48,89 @@ export default async function HomePage() {
         <HeroGradualBlur />
         <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
           <div className="grid min-w-0 gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
-            <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col overflow-hidden bg-slate-950 shadow-2xl">
-              <Link
-                href={heroHref}
-                className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
-              >
-                <Image
-                  src={hero.image}
-                  alt=""
-                  fill
-                  priority
-                  className="object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
-                  sizes="(max-width:1024px) 100vw, 68vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
-              </Link>
-              <div className="relative flex flex-1 flex-col justify-end bg-gradient-to-b from-slate-950 via-slate-950 to-black px-6 pb-9 pt-8 sm:px-10 sm:pb-11 sm:pt-10">
-                <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/70">
-                  <span className="rounded-md bg-white/10 px-2.5 py-1 text-white ring-1 ring-white/15 backdrop-blur">
-                    {hero.homeBadge ?? "Материал дня"}
-                  </span>
-                  {hero.readMin ? (
-                    <span className="rounded-xl bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/30">
-                      {hero.readMin} мин · без воды
-                    </span>
-                  ) : null}
-                  <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
-                </div>
-                <Link href={heroHref}>
-                  <h1 className="font-display mt-5 max-w-[22ch] text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
-                    {hero.title}
-                  </h1>
+            {hero ? (
+              <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col overflow-hidden bg-slate-950 shadow-2xl">
+                <Link
+                  href={heroHref}
+                  className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
+                >
+                  <Image
+                    src={hero.image}
+                    alt=""
+                    fill
+                    priority
+                    className="object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
+                    sizes="(max-width:1024px) 100vw, 68vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
                 </Link>
-                <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 sm:text-lg">{hero.lead}</p>
-                <div className="mt-8 flex flex-wrap items-center gap-3">
+                <div className="relative flex flex-1 flex-col justify-end bg-gradient-to-b from-slate-950 via-slate-950 to-black px-6 pb-9 pt-8 sm:px-10 sm:pb-11 sm:pt-10">
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/70">
+                    <span className="rounded-md bg-white/10 px-2.5 py-1 text-white ring-1 ring-white/15 backdrop-blur">
+                      {hero.homeBadge ?? "Материал дня"}
+                    </span>
+                    {hero.readMin ? (
+                      <span className="rounded-xl bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/30">
+                        {hero.readMin} мин · без воды
+                      </span>
+                    ) : null}
+                    <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
+                  </div>
+                  <Link href={heroHref}>
+                    <h1 className="font-display mt-5 max-w-[22ch] text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+                      {hero.title}
+                    </h1>
+                  </Link>
+                  <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 sm:text-lg">{hero.lead}</p>
+                  <div className="mt-8 flex flex-wrap items-center gap-3">
+                    <Link
+                      href={heroHref}
+                      className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
+                    >
+                      {hero.homeCta ?? "Читать сейчас"}
+                      <span aria-hidden>→</span>
+                    </Link>
+                    {heroVideoHref ? (
+                      <div className="min-w-0 max-w-full shrink-0">
+                        <HeroGlassVideoLink
+                          href={heroVideoHref}
+                          {...(isExternalUrl(heroVideoHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                        >
+                          <IconPlay className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+                          {heroVideoLabel}
+                        </HeroGlassVideoLink>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              </article>
+            ) : (
+              <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col justify-center overflow-hidden bg-slate-950 px-6 py-14 shadow-2xl sm:px-10 sm:py-16">
+                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Материалы</p>
+                <h1 className="font-display mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
+                  Пока нет опубликованных материалов в ленте
+                </h1>
+                <p className="mt-4 max-w-lg text-base leading-relaxed text-white/70">
+                  Если включён режим только облака (<code className="rounded bg-white/10 px-1.5 py-0.5 text-[13px]">POSTS_FEED_MODE=remote_only</code>
+                  ), добавьте материалы через админку или Make — тогда они появятся здесь.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-3">
                   <Link
-                    href={heroHref}
-                    className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
+                    href="/novosti"
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                   >
-                    {hero.homeCta ?? "Читать сейчас"}
+                    Перейти к новостям
                     <span aria-hidden>→</span>
                   </Link>
-                  {heroVideoHref ? (
-                    <div className="min-w-0 max-w-full shrink-0">
-                      <HeroGlassVideoLink
-                        href={heroVideoHref}
-                        {...(isExternalUrl(heroVideoHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                      >
-                        <IconPlay className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-                        {heroVideoLabel}
-                      </HeroGlassVideoLink>
-                    </div>
-                  ) : null}
+                  <Link
+                    href="/admin/posts"
+                    className="inline-flex min-h-[44px] items-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    Админка
+                  </Link>
                 </div>
-              </div>
-            </article>
+              </article>
+            )}
 
             <div className="flex min-w-0 flex-col gap-5 lg:justify-center">
               <div>
