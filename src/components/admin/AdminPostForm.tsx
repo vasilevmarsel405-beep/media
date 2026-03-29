@@ -342,6 +342,10 @@ export function AdminPostForm({
                     const firstBlock = desc.split(/\n\s*\n/)[0]?.trim() ?? "";
                     const leadFromYt = (firstBlock || desc.slice(0, 500) || data.title || "").slice(0, 4000);
                     const seoDesc = (desc.slice(0, 320) || leadFromYt.slice(0, 320)).trim();
+                    const fallbackThumb =
+                      data.youtubeId && data.youtubeId.trim()
+                        ? `https://i.ytimg.com/vi/${data.youtubeId.trim()}/hqdefault.jpg`
+                        : "";
                     setForm((f) => ({
                       ...f,
                       youtubeId: (data.youtubeId ?? "").trim(),
@@ -350,7 +354,7 @@ export function AdminPostForm({
                       image:
                         typeof data.thumbnailUrl === "string" && data.thumbnailUrl.trim()
                           ? data.thumbnailUrl.trim()
-                          : f.image,
+                          : fallbackThumb || f.image,
                       seoTitle: (data.title ?? "").slice(0, 70),
                       seoDescription: seoDesc,
                       paragraphsText: desc,

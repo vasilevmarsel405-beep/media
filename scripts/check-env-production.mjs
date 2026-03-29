@@ -47,7 +47,12 @@ const required = [
   "ADMIN_SESSION_SECRET",
 ];
 
-const optional = ["NEXT_PUBLIC_YANDEX_METRIKA_ID", "YANDEX_METRIKA_OAUTH_TOKEN", "NEXT_PUBLIC_IMAGE_REMOTE_HOSTS"];
+const optional = [
+  "NEXT_PUBLIC_YANDEX_METRIKA_ID",
+  "YANDEX_METRIKA_OAUTH_TOKEN",
+  "NEXT_PUBLIC_IMAGE_REMOTE_HOSTS",
+  "YOUTUBE_DATA_API_KEY",
+];
 
 const missing = required.filter((k) => !merged[k]?.trim());
 const missingOptional = optional.filter((k) => !merged[k]?.trim());
@@ -65,6 +70,12 @@ if (missing.length === 0) {
 if (missingOptional.length > 0 && process.exitCode !== 1) {
   console.log("\nПредупреждение: не заданы опциональные:");
   missingOptional.forEach((k) => console.log("  -", k));
+  if (missingOptional.includes("YOUTUBE_DATA_API_KEY")) {
+    console.log(
+      "\nБез YOUTUBE_DATA_API_KEY кнопка «Заполнить из YouTube» в админке может не подтянуть полное описание;\n" +
+        "на проде добавьте ключ в .env.production и выполните: pm2 restart marsmedia --update-env"
+    );
+  }
 } else if (missingOptional.length === 0 && process.exitCode !== 1) {
   console.log("Опциональные ключи тоже заданы.");
 }

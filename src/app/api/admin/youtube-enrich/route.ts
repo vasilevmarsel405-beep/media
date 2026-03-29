@@ -35,12 +35,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Не удалось распознать ссылку YouTube" }, { status: 400 });
   }
 
+  const hasApiKey = Boolean(process.env.YOUTUBE_DATA_API_KEY?.trim());
   const meta = await fetchYoutubeVideoEnrichmentDirect(videoId);
   if (!meta) {
+    if (!hasApiKey) {
+      return NextResponse.json(
+        {
+          error:
+            "На сервере нет YOUTUBE_DATA_API_KEY. Добавьте строку в /var/www/cryptomars/.env.production, затем: npm run build && pm2 restart marsmedia --update-env",
+        },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       {
         error:
-          "YouTube не вернул данные (сеть, файрвол или ключ API). Проверьте YOUTUBE_DATA_API_KEY и доступ к Google.",
+          "YouTube недоступен с сервера (таймаут/фаервол) или ответ пустой. Проверьте исходящий HTTPS к googleapis.com и youtube.com с VPS; при необходимости откройте в фаерволе.",
       },
       { status: 502 }
     );

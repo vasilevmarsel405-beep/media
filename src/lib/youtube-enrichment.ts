@@ -15,7 +15,10 @@ async function fetchYoutubeDataApi(videoId: string, apiKey: string): Promise<You
     url.searchParams.set("id", videoId);
     url.searchParams.set("key", apiKey);
 
-    const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
+    const res = await fetch(url.toString(), {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(20_000),
+    });
     if (!res.ok) return null;
 
     const data = (await res.json()) as {
@@ -56,7 +59,10 @@ async function fetchYoutubeOembed(videoId: string): Promise<YoutubeVideoEnrichme
     const watch = `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
     const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(watch)}&format=json`;
 
-    const res = await fetch(oembedUrl, { next: { revalidate: 3600 } });
+    const res = await fetch(oembedUrl, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(20_000),
+    });
     if (!res.ok) return null;
 
     const j = (await res.json()) as {

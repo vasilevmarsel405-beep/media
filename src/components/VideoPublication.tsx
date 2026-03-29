@@ -155,21 +155,6 @@ export function VideoPublication({
                   <p className="mt-3 text-sm leading-snug text-white/70">&ldquo;{youtubeMeta.title}&rdquo;</p>
                 ) : null}
 
-                <div className="mt-5 border-t border-white/10 pt-5">
-                  <h2 className="text-[11px] font-bold uppercase tracking-wider text-white/50">
-                    {videoPublicationCopy.youtubeDescriptionTitle}
-                  </h2>
-                  {showYoutubeDescription ? (
-                    <YoutubeDescription text={ytDescription} tone="dark" className="mt-3 space-y-3" />
-                  ) : (
-                    <p className="mt-3 text-sm leading-relaxed text-white/55">
-                      Полное описание с YouTube доступно при настройке ключа API на сервере (
-                      <code className="rounded bg-white/10 px-1 text-[11px]">YOUTUBE_DATA_API_KEY</code>
-                      ). Пока — лид редакции ниже и текст под видео.
-                    </p>
-                  )}
-                </div>
-
                 {post.youtubeId ? (
                   <Link
                     href={WATCH_URL(post.youtubeId)}
@@ -230,19 +215,22 @@ export function VideoPublication({
         ) : null}
 
         {post.paragraphs.some((p) => p.trim()) ? (
-          <section className="mt-12">
-            <h2 className="font-display text-xl font-bold text-slate-900 sm:text-2xl">
+          <section className="mt-12 rounded-2xl border border-white/10 bg-slate-950 px-5 py-6 sm:px-7 sm:py-8">
+            <h2 className="font-display text-xl font-bold text-white sm:text-2xl">
               {videoPublicationCopy.editorialTitle}
             </h2>
-            <div className="prose-mars prose-mars--article mt-6 max-w-[42rem] text-slate-700">
-              {post.paragraphs.map((text, i) =>
-                text.trim() ? (
-                  <p key={i} className="mt-6 leading-relaxed first:mt-0">
-                    {text}
-                  </p>
-                ) : null
-              )}
+            <div className="mt-5 max-w-[44rem]">
+              <YoutubeDescription
+                text={post.paragraphs.filter((p) => p.trim()).join("\n\n")}
+                tone="dark"
+                className="space-y-4"
+              />
             </div>
+            {showYoutubeDescription ? (
+              <p className="mt-5 text-xs text-white/45">
+                Источник текста: описание ролика YouTube.
+              </p>
+            ) : null}
           </section>
         ) : null}
 
