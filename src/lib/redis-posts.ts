@@ -87,9 +87,9 @@ async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
   await pipe.exec();
 }
 
-async function mgetValues(redis: Redis, keys: string[]): Promise<(string | null)[]> {
+async function mgetValues(redis: Redis, keys: string[]): Promise<(string | object | null)[]> {
   if (keys.length === 0) return [];
-  const out: (string | null)[] = [];
+  const out: (string | object | null)[] = [];
   for (let i = 0; i < keys.length; i += MGET_CHUNK) {
     const slice = keys.slice(i, i + MGET_CHUNK);
     const raw = await redis.mget(...slice);
@@ -97,10 +97,25 @@ async function mgetValues(redis: Redis, keys: string[]): Promise<(string | null)
     for (const item of batch) {
       if (item == null) out.push(null);
       else if (typeof item === "string") out.push(item);
+      else if (typeof item === "object") out.push(item);
       else out.push(String(item));
     }
   }
   return out;
+}
+
+function parsePostRecord(raw: string | object): Post | null {
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw) as Post;
+    } catch {
+      return null;
+    }
+  }
+  if (typeof raw === "object" && raw != null) {
+    return raw as Post;
+  }
+  return null;
 }
 
 async function readFromLocalFile(): Promise<Post[]> {
@@ -139,11 +154,8 @@ export async function readRemotePostsRaw(): Promise<Post[]> {
     for (let i = 0; i < values.length; i++) {
       const v = values[i];
       if (v == null) continue;
-      try {
-        posts.push(JSON.parse(v) as Post);
-      } catch {
-        /* пропуск битого значения */
-      }
+      const post = parsePostRecord(v);
+      if (post) posts.push(post);
     }
     return posts;
   }
