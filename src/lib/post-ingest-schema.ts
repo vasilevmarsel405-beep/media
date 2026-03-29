@@ -69,6 +69,19 @@ const canonicalUrlIngestZ = z
     message: "canonicalUrl: укажите абсолютный URL (https://...)",
   });
 
+const homeVideoUrlIngestZ = z
+  .string()
+  .max(2000)
+  .optional()
+  .transform((s) => {
+    if (s == null) return undefined;
+    const t = s.trim();
+    return t === "" ? undefined : t;
+  })
+  .refine((s) => s == null || /^https?:\/\//i.test(s) || s.startsWith("/"), {
+    message: "homeVideoUrl: укажите абсолютный URL или путь, начинающийся с /",
+  });
+
 export const makeIngestPostSchema = z
   .object({
     slug: slugZ,
@@ -96,6 +109,9 @@ export const makeIngestPostSchema = z
     timecodes: z.array(timecodeZ).optional(),
     homeBadge: z.string().max(120).optional(),
     homeCta: z.string().max(120).optional(),
+    homeHero: z.boolean().optional(),
+    homeVideoUrl: homeVideoUrlIngestZ,
+    homeVideoLabel: z.string().max(120).optional(),
     seoTitle: z.string().min(1).max(70).optional(),
     seoDescription: z.string().min(1).max(320).optional(),
     canonicalUrl: canonicalUrlIngestZ,
@@ -156,6 +172,9 @@ export function normalizeIngestToPost(input: MakeIngestPostInput): import("./typ
     ...(input.timecodes !== undefined ? { timecodes: input.timecodes } : {}),
     ...(input.homeBadge !== undefined ? { homeBadge: sanitizeIngestText(input.homeBadge) } : {}),
     ...(input.homeCta !== undefined ? { homeCta: sanitizeIngestText(input.homeCta) } : {}),
+    ...(input.homeHero !== undefined ? { homeHero: input.homeHero } : {}),
+    ...(input.homeVideoUrl !== undefined ? { homeVideoUrl: input.homeVideoUrl } : {}),
+    ...(input.homeVideoLabel !== undefined ? { homeVideoLabel: sanitizeIngestText(input.homeVideoLabel) } : {}),
     ...(input.seoTitle !== undefined ? { seoTitle: sanitizeIngestText(input.seoTitle) } : {}),
     ...(input.seoDescription !== undefined ? { seoDescription: sanitizeIngestText(input.seoDescription) } : {}),
     ...(input.canonicalUrl !== undefined ? { canonicalUrl: input.canonicalUrl } : {}),

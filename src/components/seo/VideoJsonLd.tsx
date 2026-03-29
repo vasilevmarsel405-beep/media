@@ -3,6 +3,7 @@ import { postHref } from "@/lib/routes";
 import { siteUrl } from "@/lib/site";
 import { absoluteContentUrl } from "@/lib/seo/post-metadata";
 import type { Post } from "@/lib/types";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 export function VideoJsonLd({
   post,
@@ -17,6 +18,7 @@ export function VideoJsonLd({
   const author = authorById(post.authorId) ?? authors[0];
   const pageUrl = `${siteUrl}${postHref(post)}`;
   const embedUrl = post.youtubeId ? `https://www.youtube.com/embed/${post.youtubeId}` : undefined;
+  const cover = resolvePostImage(post);
 
   const descriptionRaw =
     youtubeDescription?.trim() || post.seoDescription?.trim() || post.lead;
@@ -24,7 +26,7 @@ export function VideoJsonLd({
 
   const thumbnailUrl: string[] = [];
   if (youtubeThumbnailUrl) thumbnailUrl.push(youtubeThumbnailUrl);
-  thumbnailUrl.push(absoluteContentUrl(post.image));
+  thumbnailUrl.push(absoluteContentUrl(cover));
 
   const json = {
     "@context": "https://schema.org",

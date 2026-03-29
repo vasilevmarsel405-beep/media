@@ -5,6 +5,7 @@ import { formatDateTime } from "@/lib/format";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { postHref } from "@/lib/routes";
 import type { Post } from "@/lib/types";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 import { TagPill } from "@/components/TagPill";
 import { IconPlay } from "@/components/icons";
 
@@ -16,6 +17,7 @@ export function PostCard({
   variant?: "default" | "horizontal" | "compact" | "urgent" | "related";
 }) {
   const href = postHref(post);
+  const cover = resolvePostImage(post);
   const author = authorById(post.authorId) ?? authors[0];
   const primaryRubric = post.rubricSlugs[0]
     ? allRubrics.find((r) => r.slug === post.rubricSlugs[0])
@@ -27,7 +29,7 @@ export function PostCard({
       <article className="card-hover group flex min-w-0 max-w-full gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm sm:gap-4">
         <Link href={href} className="relative aspect-[4/3] w-[7.5rem] shrink-0 overflow-hidden rounded-xl sm:w-36 md:w-44">
           <Image
-            src={post.image}
+            src={cover}
             alt={postCoverImageAlt(post.title)}
             fill
             className="object-cover transition duration-300 group-hover:scale-[1.03]"
@@ -132,7 +134,7 @@ export function PostCard({
       <article className="group card-hover flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         <Link href={href} className="relative aspect-[3/2] w-full shrink-0 overflow-hidden">
           <Image
-            src={post.image}
+            src={cover}
             alt={postCoverImageAlt(post.title)}
             fill
             className="object-cover transition duration-500 group-hover:scale-[1.02]"
@@ -194,7 +196,7 @@ export function PostCard({
     <article className="group card-hover flex h-full flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
       <Link href={href} className="relative aspect-[16/10] w-full overflow-hidden">
         <Image
-          src={post.image}
+          src={cover}
           alt={postCoverImageAlt(post.title)}
           fill
           className="object-cover transition duration-500 group-hover:scale-[1.02]"

@@ -5,10 +5,12 @@ import { formatDateTime } from "@/lib/format";
 import { postHref } from "@/lib/routes";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import type { Post } from "@/lib/types";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 import { TagPill } from "@/components/TagPill";
 
 export function FeaturedNewsCard({ post }: { post: Post }) {
   const href = postHref(post);
+  const cover = resolvePostImage(post);
   const author = authorById(post.authorId) ?? authors[0];
   const primaryRubric = post.rubricSlugs[0]
     ? allRubrics.find((r) => r.slug === post.rubricSlugs[0])
@@ -20,7 +22,7 @@ export function FeaturedNewsCard({ post }: { post: Post }) {
       <div className="grid lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <Link href={href} className="group relative block aspect-[16/10] min-h-[220px] lg:aspect-auto lg:min-h-[300px]">
           <Image
-            src={post.image}
+            src={cover}
             alt={postCoverImageAlt(post.title)}
             fill
             className="object-cover transition duration-700 ease-out group-hover:scale-[1.02]"

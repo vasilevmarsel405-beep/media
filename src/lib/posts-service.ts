@@ -100,19 +100,21 @@ export async function searchPosts(q: string): Promise<Post[]> {
   });
 }
 
-/** Герой: закреплённый (самый свежий из pinned) или самый свежий материал. */
+/** Герой: явный homeHero, затем pinned, затем самый свежий материал. */
 export async function getFeaturedHero(): Promise<Post> {
   const all = await getAllPosts();
+  const manualHero = all.filter((p) => p.homeHero);
+  if (manualHero.length) return manualHero[0];
   const pinned = all.filter((p) => p.pinned);
   if (pinned.length) return pinned[0];
   return all[0] ?? staticPosts[0];
 }
 
-/** Свежие новости в колонку справа от героя (кроме текущего героя). */
+/** Свежие материалы всех типов в колонку справа от героя (кроме текущего героя). */
 export async function getSecondaryHero(): Promise<Post[]> {
   const all = await getAllPosts();
   const hero = await getFeaturedHero();
-  return all.filter((p) => p.kind === "news" && p.slug !== hero.slug).slice(0, 4);
+  return all.filter((p) => p.slug !== hero.slug).slice(0, 4);
 }
 
 const URGENT_FEED_LIMIT = 8;

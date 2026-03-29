@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { authorById, authors, rubricBySlug, tagBySlug } from "../content";
 import { siteUrl } from "../site";
 import type { Post } from "../types";
+import { resolvePostImage } from "../youtube-thumbnail";
 
 export function absoluteContentUrl(url: string): string {
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
@@ -26,6 +27,7 @@ export function buildPostMetadata(post: Post, canonicalPath: string): Metadata {
   const author = authorById(post.authorId) ?? authors[0];
   const sectionRubric = post.rubricSlugs[0] ? rubricBySlug(post.rubricSlugs[0]) : undefined;
 
+  const cover = resolvePostImage(post);
   return {
     title,
     description,
@@ -49,7 +51,7 @@ export function buildPostMetadata(post: Post, canonicalPath: string): Metadata {
             modifiedTime: post.publishedAt,
             ...(sectionRubric ? { section: sectionRubric.name } : {}),
           }),
-      images: [{ url: absoluteContentUrl(post.image), alt: title }],
+      images: [{ url: absoluteContentUrl(cover), alt: title }],
     },
     twitter: {
       card: "summary_large_image",

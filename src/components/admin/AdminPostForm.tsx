@@ -69,6 +69,9 @@ export function AdminPostForm({
       materialType: initial?.materialType ?? "",
       homeBadge: initial?.homeBadge ?? "",
       homeCta: initial?.homeCta ?? "",
+      homeHero: initial?.homeHero ?? false,
+      homeVideoUrl: initial?.homeVideoUrl ?? "",
+      homeVideoLabel: initial?.homeVideoLabel ?? "",
     }),
     [initial]
   );
@@ -129,6 +132,9 @@ export function AdminPostForm({
         body.seoNoindex = form.seoNoindex;
         if (form.homeBadge.trim()) body.homeBadge = form.homeBadge.trim();
         if (form.homeCta.trim()) body.homeCta = form.homeCta.trim();
+        if (form.homeVideoUrl.trim()) body.homeVideoUrl = form.homeVideoUrl.trim();
+        if (form.homeVideoLabel.trim()) body.homeVideoLabel = form.homeVideoLabel.trim();
+        body.homeHero = form.homeHero;
         body.urgent = form.urgent;
         body.pinned = form.pinned;
 
@@ -488,6 +494,33 @@ export function AdminPostForm({
             className={inCls}
           />
         </Field>
+        <Field label="Главная: ссылка видео-кнопки (опционально)">
+          <input
+            disabled={!canSave}
+            value={form.homeVideoUrl}
+            onChange={(e) => setForm((f) => ({ ...f, homeVideoUrl: e.target.value }))}
+            className={inCls}
+            placeholder="/video/slug или https://youtube.com/..."
+          />
+        </Field>
+        <Field label="Главная: текст видео-кнопки">
+          <input
+            disabled={!canSave}
+            value={form.homeVideoLabel}
+            onChange={(e) => setForm((f) => ({ ...f, homeVideoLabel: e.target.value }))}
+            className={inCls}
+            placeholder="Видео-дайджест"
+          />
+        </Field>
+        <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2">
+          <input
+            type="checkbox"
+            disabled={!canSave}
+            checked={form.homeHero}
+            onChange={(e) => setForm((f) => ({ ...f, homeHero: e.target.checked }))}
+          />
+          Поставить в главный слот слева на главной
+        </label>
       </section>
 
       {canSave ? (

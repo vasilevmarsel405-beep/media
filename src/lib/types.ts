@@ -62,6 +62,12 @@ export interface Post {
   homeBadge?: string;
   /** Текст основной кнопки на главной */
   homeCta?: string;
+  /** Явно поставить материал в главный слот слева на главной */
+  homeHero?: boolean;
+  /** Опциональная ссылка второй кнопки в герое (например, на видео) */
+  homeVideoUrl?: string;
+  /** Текст второй кнопки в герое */
+  homeVideoLabel?: string;
   /** Переопределение <title> и og:title (Make / ручной SEO) */
   seoTitle?: string;
   /** Meta description и og:description до ~320 символов */

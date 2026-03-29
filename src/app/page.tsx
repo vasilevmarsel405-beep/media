@@ -21,6 +21,10 @@ import {
 } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
 
+function isExternalUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
+}
+
 export default async function HomePage() {
   const allPosts = await getAllPosts();
   const hero = await getFeaturedHero();
@@ -32,7 +36,8 @@ export default async function HomePage() {
   const analyticsList = await getPostsByKind("analytics");
   const interviews = await getPostsByKind("interview");
   const videos = await getPostsByKind("video");
-  const videoDigest = videos[0];
+  const heroVideoHref = hero.homeVideoUrl?.trim() ?? "";
+  const heroVideoLabel = hero.homeVideoLabel?.trim() || "Видео-дайджест";
 
   return (
     <div>
@@ -84,11 +89,14 @@ export default async function HomePage() {
                     {hero.homeCta ?? "Читать сейчас"}
                     <span aria-hidden>→</span>
                   </Link>
-                  {videoDigest ? (
+                  {heroVideoHref ? (
                     <div className="min-w-0 max-w-full shrink-0">
-                      <HeroGlassVideoLink href={`/video/${videoDigest.slug}`}>
+                      <HeroGlassVideoLink
+                        href={heroVideoHref}
+                        {...(isExternalUrl(heroVideoHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                      >
                         <IconPlay className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
-                        Видео-дайджест
+                        {heroVideoLabel}
                       </HeroGlassVideoLink>
                     </div>
                   ) : null}
