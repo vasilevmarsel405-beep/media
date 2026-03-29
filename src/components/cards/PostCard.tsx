@@ -14,7 +14,7 @@ export function PostCard({
   variant = "default",
 }: {
   post: Post;
-  variant?: "default" | "horizontal" | "compact" | "urgent" | "related";
+  variant?: "default" | "horizontal" | "horizontal-dark" | "compact" | "urgent" | "related" | "dark";
 }) {
   const href = postHref(post);
   const cover = resolvePostImage(post);
@@ -24,9 +24,16 @@ export function PostCard({
     : undefined;
   const tagLabel = (slug: string) => allTags.find((t) => t.slug === slug)?.name ?? slug;
 
-  if (variant === "horizontal") {
+  if (variant === "horizontal" || variant === "horizontal-dark") {
+    const dark = variant === "horizontal-dark";
     return (
-      <article className="card-hover group flex min-w-0 max-w-full gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm sm:gap-4">
+      <article
+        className={
+          dark
+            ? "card-hover group flex min-w-0 max-w-full gap-3 rounded-2xl border border-white/12 bg-white/[0.06] p-3 shadow-[0_18px_44px_-30px_rgb(0_0_0_/_0.9)] backdrop-blur-sm sm:gap-4"
+            : "card-hover group flex min-w-0 max-w-full gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm sm:gap-4"
+        }
+      >
         <Link href={href} className="relative aspect-[4/3] w-[7.5rem] shrink-0 overflow-hidden rounded-xl sm:w-36 md:w-44">
           <Image
             src={cover}
@@ -44,28 +51,37 @@ export function PostCard({
           ) : null}
         </Link>
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <div className={`flex flex-wrap items-center gap-2 text-xs ${dark ? "text-white/60" : "text-slate-500"}`}>
             {post.urgent ? (
               <span className="rounded-md bg-[#ff3100] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
                 Срочно
               </span>
             ) : null}
             {primaryRubric ? (
-              <Link href={`/rubriki/${primaryRubric.slug}`} className="font-semibold text-mars-blue hover:underline">
+              <Link
+                href={`/rubriki/${primaryRubric.slug}`}
+                className={dark ? "font-semibold text-blue-200 hover:underline" : "font-semibold text-mars-blue hover:underline"}
+              >
                 {primaryRubric.name}
               </Link>
             ) : null}
             <time dateTime={post.publishedAt}>{formatDateTime(post.publishedAt)}</time>
           </div>
           <Link href={href}>
-            <h3 className="mt-2 font-display text-lg font-semibold leading-snug text-slate-900 group-hover:text-slate-700">
+            <h3
+              className={
+                dark
+                  ? "mt-2 font-display text-lg font-semibold leading-snug text-white group-hover:text-orange-200"
+                  : "mt-2 font-display text-lg font-semibold leading-snug text-slate-900 group-hover:text-slate-700"
+              }
+            >
               {post.title}
             </h3>
           </Link>
-          <p className="mt-1 line-clamp-2 text-sm text-slate-600">{post.lead}</p>
+          <p className={`mt-1 line-clamp-2 text-sm ${dark ? "text-white/70" : "text-slate-600"}`}>{post.lead}</p>
           {author ? (
-            <p className="mt-2 text-xs text-slate-500">
-              <span className="font-semibold text-slate-600">Автор:</span> {author.name}
+            <p className={`mt-2 text-xs ${dark ? "text-white/60" : "text-slate-500"}`}>
+              <span className={dark ? "font-semibold text-white/80" : "font-semibold text-slate-600"}>Автор:</span> {author.name}
             </p>
           ) : null}
           <div className="mt-auto flex flex-wrap gap-2 pt-3">
@@ -182,6 +198,70 @@ export function PostCard({
           </time>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {post.tagSlugs.slice(0, 2).map((t) => (
+              <TagPill key={t} href={`/teg/${t}`}>
+                {tagLabel(t)}
+              </TagPill>
+            ))}
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  if (variant === "dark") {
+    return (
+      <article className="group card-hover flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/[0.06] shadow-[0_20px_50px_-34px_rgb(0_0_0_/_0.9)] backdrop-blur-sm">
+        <Link href={href} className="relative aspect-[16/10] w-full overflow-hidden">
+          <Image
+            src={cover}
+            alt={postCoverImageAlt(post.title)}
+            fill
+            className="object-cover transition duration-500 group-hover:scale-[1.02]"
+            sizes="(max-width:768px) 100vw, 400px"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+          {post.kind === "video" ? (
+            <span className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+              <IconPlay className="h-3.5 w-3.5" />
+              {post.durationLabel ?? "Видео"}
+            </span>
+          ) : null}
+          {post.pinned ? (
+            <span className="absolute left-3 top-3 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">
+              Главное
+            </span>
+          ) : null}
+        </Link>
+        <div className="flex flex-1 flex-col p-5">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
+            {post.urgent ? (
+              <span className="rounded-md bg-[#ff3100] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                Срочно
+              </span>
+            ) : null}
+            {primaryRubric ? (
+              <Link href={`/rubriki/${primaryRubric.slug}`} className="font-semibold text-blue-200 hover:underline">
+                {primaryRubric.name}
+              </Link>
+            ) : null}
+            {post.readMin ? <span>{post.readMin} мин чтения</span> : null}
+          </div>
+          <Link href={href} className="mt-2">
+            <h3 className="font-display text-xl font-semibold leading-snug text-white group-hover:text-orange-200">
+              {post.title}
+            </h3>
+          </Link>
+          <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-white/70">{post.lead}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-white/60">
+            <time dateTime={post.publishedAt}>{formatDateTime(post.publishedAt)}</time>
+            {author ? (
+              <span>
+                · <span className="text-white/80">Автор:</span> {author.name}
+              </span>
+            ) : null}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {post.tagSlugs.slice(0, 3).map((t) => (
               <TagPill key={t} href={`/teg/${t}`}>
                 {tagLabel(t)}
               </TagPill>

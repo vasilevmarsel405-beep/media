@@ -47,6 +47,14 @@ export function VideoPublication({
         className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2032%2032%22%20width=%2232%22%20height=%2232%22%20fill=%22none%22%20stroke=%22rgb(255%20255%20255%20/%200.04)%22%3E%3Cpath%20d=%22M0%20.5H32M0%208.5H32M0%2016.5H32M0%2024.5H32M.5%200V32M8.5%200V32M16.5%200V32M24.5%200V32%22/%3E%3C/svg%3E')] opacity-[0.45]"
         aria-hidden
       />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[46rem] bg-[radial-gradient(ellipse_75%_55%_at_18%_8%,rgb(255_49_0_/_0.17),transparent_62%),radial-gradient(ellipse_58%_45%_at_85%_4%,rgb(43_62_247_/_0.14),transparent_60%)]"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-[30rem] bg-[radial-gradient(ellipse_64%_52%_at_50%_100%,rgb(43_62_247_/_0.10),transparent_72%)]"
+        aria-hidden
+      />
       <BreadcrumbJsonLd items={videoBreadcrumbs} />
       <VideoJsonLd
         post={post}
@@ -121,7 +129,7 @@ export function VideoPublication({
         </div>
       </header>
 
-      <div className="relative bg-gradient-to-b from-black via-black to-slate-950 pb-2 pt-2 sm:pb-4">
+      <div className="relative pb-2 pt-2 sm:pb-4">
         <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10">
           <div className="grid gap-8 lg:grid-cols-12 lg:gap-10 lg:items-start">
             <div className="lg:col-span-8">
@@ -197,18 +205,18 @@ export function VideoPublication({
           ))}
         </div>
 
-        <div className="mt-8 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-5 sm:px-6">
+        <div className="mt-8 rounded-2xl border border-white/12 bg-white/[0.05] px-4 py-5 shadow-[0_12px_36px_-24px_rgb(0_0_0_/_0.9)] backdrop-blur-sm sm:px-6">
           <ShareRow title={post.title} />
         </div>
 
         {post.timecodes?.length ? (
-          <section className="mt-10 rounded-2xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50/90 p-6 shadow-sm sm:p-8">
-            <h2 className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Таймкоды</h2>
+          <section className="mt-10 rounded-2xl border border-white/12 bg-white/[0.06] p-6 shadow-[0_20px_50px_-34px_rgb(0_0_0_/_0.85)] backdrop-blur-sm sm:p-8">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.18em] text-white/55">Таймкоды</h2>
             <ul className="mt-5 grid gap-3 sm:grid-cols-2">
               {post.timecodes.map((tc) => (
                 <li
                   key={`${tc.t}-${tc.label}`}
-                  className="flex gap-3 rounded-xl border border-slate-100 bg-white/90 px-3 py-2.5 text-sm text-slate-800 shadow-sm"
+                  className="flex gap-3 rounded-xl border border-white/10 bg-black/25 px-3 py-2.5 text-sm text-white/85 shadow-sm"
                 >
                   <span className="font-mono text-xs font-bold tabular-nums text-mars-accent">{tc.t}</span>
                   <span className="leading-snug">{tc.label}</span>
@@ -243,7 +251,7 @@ export function VideoPublication({
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{videoPublicationCopy.relatedMixedSub}</p>
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {relatedAll.slice(0, 4).map((p) => (
-              <PostCard key={p.slug} post={p} variant="horizontal" />
+              <PostCard key={p.slug} post={p} variant="horizontal-dark" />
             ))}
           </div>
         </section>
@@ -252,7 +260,7 @@ export function VideoPublication({
           <h2 className="font-display text-2xl font-bold text-white">{videoPublicationCopy.watchNextTitle}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {relatedVideos.map((p) => (
-              <PostCard key={p.slug} post={p} />
+              <PostCard key={p.slug} post={p} variant="dark" />
             ))}
           </div>
         </section>
