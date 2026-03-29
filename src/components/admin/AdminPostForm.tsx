@@ -320,7 +320,7 @@ export function AdminPostForm({
                   const res = await fetch("/api/admin/upload-cover", { method: "POST", body: fd });
                   const data = (await res.json().catch(() => ({}))) as { error?: string; url?: string };
                   if (!res.ok) {
-                    setCoverUploadError(data.error ?? "Не удалось загрузить файл");
+                    setCoverUploadError(data.error ?? `Не удалось загрузить файл (HTTP ${res.status})`);
                     setCoverUploadBusy(false);
                     return;
                   }
@@ -390,6 +390,7 @@ export function AdminPostForm({
                       title?: string;
                       description?: string;
                       thumbnailUrl?: string | null;
+                      durationLabel?: string | null;
                     };
                     if (!res.ok) {
                       setEnrichError(data.error ?? "Не удалось получить данные с YouTube");
@@ -413,6 +414,10 @@ export function AdminPostForm({
                         typeof data.thumbnailUrl === "string" && data.thumbnailUrl.trim()
                           ? data.thumbnailUrl.trim()
                           : fallbackThumb || f.image,
+                      durationLabel:
+                        typeof data.durationLabel === "string" && data.durationLabel.trim()
+                          ? data.durationLabel.trim()
+                          : f.durationLabel,
                       seoTitle: (data.title ?? "").slice(0, 70),
                       seoDescription: seoDesc,
                       paragraphsText: desc,

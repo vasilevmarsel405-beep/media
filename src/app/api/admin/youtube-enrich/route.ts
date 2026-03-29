@@ -61,6 +61,7 @@ export async function POST(request: Request) {
     title: meta.title,
     description: meta.description,
     thumbnailUrl: meta.thumbnailUrl ?? null,
+    durationLabel: meta.durationLabel ?? null,
     channelTitle: meta.channelTitle ?? null,
     source: meta.source,
   });

@@ -53,14 +53,25 @@ export async function POST(request: Request) {
     );
   }
 
-  const buf = Buffer.from(await entry.arrayBuffer());
-  const dir = path.join(process.cwd(), "public", "uploads", "covers");
-  await mkdir(dir, { recursive: true });
+  try {
+    const buf = Buffer.from(await entry.arrayBuffer());
+    const dir = path.join(process.cwd(), "public", "uploads", "covers");
+    await mkdir(dir, { recursive: true });
 
-  const filename = `${randomUUID()}${ext}`;
-  const filePath = path.join(dir, filename);
-  await writeFile(filePath, buf);
+    const filename = `${randomUUID()}${ext}`;
+    const filePath = path.join(dir, filename);
+    await writeFile(filePath, buf);
 
-  const url = `/uploads/covers/${filename}`;
-  return NextResponse.json({ ok: true, url });
+    const url = `/uploads/covers/${filename}`;
+    return NextResponse.json({ ok: true, url });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Неизвестная ошибка";
+    return NextResponse.json(
+      {
+        error:
+          `Сервер не смог сохранить файл. Проверьте права записи на public/uploads/covers. (${msg})`,
+      },
+      { status: 500 }
+    );
+  }
 }
