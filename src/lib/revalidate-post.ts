@@ -13,6 +13,7 @@ const KIND_PREFIX: Record<Post["kind"], string> = {
 /** Сброс кеша списков и страниц материала после ingest из Make. */
 export function revalidateAfterPostChange(post: Post | null, opts?: { slugDeleted?: string }) {
   revalidateTag("posts", "max");
+  revalidateTag("youtube-videos", "max");
 
   const roots = ["/", "/poisk", "/novosti", "/stati", "/analitika", "/intervyu", "/video", "/rubriki", "/teg"];
 

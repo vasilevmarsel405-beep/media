@@ -279,13 +279,13 @@ export function AdminPostForm({
 
       {form.kind === "video" ? (
         <section className="grid gap-4 sm:grid-cols-2">
-          <Field label="YouTube ID">
+          <Field label="YouTube — ссылка или ID ролика">
             <input
               disabled={!canSave}
               value={form.youtubeId}
               onChange={(e) => setForm((f) => ({ ...f, youtubeId: e.target.value }))}
               className={inCls}
-              placeholder="dQw4w9WgXcQ"
+              placeholder="https://www.youtube.com/watch?v=… или dQw4w9WgXcQ"
             />
           </Field>
           <Field label="Длительность (подпись)">

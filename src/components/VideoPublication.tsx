@@ -4,23 +4,30 @@ import { PostCard } from "@/components/cards/PostCard";
 import { Breadcrumbs, type Crumb } from "@/components/Breadcrumbs";
 import { ShareRow } from "@/components/ShareRow";
 import { TagPill } from "@/components/TagPill";
+import { YoutubeDescription } from "@/components/video/YoutubeDescription";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { VideoJsonLd } from "@/components/seo/VideoJsonLd";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
+import { IconPlay } from "@/components/icons";
 import { authorById, authors, rubrics as allRubrics, tags as allTags } from "@/lib/content";
-import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { videoPublicationCopy } from "@/lib/copy";
 import { formatDateTime } from "@/lib/format";
+import { postCoverImageAlt } from "@/lib/seo/image-alt";
+import type { YoutubeVideoEnrichment } from "@/lib/youtube-enrichment";
 import type { Post } from "@/lib/types";
+
+const WATCH_URL = (id: string) => `https://www.youtube.com/watch?v=${id}`;
 
 export function VideoPublication({
   post,
   relatedVideos,
   relatedAll,
+  youtubeMeta,
 }: {
   post: Post;
   relatedVideos: Post[];
   relatedAll: Post[];
+  youtubeMeta: YoutubeVideoEnrichment | null;
 }) {
   const author = authorById(post.authorId) ?? authors[0];
   const tagLabel = (slug: string) => allTags.find((t) => t.slug === slug)?.name ?? slug;
@@ -30,57 +37,157 @@ export function VideoPublication({
     { href: `/video/${post.slug}`, label: post.title },
   ];
 
+  const ytDescription = youtubeMeta?.description?.trim() ?? "";
+  const showYoutubeDescription = ytDescription.length > 0;
+  const channelLine = youtubeMeta?.channelTitle;
+
   return (
-    <article>
+    <article className="bg-white">
       <BreadcrumbJsonLd items={videoBreadcrumbs} />
-      <VideoJsonLd post={post} />
-      <div className="border-b border-slate-200 bg-black">
-        <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-10">
+      <VideoJsonLd
+        post={post}
+        youtubeDescription={youtubeMeta?.description}
+        youtubeThumbnailUrl={youtubeMeta?.thumbnailUrl}
+      />
+
+      <header className="relative overflow-hidden border-b border-white/10 bg-black text-white">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_120%_70%_at_50%_-30%,rgb(255_49_0_/_0.22),transparent_55%),radial-gradient(ellipse_70%_60%_at_105%_40%,rgb(43_62_247_/_0.12),transparent_50%)]"
+          aria-hidden
+        />
+        <div className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2032%2032%22%20width=%2232%22%20height=%2232%22%20fill=%22none%22%20stroke=%22rgb(255%20255%20255%20/%200.04)%22%3E%3Cpath%20d=%22M0%20.5H32M0%208.5H32M0%2016.5H32M0%2024.5H32M.5%200V32M8.5%200V32M16.5%200V32M24.5%200V32%22/%3E%3C/svg%3E')] opacity-[0.65]" />
+
+        <div className="relative z-[1] mx-auto max-w-[1200px] px-4 pb-10 pt-8 sm:px-6 sm:pb-12 sm:pt-10 lg:px-10">
           <Breadcrumbs tone="dark" items={videoBreadcrumbs} />
-          <h1 className="font-display mt-6 max-w-4xl text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
+
+          <div className="mt-2 h-1 w-16 rounded-full bg-gradient-to-r from-[#ff3100] to-[#ff7a45] shadow-[0_0_24px_rgb(255_49_0_/_0.45)]" />
+
+          <h1 className="font-display mt-6 max-w-[52rem] text-[1.65rem] font-bold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-[2.75rem]">
             {post.title}
           </h1>
-          <p className="mt-4 max-w-3xl text-lg text-white/80">{post.lead}</p>
-          <div className="mt-6 space-y-4 text-sm">
-            <div className="flex flex-wrap items-center gap-3 text-white/70">
-              <time dateTime={post.publishedAt}>{formatDateTime(post.publishedAt)}</time>
-              {post.durationLabel ? <span>· {post.durationLabel}</span> : null}
-            </div>
-            {author ? (
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/45">Автор</p>
-                <Link
-                  href={`/avtor/${author.slug}`}
-                  className="mt-2 inline-flex max-w-full items-center gap-3 rounded-xl border border-white/15 bg-white/5 py-2 pl-2 pr-4 transition hover:border-white/25 hover:bg-white/10"
-                >
-                  <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full ring-2 ring-white/20">
-                    <Image src={author.photo} alt={author.name} fill className="object-cover" sizes="40px" />
-                  </span>
-                  <span className="min-w-0 text-left">
-                    <span className="block font-semibold text-white">{author.name}</span>
-                    <span className="mt-0.5 block text-xs text-white/65">{author.role}</span>
-                  </span>
-                </Link>
-              </div>
+          {post.subtitle ? (
+            <p className="mt-4 max-w-3xl text-lg font-medium leading-snug text-white/85">{post.subtitle}</p>
+          ) : null}
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-white/72 sm:text-[1.05rem] sm:leading-relaxed">
+            {post.lead}
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-center gap-x-4 gap-y-3 text-sm text-white/60">
+            <time dateTime={post.publishedAt} className="tabular-nums">
+              {formatDateTime(post.publishedAt)}
+            </time>
+            {post.durationLabel ? (
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-white/90 ring-1 ring-white/15">
+                <IconPlay className="h-3.5 w-3.5" aria-hidden />
+                {post.durationLabel}
+              </span>
             ) : null}
+            {post.youtubeId ? (
+              <Link
+                href={WATCH_URL(post.youtubeId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-semibold text-white transition hover:border-[#ff3100]/50 hover:bg-[#ff3100]/15 hover:text-white"
+              >
+                {videoPublicationCopy.youtubeOpenButton}
+                <span aria-hidden className="text-white/50">
+                  ↗
+                </span>
+              </Link>
+            ) : null}
+          </div>
+
+          {author ? (
+            <div className="mt-8">
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-white/40">Автор</p>
+              <Link
+                href={`/avtor/${author.slug}`}
+                className="mt-2 inline-flex max-w-full items-center gap-3 rounded-2xl border border-white/15 bg-white/[0.07] py-2.5 pl-2.5 pr-5 shadow-[0_12px_40px_-20px_rgb(0_0_0_/_0.8)] backdrop-blur-sm transition hover:border-white/25 hover:bg-white/10"
+              >
+                <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-[#ff3100]/35">
+                  <Image src={author.photo} alt={author.name} fill className="object-cover" sizes="44px" />
+                </span>
+                <span className="min-w-0 text-left">
+                  <span className="block text-sm font-bold text-white">{author.name}</span>
+                  <span className="mt-0.5 block text-xs leading-snug text-white/55">{author.role}</span>
+                </span>
+              </Link>
+            </div>
+          ) : null}
+        </div>
+      </header>
+
+      <div className="relative bg-gradient-to-b from-black via-black to-slate-950 pb-2 pt-2 sm:pb-4">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10">
+          <div className="grid gap-8 lg:grid-cols-12 lg:gap-10 lg:items-start">
+            <div className="lg:col-span-8">
+              {post.youtubeId ? (
+                <YouTubeEmbed id={post.youtubeId} title={post.title} />
+              ) : (
+                <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:rounded-3xl">
+                  <Image
+                    src={post.image}
+                    alt={postCoverImageAlt(post.title)}
+                    fill
+                    className="object-cover opacity-55"
+                    sizes="(max-width:1024px) 100vw, 800px"
+                    priority
+                  />
+                  <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm font-medium text-white/80">
+                    Укажите ссылку или ID ролика YouTube — плеер появится здесь
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <aside className="lg:col-span-4 lg:sticky lg:top-24">
+              <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-5 shadow-[0_20px_50px_-28px_rgb(0_0_0_/_0.9)] backdrop-blur-md sm:p-6">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#ff3100]/90">
+                  {videoPublicationCopy.youtubeMetaEyebrow}
+                </p>
+                {channelLine ? (
+                  <p className="mt-3 text-sm text-white/80">
+                    <span className="text-white/45">{videoPublicationCopy.youtubeChannel} · </span>
+                    <span className="font-medium text-white">{channelLine}</span>
+                  </p>
+                ) : null}
+                {youtubeMeta?.title && youtubeMeta.title !== post.title ? (
+                  <p className="mt-3 text-sm leading-snug text-white/70">&ldquo;{youtubeMeta.title}&rdquo;</p>
+                ) : null}
+
+                <div className="mt-5 border-t border-white/10 pt-5">
+                  <h2 className="text-[11px] font-bold uppercase tracking-wider text-white/50">
+                    {videoPublicationCopy.youtubeDescriptionTitle}
+                  </h2>
+                  {showYoutubeDescription ? (
+                    <YoutubeDescription text={ytDescription} tone="dark" className="mt-3 space-y-3" />
+                  ) : (
+                    <p className="mt-3 text-sm leading-relaxed text-white/55">
+                      Полное описание с YouTube доступно при настройке ключа API на сервере (
+                      <code className="rounded bg-white/10 px-1 text-[11px]">YOUTUBE_DATA_API_KEY</code>
+                      ). Пока — лид редакции ниже и текст под видео.
+                    </p>
+                  )}
+                </div>
+
+                {post.youtubeId ? (
+                  <Link
+                    href={WATCH_URL(post.youtubeId)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_36px_-8px_rgb(255_49_0_/_0.55)] transition hover:brightness-110"
+                  >
+                    <IconPlay className="h-4 w-4" aria-hidden />
+                    {videoPublicationCopy.youtubeOpenButton}
+                  </Link>
+                ) : null}
+              </div>
+            </aside>
           </div>
         </div>
       </div>
 
-      <div className="bg-black pb-6">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10">
-          {post.youtubeId ? (
-            <YouTubeEmbed id={post.youtubeId} title={post.title} />
-          ) : (
-            <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900">
-              <Image src={post.image} alt={postCoverImageAlt(post.title)} fill className="object-cover opacity-60" sizes="1200px" />
-              <p className="absolute inset-0 flex items-center justify-center text-white">Видео будет здесь</p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-[1100px] px-4 py-10 sm:px-6 lg:px-10">
+      <div className="mx-auto max-w-[1100px] px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
         <div className="flex flex-wrap gap-2">
           {post.rubricSlugs.map((slug) => {
             const r = allRubrics.find((x) => x.slug === slug);
@@ -88,7 +195,7 @@ export function VideoPublication({
               <Link
                 key={slug}
                 href={`/rubriki/${slug}`}
-                className="rounded-xl bg-mars-blue-soft px-3 py-1 text-xs font-semibold text-mars-blue ring-1 ring-mars-blue/20"
+                className="rounded-xl bg-mars-blue-soft px-3 py-1 text-xs font-semibold text-mars-blue ring-1 ring-mars-blue/20 transition hover:ring-mars-blue/40"
               >
                 {r.name}
               </Link>
@@ -101,34 +208,46 @@ export function VideoPublication({
           ))}
         </div>
 
-        <div className="mt-8 border-y border-slate-100 py-6">
+        <div className="mt-8 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-5 sm:px-6">
           <ShareRow title={post.title} />
         </div>
 
         {post.timecodes?.length ? (
-          <section className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-6">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">Таймкоды</h2>
-            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+          <section className="mt-10 rounded-2xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50/90 p-6 shadow-sm sm:p-8">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Таймкоды</h2>
+            <ul className="mt-5 grid gap-3 sm:grid-cols-2">
               {post.timecodes.map((tc) => (
-                <li key={tc.t} className="flex gap-3 text-sm text-slate-800">
-                  <span className="font-mono text-xs font-bold text-mars-accent">{tc.t}</span>
-                  <span>{tc.label}</span>
+                <li
+                  key={`${tc.t}-${tc.label}`}
+                  className="flex gap-3 rounded-xl border border-slate-100 bg-white/90 px-3 py-2.5 text-sm text-slate-800 shadow-sm"
+                >
+                  <span className="font-mono text-xs font-bold tabular-nums text-mars-accent">{tc.t}</span>
+                  <span className="leading-snug">{tc.label}</span>
                 </li>
               ))}
             </ul>
           </section>
         ) : null}
 
-        <div className="prose-mars mt-10 max-w-[42rem] text-slate-700">
-          {post.paragraphs.map((text, i) => (
-            <p key={i} className="mt-6 leading-relaxed first:mt-0">
-              {text}
-            </p>
-          ))}
-        </div>
+        {post.paragraphs.some((p) => p.trim()) ? (
+          <section className="mt-12">
+            <h2 className="font-display text-xl font-bold text-slate-900 sm:text-2xl">
+              {videoPublicationCopy.editorialTitle}
+            </h2>
+            <div className="prose-mars prose-mars--article mt-6 max-w-[42rem] text-slate-700">
+              {post.paragraphs.map((text, i) =>
+                text.trim() ? (
+                  <p key={i} className="mt-6 leading-relaxed first:mt-0">
+                    {text}
+                  </p>
+                ) : null
+              )}
+            </div>
+          </section>
+        ) : null}
 
         {author ? (
-          <footer className="mt-10 max-w-[42rem] border-t border-slate-200 pt-8">
+          <footer className="mt-12 max-w-[42rem] border-t border-slate-200 pt-10">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Автор</p>
             <p className="mt-2 text-base text-slate-800">
               <Link
@@ -142,19 +261,19 @@ export function VideoPublication({
           </footer>
         ) : null}
 
-        <section className="mt-14 border-t border-slate-200 pt-10">
-          <h2 className="font-display text-2xl font-semibold text-slate-900">{videoPublicationCopy.relatedMixedTitle}</h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">{videoPublicationCopy.relatedMixedSub}</p>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <section className="mt-16 border-t border-slate-200 pt-12">
+          <h2 className="font-display text-2xl font-bold text-slate-900">{videoPublicationCopy.relatedMixedTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{videoPublicationCopy.relatedMixedSub}</p>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {relatedAll.slice(0, 4).map((p) => (
               <PostCard key={p.slug} post={p} variant="horizontal" />
             ))}
           </div>
         </section>
 
-        <section className="mt-14">
-          <h2 className="font-display text-2xl font-semibold text-slate-900">{videoPublicationCopy.watchNextTitle}</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-16">
+          <h2 className="font-display text-2xl font-bold text-slate-900">{videoPublicationCopy.watchNextTitle}</h2>
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {relatedVideos.map((p) => (
               <PostCard key={p.slug} post={p} />
             ))}

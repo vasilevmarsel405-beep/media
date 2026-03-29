@@ -4,17 +4,34 @@ import { siteUrl } from "@/lib/site";
 import { absoluteContentUrl } from "@/lib/seo/post-metadata";
 import type { Post } from "@/lib/types";
 
-export function VideoJsonLd({ post }: { post: Post }) {
+export function VideoJsonLd({
+  post,
+  youtubeDescription,
+  youtubeThumbnailUrl,
+}: {
+  post: Post;
+  /** Полное описание из YouTube Data API (при наличии ключа). */
+  youtubeDescription?: string | null;
+  youtubeThumbnailUrl?: string | null;
+}) {
   const author = authorById(post.authorId) ?? authors[0];
   const pageUrl = `${siteUrl}${postHref(post)}`;
   const embedUrl = post.youtubeId ? `https://www.youtube.com/embed/${post.youtubeId}` : undefined;
+
+  const descriptionRaw =
+    youtubeDescription?.trim() || post.seoDescription?.trim() || post.lead;
+  const description = descriptionRaw.slice(0, 5000);
+
+  const thumbnailUrl: string[] = [];
+  if (youtubeThumbnailUrl) thumbnailUrl.push(youtubeThumbnailUrl);
+  thumbnailUrl.push(absoluteContentUrl(post.image));
 
   const json = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
     name: post.title,
-    description: (post.seoDescription?.trim() || post.lead).slice(0, 500),
-    thumbnailUrl: [absoluteContentUrl(post.image)],
+    description,
+    thumbnailUrl,
     uploadDate: post.publishedAt,
     contentUrl: embedUrl,
     embedUrl,

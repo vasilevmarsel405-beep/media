@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { extractYoutubeVideoId } from "./youtube-id";
 
 const kindZ = z.enum(["news", "article", "analytics", "interview", "video"]);
 
@@ -39,6 +40,22 @@ function shouldDropPlaceholderToc(toc: { id: string }[] | undefined): boolean {
   return ids.size === 3 && [...MAKE_PLACEHOLDER_TOC_IDS].every((id) => ids.has(id));
 }
 
+/** Ссылка watch/shortsyoutu.be или 11-символьный id → нормализованный id. */
+const youtubeIdIngestZ = z
+  .string()
+  .max(500)
+  .optional()
+  .transform((s) => {
+    if (s == null) return undefined;
+    const t = s.trim();
+    return t === "" ? undefined : t;
+  })
+  .refine(
+    (s) => s == null || extractYoutubeVideoId(s) !== null || /^[a-zA-Z0-9_-]{11}$/.test(s),
+    { message: "youtubeId: укажите корректную ссылку на YouTube или ID ролика (11 символов)" }
+  )
+  .transform((s) => (s == null ? undefined : extractYoutubeVideoId(s) ?? s));
+
 export const makeIngestPostSchema = z
   .object({
     slug: slugZ,
@@ -55,7 +72,7 @@ export const makeIngestPostSchema = z
     urgent: z.boolean().optional(),
     pinned: z.boolean().optional(),
     readMin: z.number().int().positive().max(999).optional(),
-    youtubeId: z.string().max(32).optional(),
+    youtubeId: youtubeIdIngestZ,
     durationLabel: z.string().max(32).optional(),
     guestName: z.string().max(200).optional(),
     guestBio: z.string().max(2000).optional(),

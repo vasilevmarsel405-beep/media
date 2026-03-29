@@ -5,6 +5,16 @@ import type { Post } from "./types";
 
 const DEFAULT_AUTHOR_ID = authors[0]?.id ?? "mv1";
 
+function publishedAtMs(p: Post): number {
+  const t = Date.parse(p.publishedAt);
+  return Number.isNaN(t) ? 0 : t;
+}
+
+/** Новее — выше (для главной, списков и героя). */
+export function sortPostsByPublishedDesc(posts: Post[]): Post[] {
+  return [...posts].sort((a, b) => publishedAtMs(b) - publishedAtMs(a));
+}
+
 /** Запись из Redis может перезаписать статику без `authorId` или со старым id — тогда автор на странице не показывался. */
 function normalizePostAuthor(post: Post): Post {
   const raw = post.authorId;
@@ -23,7 +33,8 @@ function mergeBySlug(remote: Post[], local: Post[]): Post[] {
 async function loadMergedPosts(): Promise<Post[]> {
   const remote = await readRemotePostsRaw();
   const merged = mergeBySlug(remote, staticPosts);
-  return merged.map(normalizePostAuthor);
+  const normalized = merged.map(normalizePostAuthor);
+  return sortPostsByPublishedDesc(normalized);
 }
 
 /** Все посты: статика из репозитория + записи из Redis (Make / API). */
@@ -89,20 +100,47 @@ export async function searchPosts(q: string): Promise<Post[]> {
   });
 }
 
+/** Герой: закреплённый (самый свежий из pinned) или самый свежий материал. */
 export async function getFeaturedHero(): Promise<Post> {
   const all = await getAllPosts();
-  return all.find((p) => p.pinned) ?? all[0];
+  const pinned = all.filter((p) => p.pinned);
+  if (pinned.length) return pinned[0];
+  return all[0] ?? staticPosts[0];
 }
 
+/** Свежие новости в колонку справа от героя (кроме текущего героя). */
 export async function getSecondaryHero(): Promise<Post[]> {
   const all = await getAllPosts();
   const hero = await getFeaturedHero();
   return all.filter((p) => p.kind === "news" && p.slug !== hero.slug).slice(0, 4);
 }
 
+const URGENT_FEED_LIMIT = 8;
+
+/**
+ * Срочная лента: сначала все материалы с urgent (любой kind), по дате;
+ * если слотов не хватает — добиваем свежими новостями без дубликатов.
+ */
 export async function getUrgentFeed(): Promise<Post[]> {
   const all = await getAllPosts();
-  return all.filter((p) => p.urgent || p.kind === "news").slice(0, 8);
+  const picked = new Set<string>();
+  const out: Post[] = [];
+
+  for (const p of all) {
+    if (!p.urgent) continue;
+    if (picked.has(p.slug) || out.length >= URGENT_FEED_LIMIT) continue;
+    out.push(p);
+    picked.add(p.slug);
+  }
+
+  for (const p of all) {
+    if (p.kind !== "news") continue;
+    if (picked.has(p.slug) || out.length >= URGENT_FEED_LIMIT) continue;
+    out.push(p);
+    picked.add(p.slug);
+  }
+
+  return out;
 }
 
 export async function getPopularPosts(): Promise<Post[]> {

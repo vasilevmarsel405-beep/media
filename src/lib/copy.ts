@@ -146,6 +146,11 @@ export const videoPublicationCopy = {
   relatedMixedTitle: "Продолжить в текстах",
   relatedMixedSub: "Те же темы в новостях и колонках, если нужен контекст глубже ролика.",
   watchNextTitle: "Выпуски, которые чаще досматривают до конца",
+  youtubeMetaEyebrow: "О ролике",
+  youtubeDescriptionTitle: "Описание с YouTube",
+  youtubeOpenButton: "Смотреть на YouTube",
+  youtubeChannel: "Канал",
+  editorialTitle: "Текст редакции",
 } as const;
 
 export const videoHubCopy = {
