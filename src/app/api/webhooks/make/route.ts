@@ -34,6 +34,24 @@ function checkSecret(request: Request): boolean {
   return timingSafeStringEqual(token, secret);
 }
 
+function urlPathForPost(post: Post): string {
+  const base =
+    post.kind === "news"
+      ? "/novosti"
+      : post.kind === "article"
+        ? "/stati"
+        : post.kind === "analytics"
+          ? "/analitika"
+          : post.kind === "interview"
+            ? "/intervyu"
+            : "/video";
+  return `${base}/${post.slug}`;
+}
+
+/**
+ * Всё, что ходит в Upstash и revalidatePath, уходит в фон: nginx не ждёт и не отдаёт 504.
+ * Make получает 200 сразу после валидации JSON; материал появляется на сайте через секунды.
+ */
 export async function POST(request: Request) {
   if (!checkSecret(request)) {
     return unauthorized();
@@ -65,13 +83,27 @@ export async function POST(request: Request) {
   const body = parsed.data;
 
   if (body.action === "delete") {
-    const removed = await deleteRemotePost(body.slug);
-    const deletedSlug = body.slug;
-    /** Ревалидация кеша Next — долго при многих путях; не блокируем ответ (иначе nginx → 504). */
+    const slug = body.slug;
     after(() => {
-      revalidateAfterPostChange(null, { slugDeleted: deletedSlug });
+      void (async () => {
+        try {
+          const removed = await deleteRemotePost(slug);
+          revalidateAfterPostChange(null, { slugDeleted: slug });
+          if (process.env.NODE_ENV !== "production") {
+            console.info("[webhooks/make] delete done", slug, removed);
+          }
+        } catch (e) {
+          console.error("[webhooks/make] delete failed", slug, e);
+        }
+      })();
     });
-    return NextResponse.json({ ok: true, deleted: removed, slug: deletedSlug });
+    return NextResponse.json({
+      ok: true,
+      slug,
+      queued: true,
+      /** Поле заполняется асинхронно; для Make достаточно ok + slug. */
+      note: "Removal and cache refresh run in the background.",
+    });
   }
 
   const post = normalizeIngestToPost(body.post);
@@ -79,15 +111,27 @@ export async function POST(request: Request) {
   if (refErr) {
     return NextResponse.json({ ok: false, error: refErr }, { status: 400 });
   }
-  await upsertRemotePost(post);
+
   after(() => {
-    revalidateAfterPostChange(post);
+    void (async () => {
+      try {
+        await upsertRemotePost(post);
+        revalidateAfterPostChange(post);
+        if (process.env.NODE_ENV !== "production") {
+          console.info("[webhooks/make] upsert done", post.slug);
+        }
+      } catch (e) {
+        console.error("[webhooks/make] upsert failed", post.slug, e);
+      }
+    })();
   });
 
   return NextResponse.json({
     ok: true,
+    queued: true,
     slug: post.slug,
     kind: post.kind,
-    urlPath: `${post.kind === "news" ? "/novosti" : post.kind === "article" ? "/stati" : post.kind === "analytics" ? "/analitika" : post.kind === "interview" ? "/intervyu" : "/video"}/${post.slug}`,
+    urlPath: urlPathForPost(post),
+    note: "Post save and cache refresh run in the background.",
   });
 }
