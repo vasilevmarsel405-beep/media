@@ -129,84 +129,85 @@ export function VideoPublication({
         </div>
       </header>
 
-      <div className="relative pb-2 pt-2 sm:pb-4">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-10">
-          <div className="grid gap-8 lg:grid-cols-12 lg:gap-10 lg:items-start">
-            <div className="lg:col-span-8">
-              {post.youtubeId ? (
-                <YouTubeEmbed id={post.youtubeId} title={post.title} />
-              ) : (
-                <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:rounded-3xl">
-                  <Image
-                    src={post.image}
-                    alt={postCoverImageAlt(post.title)}
-                    fill
-                    className="object-cover opacity-55"
-                    sizes="(max-width:1024px) 100vw, 800px"
-                    priority
-                  />
-                  <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm font-medium text-white/80">
-                    Укажите ссылку или ID ролика YouTube — плеер появится здесь
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <aside className="lg:col-span-4 lg:sticky lg:top-24">
-              <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-5 shadow-[0_20px_50px_-28px_rgb(0_0_0_/_0.9)] backdrop-blur-md sm:p-6">
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#ff3100]/90">
-                  {videoPublicationCopy.youtubeMetaEyebrow}
+      {/* Один контейнер под плеер и всё ниже — одна ширина с header (1200px), без «ступеньки» */}
+      <div className="relative z-[1] mx-auto max-w-[1200px] px-4 pb-16 pt-2 sm:px-6 sm:pb-20 sm:pt-4 lg:px-10">
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-10 lg:items-start">
+          <div className="lg:col-span-8">
+            {post.youtubeId ? (
+              <YouTubeEmbed id={post.youtubeId} title={post.title} />
+            ) : (
+              <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:rounded-3xl">
+                <Image
+                  src={post.image}
+                  alt={postCoverImageAlt(post.title)}
+                  fill
+                  className="object-cover opacity-55"
+                  sizes="(max-width:1024px) 100vw, 800px"
+                  priority
+                />
+                <p className="absolute inset-0 flex items-center justify-center px-6 text-center text-sm font-medium text-white/80">
+                  Укажите ссылку или ID ролика YouTube — плеер появится здесь
                 </p>
-                {channelLine ? (
-                  <p className="mt-3 text-sm text-white/80">
-                    <span className="text-white/45">{videoPublicationCopy.youtubeChannel} · </span>
-                    <span className="font-medium text-white">{channelLine}</span>
-                  </p>
-                ) : null}
-                {youtubeMeta?.title && youtubeMeta.title !== post.title ? (
-                  <p className="mt-3 text-sm leading-snug text-white/70">&ldquo;{youtubeMeta.title}&rdquo;</p>
-                ) : null}
-
-                {post.youtubeId ? (
-                  <Link
-                    href={WATCH_URL(post.youtubeId)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_36px_-8px_rgb(255_49_0_/_0.55)] transition hover:brightness-110"
-                  >
-                    <IconPlay className="h-4 w-4" aria-hidden />
-                    {videoPublicationCopy.youtubeOpenButton}
-                  </Link>
-                ) : null}
               </div>
-            </aside>
+            )}
           </div>
-        </div>
-      </div>
 
-      <div className="relative z-[1] mx-auto max-w-[1100px] px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
-        <div className="flex flex-wrap gap-2">
+          <aside className="lg:col-span-4 lg:sticky lg:top-24">
+            <div className="rounded-2xl border border-white/12 bg-white/[0.06] p-5 shadow-[0_20px_50px_-28px_rgb(0_0_0_/_0.9)] backdrop-blur-md sm:p-6">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#ff3100]/90">
+                {videoPublicationCopy.youtubeMetaEyebrow}
+              </p>
+              {channelLine ? (
+                <p className="mt-3 text-sm text-white/80">
+                  <span className="text-white/45">{videoPublicationCopy.youtubeChannel} · </span>
+                  <span className="font-medium text-white">{channelLine}</span>
+                </p>
+              ) : null}
+              {youtubeMeta?.title && youtubeMeta.title !== post.title ? (
+                <p className="mt-3 text-sm leading-snug text-white/70">&ldquo;{youtubeMeta.title}&rdquo;</p>
+              ) : null}
+
+              {post.youtubeId ? (
+                <Link
+                  href={WATCH_URL(post.youtubeId)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-3 text-sm font-bold text-white shadow-[0_12px_36px_-8px_rgb(255_49_0_/_0.55)] transition hover:brightness-110"
+                >
+                  <IconPlay className="h-4 w-4" aria-hidden />
+                  {videoPublicationCopy.youtubeOpenButton}
+                </Link>
+              ) : null}
+            </div>
+          </aside>
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-2 sm:mt-12">
           {post.rubricSlugs.map((slug) => {
             const r = allRubrics.find((x) => x.slug === slug);
             return r ? (
               <Link
                 key={slug}
                 href={`/rubriki/${slug}`}
-                className="rounded-xl bg-mars-blue-soft px-3 py-1 text-xs font-semibold text-mars-blue ring-1 ring-mars-blue/20 transition hover:ring-mars-blue/40"
+                className="rounded-xl border border-white/14 bg-white/[0.07] px-3 py-1 text-xs font-semibold text-white/90 ring-1 ring-white/10 transition hover:bg-white/10"
               >
                 {r.name}
               </Link>
             ) : null;
           })}
           {post.tagSlugs.map((t) => (
-            <TagPill key={t} href={`/teg/${t}`}>
+            <TagPill
+              key={t}
+              href={`/teg/${t}`}
+              className="border border-white/12 bg-white/[0.07] text-white/90 ring-white/12 hover:bg-white/11"
+            >
               {tagLabel(t)}
             </TagPill>
           ))}
         </div>
 
         <div className="mt-8 rounded-2xl border border-white/12 bg-white/[0.05] px-4 py-5 shadow-[0_12px_36px_-24px_rgb(0_0_0_/_0.9)] backdrop-blur-sm sm:px-6">
-          <ShareRow title={post.title} />
+          <ShareRow title={post.title} tone="dark" />
         </div>
 
         {post.timecodes?.length ? (
@@ -227,11 +228,11 @@ export function VideoPublication({
         ) : null}
 
         {post.paragraphs.some((p) => p.trim()) ? (
-          <section className="mt-12 rounded-2xl border border-white/10 bg-slate-950 px-5 py-6 sm:px-7 sm:py-8">
+          <section className="mt-12 rounded-2xl border border-white/12 bg-white/[0.05] px-5 py-6 shadow-[0_20px_50px_-36px_rgb(0_0_0_/_0.88)] backdrop-blur-sm sm:px-7 sm:py-8">
             <h2 className="font-display text-xl font-bold text-white sm:text-2xl">
               {videoPublicationCopy.editorialTitle}
             </h2>
-            <div className="mt-5 max-w-[44rem]">
+            <div className="mt-5 min-w-0">
               <YoutubeDescription
                 text={post.paragraphs.filter((p) => p.trim()).join("\n\n")}
                 tone="dark"
