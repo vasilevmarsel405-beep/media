@@ -14,6 +14,7 @@ import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TocAside } from "@/components/TocAside";
 import { cn } from "@/lib/cn";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 export function PublicationView({
   post,
@@ -152,7 +153,7 @@ export function PublicationView({
         <div className="relative sm:-mt-1">
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-100 shadow-[0_28px_80px_-32px_rgb(15_23_42/0.45)] ring-1 ring-slate-900/[0.07] sm:aspect-[2.05/1] sm:rounded-3xl lg:aspect-[21/9]">
             <Image
-              src={post.image}
+              src={resolvePostImage(post)}
               alt={postCoverImageAlt(post.title)}
               fill
               priority

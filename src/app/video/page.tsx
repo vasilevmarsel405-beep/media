@@ -4,6 +4,7 @@ import { IconPlay } from "@/components/icons";
 import { videoHubCopy } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
 import { formatDateTime } from "@/lib/format";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +56,7 @@ export default async function VideoHubPage() {
           >
             <div className="relative aspect-[21/9] min-h-[220px]">
               <Image
-                src={featured.image}
+                src={resolvePostImage(featured)}
                 alt=""
                 fill
                 className="object-cover opacity-95 transition duration-700 group-hover:scale-[1.03] group-hover:opacity-100"
@@ -93,7 +94,7 @@ export default async function VideoHubPage() {
             >
               <div className="relative aspect-video">
                 <Image
-                  src={v.image}
+                  src={resolvePostImage(v)}
                   alt=""
                   fill
                   className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"

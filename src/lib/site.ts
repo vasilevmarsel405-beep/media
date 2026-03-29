@@ -1,6 +1,9 @@
-/** Публичный URL без слэша в конце — canonical, OG, JSON-LD. */
+/** Публичный URL без слэша в конце — canonical, OG, JSON-LD, ShareRow. */
+const rawSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "") ?? "";
 export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://cryptomarsmedia.ru";
+  rawSiteUrl.startsWith("http://") || rawSiteUrl.startsWith("https://")
+    ? rawSiteUrl
+    : "https://cryptomarsmedia.ru";
 
 export const siteName = "КриптоМарс Медиа";
 

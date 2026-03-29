@@ -20,6 +20,7 @@ import {
   getUrgentFeed,
 } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 function isExternalUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);
@@ -55,7 +56,7 @@ export default async function HomePage() {
                   className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
                 >
                   <Image
-                    src={hero.image}
+                    src={resolvePostImage(hero)}
                     alt=""
                     fill
                     priority
@@ -258,7 +259,7 @@ export default async function HomePage() {
               >
                 <div className="relative aspect-video">
                   <Image
-                    src={p.image}
+                    src={resolvePostImage(p)}
                     alt=""
                     fill
                     className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"

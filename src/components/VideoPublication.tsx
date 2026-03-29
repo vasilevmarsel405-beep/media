@@ -13,6 +13,7 @@ import { authorById, authors, rubrics as allRubrics, tags as allTags } from "@/l
 import { videoPublicationCopy } from "@/lib/copy";
 import { formatDateTime } from "@/lib/format";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 import type { YoutubeVideoEnrichment } from "@/lib/youtube-enrichment";
 import type { Post } from "@/lib/types";
 
@@ -138,7 +139,7 @@ export function VideoPublication({
             ) : (
               <div className="relative aspect-video overflow-hidden rounded-2xl bg-slate-900 shadow-2xl ring-1 ring-white/10 sm:rounded-3xl">
                 <Image
-                  src={post.image}
+                  src={resolvePostImage(post)}
                   alt={postCoverImageAlt(post.title)}
                   fill
                   className="object-cover opacity-55"

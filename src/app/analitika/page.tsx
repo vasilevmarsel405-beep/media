@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { getPostsByKind } from "@/lib/posts-service";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 /** Не блокируем build сетевыми запросами к Redis/внешним API. */
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ export default async function AnalitikaPage() {
             >
               <div className="relative min-h-[220px] md:min-h-[260px]">
                 <Image
-                  src={p.image}
+                  src={resolvePostImage(p)}
                   alt=""
                   fill
                   className="object-cover transition duration-700 group-hover:scale-[1.03]"

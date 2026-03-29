@@ -8,6 +8,7 @@ import { rubricBySlug, rubrics, tags } from "@/lib/content";
 import { getPostsByKind, getPostsForRubric } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
 import { siteUrl } from "@/lib/site";
+import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -66,7 +67,7 @@ export default async function RubricPage({ params }: Props) {
               className="mt-4 grid gap-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:grid-cols-2"
             >
               <div className="relative min-h-[240px]">
-                <Image src={top.image} alt="" fill className="object-cover" sizes="600px" />
+                <Image src={resolvePostImage(top)} alt="" fill className="object-cover" sizes="600px" />
               </div>
               <div className="flex flex-col justify-center p-8 lg:p-10">
                 <h3 className="font-display text-3xl font-semibold text-slate-900">{top.title}</h3>
