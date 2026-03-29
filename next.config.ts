@@ -1,4 +1,8 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import type { NextConfig } from "next";
+
+const turbopackRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -30,6 +34,9 @@ function imageRemotePatternsFromEnv(): { protocol: "https"; hostname: string; pa
 }
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: turbopackRoot,
+  },
   async headers() {
     return [{ source: "/:path*", headers: [...securityHeaders] }];
   },
