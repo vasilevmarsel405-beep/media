@@ -84,18 +84,17 @@ export async function POST(request: Request) {
 
   if (body.action === "delete") {
     const slug = body.slug;
-    after(() => {
-      void (async () => {
-        try {
-          const removed = await deleteRemotePost(slug);
-          revalidateAfterPostChange(null, { slugDeleted: slug });
-          if (process.env.NODE_ENV !== "production") {
-            console.info("[webhooks/make] delete done", slug, removed);
-          }
-        } catch (e) {
-          console.error("[webhooks/make] delete failed", slug, e);
+    /** Должен быть async-колбэк с await — иначе Next не ждёт Promise, Redis не вызывается. */
+    after(async () => {
+      try {
+        const removed = await deleteRemotePost(slug);
+        revalidateAfterPostChange(null, { slugDeleted: slug });
+        if (process.env.NODE_ENV !== "production") {
+          console.info("[webhooks/make] delete done", slug, removed);
         }
-      })();
+      } catch (e) {
+        console.error("[webhooks/make] delete failed", slug, e);
+      }
     });
     return NextResponse.json({
       ok: true,
@@ -112,18 +111,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: refErr }, { status: 400 });
   }
 
-  after(() => {
-    void (async () => {
-      try {
-        await upsertRemotePost(post);
-        revalidateAfterPostChange(post);
-        if (process.env.NODE_ENV !== "production") {
-          console.info("[webhooks/make] upsert done", post.slug);
-        }
-      } catch (e) {
-        console.error("[webhooks/make] upsert failed", post.slug, e);
+  after(async () => {
+    try {
+      await upsertRemotePost(post);
+      revalidateAfterPostChange(post);
+      if (process.env.NODE_ENV !== "production") {
+        console.info("[webhooks/make] upsert done", post.slug);
       }
-    })();
+    } catch (e) {
+      console.error("[webhooks/make] upsert failed", post.slug, e);
+    }
   });
 
   return NextResponse.json({
