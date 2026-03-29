@@ -3,6 +3,9 @@ import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { getPostsByKind } from "@/lib/posts-service";
 
+/** Не блокируем build сетевыми запросами к Redis/внешним API. */
+export const dynamic = "force-dynamic";
+
 export default async function AnalitikaPage() {
   const list = (await getPostsByKind("analytics")).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)

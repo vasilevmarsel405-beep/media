@@ -5,6 +5,8 @@ import { postHref } from "@/lib/routes";
 import { getPostsByKind } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
+export const dynamic = "force-dynamic";
+
 export default async function StatiPage() {
   const list = (await getPostsByKind("article")).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)

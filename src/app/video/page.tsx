@@ -5,6 +5,8 @@ import { videoHubCopy } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
 import { formatDateTime } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 const categories = [
   { slug: "news", label: "Сводки дня" },
   { slug: "interview", label: "Разговоры" },

@@ -2,6 +2,8 @@ import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getPostsByKind } from "@/lib/posts-service";
 
+export const dynamic = "force-dynamic";
+
 export default async function IntervyuPage() {
   const list = (await getPostsByKind("interview")).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)
