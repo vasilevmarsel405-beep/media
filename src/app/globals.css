@@ -269,22 +269,16 @@ body {
   }
 }
 
-/* При «уменьшить движение»: не ломать строку в столбец — горизонтальный скролл одной полосы */
+/* На мобильной строка должна сама двигаться, как на desktop. */
 @media (prefers-reduced-motion: reduce) {
   .mars-ticker-viewport {
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    mask-image: none;
-    -webkit-mask-image: none;
   }
 
   .mars-marquee {
-    animation: none;
-    width: max-content;
-    max-width: none;
+    animation: mars-marquee 42s linear infinite;
     flex-wrap: nowrap;
-    justify-content: flex-start;
   }
 }
 
@@ -337,7 +331,7 @@ body {
 
 /* Длинные материалы: комфортная мера строки */
 .prose-mars--article {
-  max-width: 40.5rem;
+  max-width: none;
 }
 
 .prose-mars--article h2 {

@@ -201,7 +201,12 @@ export function PublicationView({
           </aside>
         ) : null}
 
-        <div className="mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_15.5rem] lg:gap-14 lg:gap-x-16">
+        <div
+          className={cn(
+            "mt-12",
+            post.toc?.length ? "lg:grid lg:grid-cols-[minmax(0,1fr)_15.5rem] lg:gap-14 lg:gap-x-16" : ""
+          )}
+        >
           <div className="min-w-0">
             {post.quotes?.map((q, qi) => (
               <blockquote
@@ -240,21 +245,6 @@ export function PublicationView({
                 ))
               )}
             </div>
-
-            {author ? (
-              <footer className="mt-12 border-t border-slate-200/90 pt-8">
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Автор</p>
-                <p className="mt-2 text-base text-slate-800">
-                  <Link
-                    href={`/avtor/${author.slug}`}
-                    className="font-semibold text-slate-900 underline decoration-slate-300 decoration-1 underline-offset-4 transition hover:text-mars-blue hover:decoration-mars-blue/40"
-                  >
-                    {author.name}
-                  </Link>
-                  <span className="text-slate-500"> — {author.role}</span>
-                </p>
-              </footer>
-            ) : null}
 
             {tone === "analytics" ? (
               <div className="mt-12 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">

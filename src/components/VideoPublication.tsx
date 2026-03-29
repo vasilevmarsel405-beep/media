@@ -42,7 +42,11 @@ export function VideoPublication({
   const channelLine = youtubeMeta?.channelTitle;
 
   return (
-    <article className="bg-white">
+    <article className="relative overflow-hidden bg-black text-white">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2032%2032%22%20width=%2232%22%20height=%2232%22%20fill=%22none%22%20stroke=%22rgb(255%20255%20255%20/%200.04)%22%3E%3Cpath%20d=%22M0%20.5H32M0%208.5H32M0%2016.5H32M0%2024.5H32M.5%200V32M8.5%200V32M16.5%200V32M24.5%200V32%22/%3E%3C/svg%3E')] opacity-[0.45]"
+        aria-hidden
+      />
       <BreadcrumbJsonLd items={videoBreadcrumbs} />
       <VideoJsonLd
         post={post}
@@ -172,7 +176,7 @@ export function VideoPublication({
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1100px] px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
+      <div className="relative z-[1] mx-auto max-w-[1100px] px-4 py-12 sm:px-6 sm:py-14 lg:px-10">
         <div className="flex flex-wrap gap-2">
           {post.rubricSlugs.map((slug) => {
             const r = allRubrics.find((x) => x.slug === slug);
@@ -234,24 +238,9 @@ export function VideoPublication({
           </section>
         ) : null}
 
-        {author ? (
-          <footer className="mt-12 max-w-[42rem] border-t border-slate-200 pt-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Автор</p>
-            <p className="mt-2 text-base text-slate-800">
-              <Link
-                href={`/avtor/${author.slug}`}
-                className="font-semibold text-slate-900 underline decoration-slate-300 decoration-1 underline-offset-4 transition hover:text-mars-blue hover:decoration-mars-blue/40"
-              >
-                {author.name}
-              </Link>
-              <span className="text-slate-500"> — {author.role}</span>
-            </p>
-          </footer>
-        ) : null}
-
-        <section className="mt-16 border-t border-slate-200 pt-12">
-          <h2 className="font-display text-2xl font-bold text-slate-900">{videoPublicationCopy.relatedMixedTitle}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{videoPublicationCopy.relatedMixedSub}</p>
+        <section className="mt-16 border-t border-white/15 pt-12">
+          <h2 className="font-display text-2xl font-bold text-white">{videoPublicationCopy.relatedMixedTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{videoPublicationCopy.relatedMixedSub}</p>
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {relatedAll.slice(0, 4).map((p) => (
               <PostCard key={p.slug} post={p} variant="horizontal" />
@@ -260,7 +249,7 @@ export function VideoPublication({
         </section>
 
         <section className="mt-16">
-          <h2 className="font-display text-2xl font-bold text-slate-900">{videoPublicationCopy.watchNextTitle}</h2>
+          <h2 className="font-display text-2xl font-bold text-white">{videoPublicationCopy.watchNextTitle}</h2>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {relatedVideos.map((p) => (
               <PostCard key={p.slug} post={p} />
