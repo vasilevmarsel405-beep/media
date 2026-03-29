@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VideoPublication } from "@/components/VideoPublication";
 import { buildPostMetadata } from "@/lib/seo/post-metadata";
-import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
+import { getPostBySlug, getPostsByKind, getRelatedPosts } from "@/lib/posts-service";
 import { getYoutubeVideoEnrichment } from "@/lib/youtube-enrichment";
 
 type Props = { params: Promise<{ slug: string }> };
