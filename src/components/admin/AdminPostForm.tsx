@@ -3,7 +3,7 @@
 import { authors, rubrics, tags } from "@/lib/content";
 import type { Post, PostKind } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 
 const inCls =
   "w-full rounded-xl border border-white/10 bg-slate-900/60 px-4 py-2.5 text-sm text-white placeholder:text-slate-600 disabled:opacity-55 focus:outline-none focus:ring-2 focus:ring-mars-accent/45";
@@ -79,6 +79,9 @@ export function AdminPostForm({
   const [form, setForm] = useState(defaults);
   const [enrichBusy, setEnrichBusy] = useState(false);
   const [enrichError, setEnrichError] = useState<string | null>(null);
+  const [coverUploadBusy, setCoverUploadBusy] = useState(false);
+  const [coverUploadError, setCoverUploadError] = useState<string | null>(null);
+  const coverFileRef = useRef<HTMLInputElement>(null);
 
   const toggleSlug = (field: "rubricSlugs" | "tagSlugs", slug: string) => {
     setForm((f) => {
@@ -293,6 +296,55 @@ export function AdminPostForm({
 
       {form.kind === "video" ? (
         <section className="space-y-3">
+          <div className="rounded-xl border border-white/10 bg-slate-900/40 px-4 py-4 sm:px-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Обложка — файл на сервере</p>
+            <p className="mt-1 text-sm text-slate-400">
+              Файл сохраняется в <code className="rounded bg-black/40 px-1 text-[11px]">public/uploads/covers/</code> на VPS и
+              подставляется в поле «URL обложки» как путь вида <code className="rounded bg-black/40 px-1 text-[11px]">/uploads/covers/…</code>.
+            </p>
+            <input
+              ref={coverFileRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              disabled={!canSave || coverUploadBusy}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file || !canSave) return;
+                setCoverUploadError(null);
+                setCoverUploadBusy(true);
+                try {
+                  const fd = new FormData();
+                  fd.append("file", file);
+                  const res = await fetch("/api/admin/upload-cover", { method: "POST", body: fd });
+                  const data = (await res.json().catch(() => ({}))) as { error?: string; url?: string };
+                  if (!res.ok) {
+                    setCoverUploadError(data.error ?? "Не удалось загрузить файл");
+                    setCoverUploadBusy(false);
+                    return;
+                  }
+                  if (data.url) {
+                    setForm((f) => ({ ...f, image: data.url! }));
+                  }
+                } catch {
+                  setCoverUploadError("Ошибка сети");
+                }
+                setCoverUploadBusy(false);
+              }}
+            />
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                disabled={!canSave || coverUploadBusy}
+                onClick={() => coverFileRef.current?.click()}
+                className="rounded-xl border border-white/15 bg-slate-800/80 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+              >
+                {coverUploadBusy ? "Загрузка…" : "Загрузить обложку с компьютера"}
+              </button>
+              {coverUploadError ? <span className="text-sm text-red-400">{coverUploadError}</span> : null}
+            </div>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="YouTube — ссылка или ID ролика">
               <input

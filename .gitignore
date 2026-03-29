@@ -41,6 +41,10 @@ yarn-error.log*
 .env.backup
 **/credentials.json
 
+# Обложки, загруженные с админки (на VPS остаются в рабочей копии; в Git не таскаем)
+public/uploads/covers/*
+!public/uploads/covers/.gitkeep
+
 # vercel
 .vercel
 
