@@ -31,6 +31,51 @@ function sanitizeIngestText(s: string): string {
     .trim();
 }
 
+function normalizeParagraphsInput(v: unknown): string[] | undefined {
+  if (v == null) return undefined;
+  if (Array.isArray(v)) {
+    return v.map((x) => String(x)).filter((x) => x.trim().length > 0);
+  }
+  if (typeof v === "string") {
+    const t = v.trim();
+    if (!t) return undefined;
+    return t
+      .replace(/\r\n/g, "\n")
+      .split(/\n{2,}/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+  }
+  return undefined;
+}
+
+function normalizeSlugListInput(v: unknown): string[] {
+  if (v == null) return [];
+  if (Array.isArray(v)) {
+    return v
+      .map((x) => String(x).trim())
+      .filter(Boolean);
+  }
+  if (typeof v === "string") {
+    const t = v.trim();
+    if (!t) return [];
+    if (t.startsWith("[") && t.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(t) as unknown;
+        if (Array.isArray(parsed)) {
+          return parsed.map((x) => String(x).trim()).filter(Boolean);
+        }
+      } catch {
+        // fallback to simple split below
+      }
+    }
+    return t
+      .split(/[,\s;]+/)
+      .map((x) => x.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
 /** Make по умолчанию шлёт toc «Введение / Суть / Итог» — он ломает смысл (1-й абзац ≠ введение). */
 const MAKE_PLACEHOLDER_TOC_IDS = new Set(["vvedenie", "sut", "itog"]);
 
@@ -88,11 +133,11 @@ export const makeIngestPostSchema = z
     kind: kindZ,
     title: z.string().min(1).max(500),
     lead: z.string().min(1).max(4000),
-    paragraphs: z.array(z.string().min(1)).optional(),
+    paragraphs: z.preprocess(normalizeParagraphsInput, z.array(z.string().min(1)).optional()),
     image: z.string().min(1).max(2000),
     authorId: z.string().min(1),
-    rubricSlugs: z.array(z.string().min(1)).default([]),
-    tagSlugs: z.array(z.string().min(1)).default([]),
+    rubricSlugs: z.preprocess(normalizeSlugListInput, z.array(z.string().min(1)).default([])),
+    tagSlugs: z.preprocess(normalizeSlugListInput, z.array(z.string().min(1)).default([])),
     publishedAt: z.string().min(1),
     subtitle: z.string().max(500).optional(),
     urgent: z.boolean().optional(),

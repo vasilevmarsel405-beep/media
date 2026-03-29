@@ -9,7 +9,9 @@ import { revalidateAfterPostChange, revalidatePostFeedTagsOnly } from "@/lib/rev
 export const runtime = "nodejs";
 
 function useLightRevalidate(): boolean {
-  return process.env.MAKE_WEBHOOK_LIGHT_REVALIDATE?.trim() === "1";
+  const v = process.env.MAKE_WEBHOOK_LIGHT_REVALIDATE?.trim();
+  /** По умолчанию в webhook — быстрый режим (меньше шанс 504 на nginx). */
+  return v == null || v === "" ? true : v === "1";
 }
 
 function revalidateForWebhook(post: Post | null, opts?: { slugDeleted?: string }) {
