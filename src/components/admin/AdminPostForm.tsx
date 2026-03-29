@@ -60,6 +60,9 @@ export function AdminPostForm({
       pinned: initial?.pinned ?? false,
       seoTitle: initial?.seoTitle ?? "",
       seoDescription: initial?.seoDescription ?? "",
+      canonicalUrl: initial?.canonicalUrl ?? "",
+      seoKeywords: initial?.seoKeywords ?? "",
+      seoNoindex: initial?.seoNoindex ?? false,
       paragraphsText: initial?.paragraphs?.length ? initial.paragraphs.join("\n\n") : "",
       guestName: initial?.guestName ?? "",
       guestBio: initial?.guestBio ?? "",
@@ -71,6 +74,8 @@ export function AdminPostForm({
   );
 
   const [form, setForm] = useState(defaults);
+  const [enrichBusy, setEnrichBusy] = useState(false);
+  const [enrichError, setEnrichError] = useState<string | null>(null);
 
   const toggleSlug = (field: "rubricSlugs" | "tagSlugs", slug: string) => {
     setForm((f) => {
@@ -119,6 +124,9 @@ export function AdminPostForm({
         if (form.materialType.trim()) body.materialType = form.materialType.trim();
         if (form.seoTitle.trim()) body.seoTitle = form.seoTitle.trim();
         if (form.seoDescription.trim()) body.seoDescription = form.seoDescription.trim();
+        if (form.canonicalUrl.trim()) body.canonicalUrl = form.canonicalUrl.trim();
+        if (form.seoKeywords.trim()) body.seoKeywords = form.seoKeywords.trim();
+        body.seoNoindex = form.seoNoindex;
         if (form.homeBadge.trim()) body.homeBadge = form.homeBadge.trim();
         if (form.homeCta.trim()) body.homeCta = form.homeCta.trim();
         body.urgent = form.urgent;
@@ -278,25 +286,87 @@ export function AdminPostForm({
       </section>
 
       {form.kind === "video" ? (
-        <section className="grid gap-4 sm:grid-cols-2">
-          <Field label="YouTube — ссылка или ID ролика">
-            <input
-              disabled={!canSave}
-              value={form.youtubeId}
-              onChange={(e) => setForm((f) => ({ ...f, youtubeId: e.target.value }))}
-              className={inCls}
-              placeholder="https://www.youtube.com/watch?v=… или dQw4w9WgXcQ"
-            />
-          </Field>
-          <Field label="Длительность (подпись)">
-            <input
-              disabled={!canSave}
-              value={form.durationLabel}
-              onChange={(e) => setForm((f) => ({ ...f, durationLabel: e.target.value }))}
-              className={inCls}
-              placeholder="12:04"
-            />
-          </Field>
+        <section className="space-y-3">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="YouTube — ссылка или ID ролика">
+              <input
+                disabled={!canSave}
+                value={form.youtubeId}
+                onChange={(e) => setForm((f) => ({ ...f, youtubeId: e.target.value }))}
+                className={inCls}
+                placeholder="https://www.youtube.com/watch?v=… или dQw4w9WgXcQ"
+              />
+            </Field>
+            <Field label="Длительность (подпись)">
+              <input
+                disabled={!canSave}
+                value={form.durationLabel}
+                onChange={(e) => setForm((f) => ({ ...f, durationLabel: e.target.value }))}
+                className={inCls}
+                placeholder="12:04"
+              />
+            </Field>
+          </div>
+          {canSave ? (
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <button
+                type="button"
+                disabled={enrichBusy}
+                onClick={async () => {
+                  setEnrichError(null);
+                  const url = form.youtubeId.trim();
+                  if (!url) {
+                    setEnrichError("Сначала вставьте ссылку или ID ролика");
+                    return;
+                  }
+                  setEnrichBusy(true);
+                  try {
+                    const res = await fetch("/api/admin/youtube-enrich", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ url }),
+                    });
+                    const data = (await res.json().catch(() => ({}))) as {
+                      error?: string;
+                      youtubeId?: string;
+                      title?: string;
+                      description?: string;
+                      thumbnailUrl?: string | null;
+                    };
+                    if (!res.ok) {
+                      setEnrichError(data.error ?? "Не удалось получить данные с YouTube");
+                      setEnrichBusy(false);
+                      return;
+                    }
+                    const desc = (data.description ?? "").trim();
+                    const firstBlock = desc.split(/\n\s*\n/)[0]?.trim() ?? "";
+                    const leadFromYt = (firstBlock || desc.slice(0, 500) || data.title || "").slice(0, 4000);
+                    const seoDesc = (desc.slice(0, 320) || leadFromYt.slice(0, 320)).trim();
+                    setForm((f) => ({
+                      ...f,
+                      youtubeId: (data.youtubeId ?? "").trim(),
+                      title: (data.title ?? "").trim(),
+                      lead: leadFromYt,
+                      image:
+                        typeof data.thumbnailUrl === "string" && data.thumbnailUrl.trim()
+                          ? data.thumbnailUrl.trim()
+                          : f.image,
+                      seoTitle: (data.title ?? "").slice(0, 70),
+                      seoDescription: seoDesc,
+                      paragraphsText: desc,
+                    }));
+                  } catch {
+                    setEnrichError("Ошибка сети");
+                  }
+                  setEnrichBusy(false);
+                }}
+                className="rounded-xl border border-white/15 bg-slate-800/80 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+              >
+                {enrichBusy ? "Загрузка…" : "Заполнить заголовок, лид, SEO и текст из YouTube"}
+              </button>
+              {enrichError ? <p className="text-sm text-red-400">{enrichError}</p> : null}
+            </div>
+          ) : null}
         </section>
       ) : null}
 
@@ -364,6 +434,38 @@ export function AdminPostForm({
           />
         </Field>
       </section>
+
+      {form.kind === "video" ? (
+        <section className="grid gap-4 sm:grid-cols-2">
+          <Field label="Canonical URL (опционально)">
+            <input
+              disabled={!canSave}
+              value={form.canonicalUrl}
+              onChange={(e) => setForm((f) => ({ ...f, canonicalUrl: e.target.value }))}
+              className={inCls}
+              placeholder="https://site.com/video/slug"
+            />
+          </Field>
+          <Field label="SEO keywords (через запятую)">
+            <input
+              disabled={!canSave}
+              value={form.seoKeywords}
+              onChange={(e) => setForm((f) => ({ ...f, seoKeywords: e.target.value }))}
+              className={inCls}
+              placeholder="crypto, bitcoin, market"
+            />
+          </Field>
+          <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2">
+            <input
+              type="checkbox"
+              disabled={!canSave}
+              checked={form.seoNoindex}
+              onChange={(e) => setForm((f) => ({ ...f, seoNoindex: e.target.checked }))}
+            />
+            Не индексировать это видео (noindex)
+          </label>
+        </section>
+      ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2">
         <Field label="Главная: бейдж">

@@ -11,14 +11,16 @@ export function absoluteContentUrl(url: string): string {
 
 export function buildPostMetadata(post: Post, canonicalPath: string): Metadata {
   const path = canonicalPath.startsWith("/") ? canonicalPath : `/${canonicalPath}`;
-  const canonical = `${siteUrl}${path}`;
+  const canonical = post.canonicalUrl?.trim() || `${siteUrl}${path}`;
   const title = post.seoTitle?.trim() || post.title;
   const rawDesc = post.seoDescription?.trim() || post.lead;
   const description = rawDesc.length > 200 ? `${rawDesc.slice(0, 197)}…` : rawDesc;
-  const keywords = post.tagSlugs
-    .map((s) => tagBySlug(s)?.name)
-    .filter(Boolean)
-    .join(", ");
+  const keywords =
+    post.seoKeywords?.trim() ||
+    post.tagSlugs
+      .map((s) => tagBySlug(s)?.name)
+      .filter(Boolean)
+      .join(", ");
 
   const isVideo = post.kind === "video";
   const author = authorById(post.authorId) ?? authors[0];
@@ -54,6 +56,6 @@ export function buildPostMetadata(post: Post, canonicalPath: string): Metadata {
       title,
       description,
     },
-    robots: { index: true, follow: true },
+    robots: { index: !post.seoNoindex, follow: true },
   };
 }

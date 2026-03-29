@@ -27,7 +27,14 @@ export default async function VideoPage({ params }: Props) {
   const allVideo = await getPostsByKind("video");
   const relatedVideos = allVideo.filter((p) => p.slug !== slug).slice(0, 6);
   const relatedAll = await getRelatedPosts(post, 6);
-  const youtubeMeta = post.youtubeId ? await getYoutubeVideoEnrichment(post.youtubeId) : null;
+  let youtubeMeta = null;
+  if (post.youtubeId) {
+    try {
+      youtubeMeta = await getYoutubeVideoEnrichment(post.youtubeId);
+    } catch {
+      youtubeMeta = null;
+    }
+  }
 
   return (
     <VideoPublication post={post} relatedVideos={relatedVideos} relatedAll={relatedAll} youtubeMeta={youtubeMeta} />

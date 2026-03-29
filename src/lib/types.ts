@@ -66,6 +66,12 @@ export interface Post {
   seoTitle?: string;
   /** Meta description и og:description до ~320 символов */
   seoDescription?: string;
+  /** Явный canonical URL для материала (опционально) */
+  canonicalUrl?: string;
+  /** SEO keywords (через запятую) */
+  seoKeywords?: string;
+  /** Закрыть страницу от индексации */
+  seoNoindex?: boolean;
 }
 
 export interface SpecialProject {

@@ -56,6 +56,19 @@ const youtubeIdIngestZ = z
   )
   .transform((s) => (s == null ? undefined : extractYoutubeVideoId(s) ?? s));
 
+const canonicalUrlIngestZ = z
+  .string()
+  .max(2000)
+  .optional()
+  .transform((s) => {
+    if (s == null) return undefined;
+    const t = s.trim();
+    return t === "" ? undefined : t;
+  })
+  .refine((s) => s == null || /^https?:\/\//i.test(s), {
+    message: "canonicalUrl: укажите абсолютный URL (https://...)",
+  });
+
 export const makeIngestPostSchema = z
   .object({
     slug: slugZ,
@@ -85,6 +98,9 @@ export const makeIngestPostSchema = z
     homeCta: z.string().max(120).optional(),
     seoTitle: z.string().min(1).max(70).optional(),
     seoDescription: z.string().min(1).max(320).optional(),
+    canonicalUrl: canonicalUrlIngestZ,
+    seoKeywords: z.string().max(500).optional(),
+    seoNoindex: z.boolean().optional(),
   })
   .strict();
 
@@ -142,6 +158,9 @@ export function normalizeIngestToPost(input: MakeIngestPostInput): import("./typ
     ...(input.homeCta !== undefined ? { homeCta: sanitizeIngestText(input.homeCta) } : {}),
     ...(input.seoTitle !== undefined ? { seoTitle: sanitizeIngestText(input.seoTitle) } : {}),
     ...(input.seoDescription !== undefined ? { seoDescription: sanitizeIngestText(input.seoDescription) } : {}),
+    ...(input.canonicalUrl !== undefined ? { canonicalUrl: input.canonicalUrl } : {}),
+    ...(input.seoKeywords !== undefined ? { seoKeywords: sanitizeIngestText(input.seoKeywords) } : {}),
+    ...(input.seoNoindex !== undefined ? { seoNoindex: input.seoNoindex } : {}),
   };
 
   return { ...base, ...optional } as import("./types").Post;
