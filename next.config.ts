@@ -51,6 +51,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.b-cdn.net", pathname: "/**" },
       { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
       { protocol: "https", hostname: "*.amazonaws.com", pathname: "/**" },
+      /** Генерация обложек (Make / MCP) */
+      { protocol: "https", hostname: "mcp-kv.ru", pathname: "/**" },
       ...imageRemotePatternsFromEnv(),
     ],
   },

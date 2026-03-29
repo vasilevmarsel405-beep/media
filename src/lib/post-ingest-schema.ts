@@ -23,6 +23,22 @@ const slugZ = z
   .max(120)
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug: only a-z, 0-9 and hyphens");
 
+/** Убирает управляющие символы и U+FFFC (часто даёт «OBJ» в браузере). */
+function sanitizeIngestText(s: string): string {
+  return s
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\uFEFF\uFFFC]/g, "")
+    .trim();
+}
+
+/** Make по умолчанию шлёт toc «Введение / Суть / Итог» — он ломает смысл (1-й абзац ≠ введение). */
+const MAKE_PLACEHOLDER_TOC_IDS = new Set(["vvedenie", "sut", "itog"]);
+
+function shouldDropPlaceholderToc(toc: { id: string }[] | undefined): boolean {
+  if (!toc || toc.length !== 3) return false;
+  const ids = new Set(toc.map((t) => t.id.toLowerCase()));
+  return ids.size === 3 && [...MAKE_PLACEHOLDER_TOC_IDS].every((id) => ids.has(id));
+}
+
 export const makeIngestPostSchema = z
   .object({
     slug: slugZ,
@@ -58,19 +74,24 @@ export const makeIngestPostSchema = z
 export type MakeIngestPostInput = z.infer<typeof makeIngestPostSchema>;
 
 export function normalizeIngestToPost(input: MakeIngestPostInput): import("./types").Post {
-  const paragraphs =
+  const rawParagraphs =
     input.paragraphs?.length && input.paragraphs.length > 0
-      ? input.paragraphs
-      : [input.lead, "Материал обновляется — загляните позже за дополнениями."];
+      ? input.paragraphs.map(sanitizeIngestText).filter((p) => p.length > 0)
+      : [sanitizeIngestText(input.lead), "Материал обновляется — загляните позже за дополнениями."];
+
+  const paragraphs = rawParagraphs.length > 0 ? rawParagraphs : [sanitizeIngestText(input.lead)];
+
+  const tocForStore =
+    input.toc !== undefined && !shouldDropPlaceholderToc(input.toc) ? input.toc : undefined;
 
   const base = {
     id: input.slug,
     slug: input.slug,
     kind: input.kind,
-    title: input.title,
-    lead: input.lead,
+    title: sanitizeIngestText(input.title),
+    lead: sanitizeIngestText(input.lead),
     paragraphs,
-    image: input.image,
+    image: input.image.trim(),
     authorId: input.authorId,
     rubricSlugs: input.rubricSlugs,
     tagSlugs: input.tagSlugs,
@@ -78,23 +99,32 @@ export function normalizeIngestToPost(input: MakeIngestPostInput): import("./typ
   };
 
   const optional = {
-    ...(input.subtitle !== undefined ? { subtitle: input.subtitle } : {}),
+    ...(input.subtitle !== undefined ? { subtitle: sanitizeIngestText(input.subtitle) } : {}),
     ...(input.urgent !== undefined ? { urgent: input.urgent } : {}),
     ...(input.pinned !== undefined ? { pinned: input.pinned } : {}),
     ...(input.readMin !== undefined ? { readMin: input.readMin } : {}),
     ...(input.youtubeId !== undefined ? { youtubeId: input.youtubeId } : {}),
     ...(input.durationLabel !== undefined ? { durationLabel: input.durationLabel } : {}),
-    ...(input.guestName !== undefined ? { guestName: input.guestName } : {}),
-    ...(input.guestBio !== undefined ? { guestBio: input.guestBio } : {}),
-    ...(input.materialType !== undefined ? { materialType: input.materialType } : {}),
-    ...(input.quotes !== undefined ? { quotes: input.quotes } : {}),
-    ...(input.keyPoints !== undefined ? { keyPoints: input.keyPoints } : {}),
-    ...(input.toc !== undefined ? { toc: input.toc } : {}),
+    ...(input.guestName !== undefined ? { guestName: sanitizeIngestText(input.guestName) } : {}),
+    ...(input.guestBio !== undefined ? { guestBio: sanitizeIngestText(input.guestBio) } : {}),
+    ...(input.materialType !== undefined ? { materialType: sanitizeIngestText(input.materialType) } : {}),
+    ...(input.quotes !== undefined
+      ? {
+          quotes: input.quotes.map((q) => ({
+            text: sanitizeIngestText(q.text),
+            ...(q.attribution !== undefined ? { attribution: sanitizeIngestText(q.attribution) } : {}),
+          })),
+        }
+      : {}),
+    ...(input.keyPoints !== undefined
+      ? { keyPoints: input.keyPoints.map(sanitizeIngestText).filter((k) => k.length > 0) }
+      : {}),
+    ...(tocForStore !== undefined ? { toc: tocForStore } : {}),
     ...(input.timecodes !== undefined ? { timecodes: input.timecodes } : {}),
-    ...(input.homeBadge !== undefined ? { homeBadge: input.homeBadge } : {}),
-    ...(input.homeCta !== undefined ? { homeCta: input.homeCta } : {}),
-    ...(input.seoTitle !== undefined ? { seoTitle: input.seoTitle } : {}),
-    ...(input.seoDescription !== undefined ? { seoDescription: input.seoDescription } : {}),
+    ...(input.homeBadge !== undefined ? { homeBadge: sanitizeIngestText(input.homeBadge) } : {}),
+    ...(input.homeCta !== undefined ? { homeCta: sanitizeIngestText(input.homeCta) } : {}),
+    ...(input.seoTitle !== undefined ? { seoTitle: sanitizeIngestText(input.seoTitle) } : {}),
+    ...(input.seoDescription !== undefined ? { seoDescription: sanitizeIngestText(input.seoDescription) } : {}),
   };
 
   return { ...base, ...optional } as import("./types").Post;
