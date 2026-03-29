@@ -4,7 +4,17 @@ import path from "path";
 import { Redis } from "@upstash/redis";
 import type { Post } from "./types";
 
-const KEY = "marsmedia:posts:v1";
+/** Старый формат: один огромный JSON — каждый upsert читал/писал всё (nginx 504 при большом каталоге). */
+const LEGACY_POSTS_KEY = "marsmedia:posts:v1";
+
+/** Новый формат: пост отдельно, индекс — Redis SET slug'ов. */
+const POST_SLUGS_SET = "marsmedia:posts:v2:slugs";
+
+function postItemKey(slug: string): string {
+  return `marsmedia:posts:v2:item:${slug}`;
+}
+
+const MGET_CHUNK = 80;
 
 function localPostsFile(): string {
   return path.join(process.cwd(), ".local", "remote-posts.json");
@@ -49,6 +59,45 @@ function getClient(): Redis | null {
   });
 }
 
+function parsePostsArray(raw: unknown): Post[] {
+  if (raw == null) return [];
+  try {
+    const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (!Array.isArray(parsed)) return [];
+    return parsed as Post[];
+  } catch {
+    return [];
+  }
+}
+
+/** Однократный перенос монолита v1 → ключи v2 (идемпотентно: v1 удаляется после успеха). */
+async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
+  const legacyRaw = await redis.get(LEGACY_POSTS_KEY);
+  if (legacyRaw == null) return;
+
+  const posts = parsePostsArray(legacyRaw);
+  const pipe = redis.pipeline();
+  for (const p of posts) {
+    if (!p?.slug) continue;
+    pipe.set(postItemKey(p.slug), JSON.stringify(p));
+    pipe.sadd(POST_SLUGS_SET, p.slug);
+  }
+  /** Пустой или битый v1 — всё равно убираем ключ, иначе каждый запрос гоняет миграцию. */
+  pipe.del(LEGACY_POSTS_KEY);
+  await pipe.exec();
+}
+
+async function mgetValues(redis: Redis, keys: string[]): Promise<(string | null)[]> {
+  if (keys.length === 0) return [];
+  const out: (string | null)[] = [];
+  for (let i = 0; i < keys.length; i += MGET_CHUNK) {
+    const slice = keys.slice(i, i + MGET_CHUNK);
+    const batch = await redis.mget<(string | null)[]>(...slice);
+    out.push(...batch);
+  }
+  return out;
+}
+
 async function readFromLocalFile(): Promise<Post[]> {
   const file = localPostsFile();
   try {
@@ -73,15 +122,25 @@ export async function readRemotePostsRaw(): Promise<Post[]> {
   if (mode === "upstash") {
     const redis = getClient();
     if (!redis) return [];
-    const raw = await redis.get(KEY);
-    if (raw == null) return [];
-    try {
-      const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
-      if (!Array.isArray(parsed)) return [];
-      return parsed as Post[];
-    } catch {
-      return [];
+    await migrateLegacyToV2IfPresent(redis);
+
+    const slugs = await redis.smembers(POST_SLUGS_SET);
+    const list = Array.isArray(slugs) ? slugs.map(String) : [];
+    if (list.length === 0) return [];
+
+    const keys = list.map(postItemKey);
+    const values = await mgetValues(redis, keys);
+    const posts: Post[] = [];
+    for (let i = 0; i < values.length; i++) {
+      const v = values[i];
+      if (v == null) continue;
+      try {
+        posts.push(JSON.parse(v) as Post);
+      } catch {
+        /* пропуск битого значения */
+      }
     }
+    return posts;
   }
   if (mode === "local") {
     return readFromLocalFile();
@@ -94,7 +153,20 @@ export async function writeRemotePostsRaw(posts: Post[]): Promise<void> {
   if (mode === "upstash") {
     const redis = getClient();
     if (!redis) throw new Error("Redis is not configured");
-    await redis.set(KEY, JSON.stringify(posts));
+    await migrateLegacyToV2IfPresent(redis);
+
+    const existing = await redis.smembers(POST_SLUGS_SET);
+    const oldSlugs = new Set((Array.isArray(existing) ? existing : []).map(String));
+    const pipe = redis.pipeline();
+    for (const s of oldSlugs) {
+      pipe.del(postItemKey(s));
+    }
+    pipe.del(POST_SLUGS_SET);
+    for (const p of posts) {
+      pipe.set(postItemKey(p.slug), JSON.stringify(p));
+      pipe.sadd(POST_SLUGS_SET, p.slug);
+    }
+    await pipe.exec();
     return;
   }
   if (mode === "local") {
@@ -105,17 +177,45 @@ export async function writeRemotePostsRaw(posts: Post[]): Promise<void> {
 }
 
 export async function upsertRemotePost(post: Post): Promise<void> {
-  const list = await readRemotePostsRaw();
-  const idx = list.findIndex((p) => p.slug === post.slug);
-  if (idx >= 0) list[idx] = post;
-  else list.push(post);
-  await writeRemotePostsRaw(list);
+  const mode = getPostsStorageMode();
+  if (mode === "upstash") {
+    const redis = getClient();
+    if (!redis) throw new Error("Redis is not configured");
+    await migrateLegacyToV2IfPresent(redis);
+    await redis.set(postItemKey(post.slug), JSON.stringify(post));
+    await redis.sadd(POST_SLUGS_SET, post.slug);
+    return;
+  }
+  if (mode === "local") {
+    const list = await readFromLocalFile();
+    const idx = list.findIndex((p) => p.slug === post.slug);
+    if (idx >= 0) list[idx] = post;
+    else list.push(post);
+    await writeToLocalFile(list);
+    return;
+  }
+  throw new Error("Redis is not configured");
 }
 
 export async function deleteRemotePost(slug: string): Promise<boolean> {
-  const list = await readRemotePostsRaw();
-  const next = list.filter((p) => p.slug !== slug);
-  if (next.length === list.length) return false;
-  await writeRemotePostsRaw(next);
-  return true;
+  const mode = getPostsStorageMode();
+  if (mode === "upstash") {
+    const redis = getClient();
+    if (!redis) throw new Error("Redis is not configured");
+    await migrateLegacyToV2IfPresent(redis);
+    const key = postItemKey(slug);
+    const prev = await redis.get(key);
+    if (prev == null) return false;
+    await redis.del(key);
+    await redis.srem(POST_SLUGS_SET, slug);
+    return true;
+  }
+  if (mode === "local") {
+    const list = await readFromLocalFile();
+    const next = list.filter((p) => p.slug !== slug);
+    if (next.length === list.length) return false;
+    await writeToLocalFile(next);
+    return true;
+  }
+  throw new Error("Redis is not configured");
 }
