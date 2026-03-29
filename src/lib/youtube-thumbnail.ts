@@ -11,8 +11,13 @@ export function youtubeThumbUrl(videoId: string, quality: "maxresdefault" | "hqd
  * maxresdefault у части роликов отсутствует, поэтому используем hqdefault.
  */
 export function resolvePostImage(post: Post): string {
-  const image = post.image?.trim() ?? "";
+  let image = post.image?.trim() ?? "";
   const videoId = post.youtubeId?.trim() ?? "";
+
+  if (image.startsWith("/uploads/covers/")) {
+    const file = image.split("/").pop() ?? "";
+    if (file) image = `/api/media/covers/${file}`;
+  }
 
   if (!videoId) return image;
   if (!image) return youtubeThumbUrl(videoId, "hqdefault");

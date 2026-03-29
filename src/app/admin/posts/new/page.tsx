@@ -22,7 +22,7 @@ export default function AdminNewPostPage() {
         </Link>
         <h1 className="font-display mt-3 text-3xl font-bold text-white">Новый материал</h1>
       </div>
-      <AdminPostForm mode="create" />
+      <AdminPostForm key="admin-post-new" mode="create" />
     </div>
   );
 }

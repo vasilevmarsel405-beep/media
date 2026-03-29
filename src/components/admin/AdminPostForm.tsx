@@ -299,8 +299,8 @@ export function AdminPostForm({
           <div className="rounded-xl border border-white/10 bg-slate-900/40 px-4 py-4 sm:px-5">
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Обложка — файл на сервере</p>
             <p className="mt-1 text-sm text-slate-400">
-              Файл сохраняется в <code className="rounded bg-black/40 px-1 text-[11px]">public/uploads/covers/</code> на VPS и
-              подставляется в поле «URL обложки» как путь вида <code className="rounded bg-black/40 px-1 text-[11px]">/uploads/covers/…</code>.
+              Файл сохраняется на VPS в <code className="rounded bg-black/40 px-1 text-[11px]">.local/uploads/covers/</code> и
+              подставляется в поле «URL обложки» как путь вида <code className="rounded bg-black/40 px-1 text-[11px]">/api/media/covers/…</code>.
             </p>
             <input
               ref={coverFileRef}
@@ -313,6 +313,11 @@ export function AdminPostForm({
                 e.target.value = "";
                 if (!file || !canSave) return;
                 setCoverUploadError(null);
+                const maxBytes = 6 * 1024 * 1024;
+                if (file.size > maxBytes) {
+                  setCoverUploadError("Файл больше 6 МБ — сожмите картинку или уменьшите разрешение.");
+                  return;
+                }
                 setCoverUploadBusy(true);
                 try {
                   const fd = new FormData();
@@ -320,6 +325,13 @@ export function AdminPostForm({
                   const res = await fetch("/api/admin/upload-cover", { method: "POST", body: fd });
                   const data = (await res.json().catch(() => ({}))) as { error?: string; url?: string };
                   if (!res.ok) {
+                    if (res.status === 413) {
+                      setCoverUploadError(
+                        "Сервер (Nginx) отклонил файл: слишком большой запрос. На VPS добавьте в конфиг Nginx client_max_body_size 20M; и перезагрузите Nginx."
+                      );
+                      setCoverUploadBusy(false);
+                      return;
+                    }
                     setCoverUploadError(data.error ?? `Не удалось загрузить файл (HTTP ${res.status})`);
                     setCoverUploadBusy(false);
                     return;

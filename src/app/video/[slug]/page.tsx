@@ -37,6 +37,12 @@ export default async function VideoPage({ params }: Props) {
   }
 
   return (
-    <VideoPublication post={post} relatedVideos={relatedVideos} relatedAll={relatedAll} youtubeMeta={youtubeMeta} />
+    <VideoPublication
+      key={slug}
+      post={post}
+      relatedVideos={relatedVideos}
+      relatedAll={relatedAll}
+      youtubeMeta={youtubeMeta}
+    />
   );
 }

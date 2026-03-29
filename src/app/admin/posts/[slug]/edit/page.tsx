@@ -22,7 +22,7 @@ export default async function AdminEditPostPage({ params }: Props) {
         </Link>
         <h1 className="font-display mt-3 text-3xl font-bold text-white">Редактирование</h1>
       </div>
-      <AdminPostForm mode="edit" initial={post} canSave={canSave} />
+      <AdminPostForm key={slug} mode="edit" initial={post} canSave={canSave} />
     </div>
   );
 }

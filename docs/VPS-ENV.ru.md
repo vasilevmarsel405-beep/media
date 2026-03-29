@@ -73,4 +73,70 @@ URL webhook: **`https://ВАШ-ДОМЕН/api/webhooks/make`**
 
 ## Обложки видео с админки
 
-Файлы попадают в каталог **`public/uploads/covers/`** на сервере (не в Git). После `git pull` они **не пропадают**, если каталог уже есть и не делаете `git clean -fd`. Имеет смысл периодически бэкапить эту папку вместе с деплоем.
+Файлы попадают в каталог **`.local/uploads/covers/`** на сервере (не в Git) и отдаются через URL вида **`/api/media/covers/<file>`**. Такой способ не ломается при разных схемах запуска Next.js (`next start` / standalone).
+
+### Ошибка «HTTP 413» при загрузке обложки
+
+Это не Next.js и не код приложения — **прокси перед Node** (почти всегда Nginx) отклоняет тело запроса. Загрузка не доходит до `/api/admin/upload-cover`.
+
+#### Шаг 1 — убедиться, что лимит есть в том `server`, который обслуживает ваш домен
+
+В `default` может быть `client_max_body_size`, но запрос может идти в **другой файл** (отдельный vhost для `cryptomarsmedia.ru` и HTTPS). Смотрите полную собранную конфигурацию:
+
+```bash
+sudo nginx -T 2>/dev/null | grep -nE "server_name|client_max_body_size|listen"
+```
+
+Найдите блок `server { ... }`, где в `server_name` указан **именно ваш домен** (не только `default_server` и не `server_name _;`). Частая ошибка: поставить `client_max_body_size` только в «дефолтном» блоке — тогда основной сайт по домену всё ещё ограничен **1 МБ**. В **этот** блок добавьте (или поднимите лимит):
+
+```nginx
+client_max_body_size 20M;
+```
+
+Проверка и применение:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+#### Шаг 2 — если 413 остаётся: лимит на весь Nginx (в `http`)
+
+Иногда удобнее задать один раз в `/etc/nginx/nginx.conf` внутри `http { ... }` **до** включения сайтов:
+
+```nginx
+http {
+    client_max_body_size 20M;
+    ...
+}
+```
+
+Затем снова `sudo nginx -t && sudo systemctl reload nginx`.
+
+#### Шаг 3 — проверить, что нет ещё одного `client_max_body_size` меньше вашего внутри `location`
+
+Команда:
+
+```bash
+sudo grep -R "client_max_body_size" /etc/nginx/
+```
+
+Если для `location /api/` или `location /` указано, например, `1m`, оно будет действовать для этого пути — увеличьте или уберите дубликат.
+
+#### Шаг 4 — не Nginx
+
+Если перед сервером стоят **другой прокси**, **балансировщик** или панель хостинга — там может быть свой лимит тела запроса; тогда 413 отдаёт они, а не ваш `default`.
+
+Проверка с сервера (подставьте домен и путь к маленькому файлу):
+
+```bash
+curl -sS -o /dev/null -w "%{http_code}\n" -X POST -F "file=@/path/to/small.jpg" \
+  -H "Cookie: ИМЯ_КУКИ=ЗНАЧЕНИЕ" https://ВАШ-ДОМЕН/api/admin/upload-cover
+```
+
+(куки админки можно скопировать из браузера после входа.)
+
+---
+
+Лимит в приложении — до **6 МБ** на файл. После правки Nginx обложка 3 МБ должна проходить.
+
+Готовый шаблон vhost с `client_max_body_size` в блоках именно вашего домена: [`nginx-cryptomarsmedia.conf.example`](nginx-cryptomarsmedia.conf.example) — скопируйте на сервер и подставьте пути SSL и порт `proxy_pass`.

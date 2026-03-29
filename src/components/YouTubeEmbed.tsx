@@ -21,6 +21,7 @@ export function YouTubeEmbed({
         aria-hidden
       />
       <iframe
+        key={id}
         className="relative z-[1] absolute inset-0 h-full w-full"
         src={`https://www.youtube-nocookie.com/embed/${id}?rel=0`}
         title={title}

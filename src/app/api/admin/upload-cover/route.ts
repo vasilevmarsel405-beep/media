@@ -55,21 +55,21 @@ export async function POST(request: Request) {
 
   try {
     const buf = Buffer.from(await entry.arrayBuffer());
-    const dir = path.join(process.cwd(), "public", "uploads", "covers");
+    const dir = path.join(process.cwd(), ".local", "uploads", "covers");
     await mkdir(dir, { recursive: true });
 
     const filename = `${randomUUID()}${ext}`;
     const filePath = path.join(dir, filename);
     await writeFile(filePath, buf);
 
-    const url = `/uploads/covers/${filename}`;
+    const url = `/api/media/covers/${filename}`;
     return NextResponse.json({ ok: true, url });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Неизвестная ошибка";
     return NextResponse.json(
       {
         error:
-          `Сервер не смог сохранить файл. Проверьте права записи на public/uploads/covers. (${msg})`,
+          `Сервер не смог сохранить файл. Проверьте права записи на .local/uploads/covers. (${msg})`,
       },
       { status: 500 }
     );
