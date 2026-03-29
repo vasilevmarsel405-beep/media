@@ -10,6 +10,15 @@ const KIND_PREFIX: Record<Post["kind"], string> = {
   video: "/video",
 };
 
+/**
+ * Только теги `posts` / `youtube-videos` — быстро, хватает для `unstable_cache` в `getAllPosts`.
+ * На VPS при 504 после webhook задайте `MAKE_WEBHOOK_LIGHT_REVALIDATE=1` и используйте это вместо полного сброса путей.
+ */
+export function revalidatePostFeedTagsOnly() {
+  revalidateTag("posts", "max");
+  revalidateTag("youtube-videos", "max");
+}
+
 /** Сброс кеша списков и страниц материала после ingest из Make. */
 export function revalidateAfterPostChange(post: Post | null, opts?: { slugDeleted?: string }) {
   revalidateTag("posts", "max");

@@ -92,8 +92,13 @@ async function mgetValues(redis: Redis, keys: string[]): Promise<(string | null)
   const out: (string | null)[] = [];
   for (let i = 0; i < keys.length; i += MGET_CHUNK) {
     const slice = keys.slice(i, i + MGET_CHUNK);
-    const batch = await redis.mget<(string | null)[]>(...slice);
-    out.push(...batch);
+    const raw = await redis.mget(...slice);
+    const batch = Array.isArray(raw) ? raw : raw == null ? [] : [raw];
+    for (const item of batch) {
+      if (item == null) out.push(null);
+      else if (typeof item === "string") out.push(item);
+      else out.push(String(item));
+    }
   }
   return out;
 }
@@ -182,8 +187,10 @@ export async function upsertRemotePost(post: Post): Promise<void> {
     const redis = getClient();
     if (!redis) throw new Error("Redis is not configured");
     await migrateLegacyToV2IfPresent(redis);
-    await redis.set(postItemKey(post.slug), JSON.stringify(post));
-    await redis.sadd(POST_SLUGS_SET, post.slug);
+    const pipe = redis.pipeline();
+    pipe.set(postItemKey(post.slug), JSON.stringify(post));
+    pipe.sadd(POST_SLUGS_SET, post.slug);
+    await pipe.exec();
     return;
   }
   if (mode === "local") {

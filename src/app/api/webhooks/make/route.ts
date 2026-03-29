@@ -1,12 +1,24 @@
-import { after, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { authorById, rubricBySlug, tagBySlug } from "@/lib/content";
 import { timingSafeStringEqual } from "@/lib/security/timingSafe";
 import { makeIngestBodySchema, normalizeIngestToPost } from "@/lib/post-ingest-schema";
 import type { Post } from "@/lib/types";
 import { deleteRemotePost, isRemotePostsConfigured, upsertRemotePost } from "@/lib/redis-posts";
-import { revalidateAfterPostChange } from "@/lib/revalidate-post";
+import { revalidateAfterPostChange, revalidatePostFeedTagsOnly } from "@/lib/revalidate-post";
 
 export const runtime = "nodejs";
+
+function useLightRevalidate(): boolean {
+  return process.env.MAKE_WEBHOOK_LIGHT_REVALIDATE?.trim() === "1";
+}
+
+function revalidateForWebhook(post: Post | null, opts?: { slugDeleted?: string }) {
+  if (useLightRevalidate()) {
+    revalidatePostFeedTagsOnly();
+    return;
+  }
+  revalidateAfterPostChange(post, opts);
+}
 
 function validatePostRefs(post: Post): string | null {
   if (!authorById(post.authorId)) return `Unknown authorId: ${post.authorId}`;
@@ -49,8 +61,9 @@ function urlPathForPost(post: Post): string {
 }
 
 /**
- * Всё, что ходит в Upstash и revalidatePath, уходит в фон: nginx не ждёт и не отдаёт 504.
- * Make получает 200 сразу после валидации JSON; материал появляется на сайте через секунды.
+ * Сохранение в Upstash и сброс кеша — **синхронно до ответа 200**.
+ * На VPS `after()` для фоновых задач ненадёжен: Make видел ok, а Redis пустой.
+ * При 504 на nginx — увеличьте `proxy_read_timeout` или задайте `MAKE_WEBHOOK_LIGHT_REVALIDATE=1`.
  */
 export async function POST(request: Request) {
   if (!checkSecret(request)) {
@@ -84,25 +97,15 @@ export async function POST(request: Request) {
 
   if (body.action === "delete") {
     const slug = body.slug;
-    /** Должен быть async-колбэк с await — иначе Next не ждёт Promise, Redis не вызывается. */
-    after(async () => {
-      try {
-        const removed = await deleteRemotePost(slug);
-        revalidateAfterPostChange(null, { slugDeleted: slug });
-        if (process.env.NODE_ENV !== "production") {
-          console.info("[webhooks/make] delete done", slug, removed);
-        }
-      } catch (e) {
-        console.error("[webhooks/make] delete failed", slug, e);
-      }
-    });
-    return NextResponse.json({
-      ok: true,
-      slug,
-      queued: true,
-      /** Поле заполняется асинхронно; для Make достаточно ok + slug. */
-      note: "Removal and cache refresh run in the background.",
-    });
+    try {
+      const removed = await deleteRemotePost(slug);
+      revalidateForWebhook(null, { slugDeleted: slug });
+      return NextResponse.json({ ok: true, deleted: removed, slug });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Storage error";
+      console.error("[webhooks/make] delete failed", slug, e);
+      return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+    }
   }
 
   const post = normalizeIngestToPost(body.post);
@@ -111,24 +114,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: refErr }, { status: 400 });
   }
 
-  after(async () => {
-    try {
-      await upsertRemotePost(post);
-      revalidateAfterPostChange(post);
-      if (process.env.NODE_ENV !== "production") {
-        console.info("[webhooks/make] upsert done", post.slug);
-      }
-    } catch (e) {
-      console.error("[webhooks/make] upsert failed", post.slug, e);
-    }
-  });
+  try {
+    await upsertRemotePost(post);
+    revalidateForWebhook(post);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "Storage error";
+    console.error("[webhooks/make] upsert failed", post.slug, e);
+    return NextResponse.json({ ok: false, error: msg }, { status: 500 });
+  }
 
   return NextResponse.json({
     ok: true,
-    queued: true,
+    saved: true,
     slug: post.slug,
     kind: post.kind,
     urlPath: urlPathForPost(post),
-    note: "Post save and cache refresh run in the background.",
+    cache: useLightRevalidate() ? "tags-only" : "full",
   });
 }
