@@ -2,14 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicationView } from "@/components/PublicationView";
 import { buildPostMetadata } from "@/lib/seo/post-metadata";
-import { getPostBySlug, getPostsByKind, getRelatedPosts } from "@/lib/posts-service";
+import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export async function generateStaticParams() {
-  const list = await getPostsByKind("news");
-  return list.map((p) => ({ slug: p.slug }));
-}
+/** См. analitika/[slug]: без предрендера при build — меньше таймаутов к Upstash. */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

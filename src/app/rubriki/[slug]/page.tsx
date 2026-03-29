@@ -11,9 +11,8 @@ import { siteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return rubrics.map((r) => ({ slug: r.slug }));
-}
+/** Лента рубрики читает посты из Redis — не дёргать хранилище N раз на этапе `next build`. */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

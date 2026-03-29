@@ -2,14 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicationView } from "@/components/PublicationView";
 import { buildPostMetadata } from "@/lib/seo/post-metadata";
-import { getPostBySlug, getPostsByKind, getRelatedPosts } from "@/lib/posts-service";
+import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export async function generateStaticParams() {
-  const list = await getPostsByKind("analytics");
-  return list.map((p) => ({ slug: p.slug }));
-}
+/** Не предрендерим при сборке: чтение Redis/Upstash с VPS часто даёт ETIMEDOUT при десятках страниц подряд. */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

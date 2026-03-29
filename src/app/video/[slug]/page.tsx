@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VideoPublication } from "@/components/VideoPublication";
 import { buildPostMetadata } from "@/lib/seo/post-metadata";
-import { getPostBySlug, getPostsByKind, getRelatedPosts } from "@/lib/posts-service";
+import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 import { getYoutubeVideoEnrichment } from "@/lib/youtube-enrichment";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export async function generateStaticParams() {
-  const list = await getPostsByKind("video");
-  return list.map((p) => ({ slug: p.slug }));
-}
+/** Видео тянет YouTube API при рендере — предрендер при build многократно обрывается по таймауту. */
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
