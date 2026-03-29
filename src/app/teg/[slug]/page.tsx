@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PostCard } from "@/components/cards/PostCard";
-import { postsForTag, tagBySlug, tags } from "@/lib/content";
+import { tagBySlug, tags } from "@/lib/content";
+import { getPostsForTag } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -16,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!t) return {};
   return {
     title: `Тег: ${t.name}`,
-    description: `Все материалы по тегу «${t.name}» на МарсМедиа.`,
+    description: `Все материалы по тегу «${t.name}» на КриптоМарс Медиа.`,
     alternates: { canonical: `${siteUrl}/teg/${slug}` },
   };
 }
@@ -26,7 +27,7 @@ export default async function TagPage({ params }: Props) {
   const tag = tagBySlug(slug);
   if (!tag) notFound();
 
-  const list = postsForTag(slug).sort(
+  const list = (await getPostsForTag(slug)).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)
   );
 

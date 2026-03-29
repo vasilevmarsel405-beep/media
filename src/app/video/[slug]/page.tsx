@@ -1,39 +1,31 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VideoPublication } from "@/components/VideoPublication";
-import { postBySlug, postsByKind, relatedPosts } from "@/lib/content";
-import { siteUrl } from "@/lib/site";
+import { buildPostMetadata } from "@/lib/seo/post-metadata";
+import { getPostBySlug, getPostsByKind, getRelatedPosts } from "@/lib/posts-service";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return postsByKind("video").map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const list = await getPostsByKind("video");
+  return list.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = postBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || post.kind !== "video") return {};
-  return {
-    title: post.title,
-    description: post.lead,
-    openGraph: {
-      title: post.title,
-      description: post.lead,
-      images: [{ url: post.image }],
-      type: "website",
-    },
-    alternates: { canonical: `${siteUrl}/video/${slug}` },
-  };
+  return buildPostMetadata(post, `/video/${slug}`);
 }
 
 export default async function VideoPage({ params }: Props) {
   const { slug } = await params;
-  const post = postBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || post.kind !== "video") notFound();
 
-  const relatedVideos = postsByKind("video").filter((p) => p.slug !== slug).slice(0, 6);
-  const relatedAll = relatedPosts(post, 6);
+  const allVideo = await getPostsByKind("video");
+  const relatedVideos = allVideo.filter((p) => p.slug !== slug).slice(0, 6);
+  const relatedAll = await getRelatedPosts(post, 6);
 
   return <VideoPublication post={post} relatedVideos={relatedVideos} relatedAll={relatedAll} />;
 }

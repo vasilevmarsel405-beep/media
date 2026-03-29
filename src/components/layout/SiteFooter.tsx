@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
-import { footerCopy } from "@/lib/copy";
+import { footerCopy, topBarCopy } from "@/lib/copy";
+import { adminEntryPathname } from "@/lib/admin-entry-path";
+import { siteName, socialTelegram, socialYoutube } from "@/lib/site";
 
 const sections = [
   {
@@ -18,7 +20,9 @@ const sections = [
     links: [
       { href: "/rubriki", label: "Рубрики" },
       { href: "/specproekty", label: "Спецпроекты" },
+      { href: "/podpiska", label: topBarCopy.subscription },
       { href: "/poisk", label: "Поиск" },
+      { href: "/rss.xml", label: "RSS" },
       { href: "/o-proekte", label: "О проекте" },
       { href: "/kontakty", label: "Контакты" },
     ],
@@ -30,6 +34,7 @@ const sections = [
       { href: "/polzovatelskoe-soglashenie", label: "Соглашение" },
       { href: "/redaktsionnaya-politika", label: "Редакционная политика" },
       { href: "/reklamodatelyam", label: "Рекламодателям" },
+      { href: "/politika-faylov-cookie", label: "Файлы cookie" },
     ],
   },
 ];
@@ -41,23 +46,15 @@ export function SiteFooter() {
         <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <Link href="/" className="font-display text-2xl font-semibold text-slate-900">
-              Марс<span className="text-red-600">Медиа</span>
+              КриптоМарс <span className="text-mars-accent">Медиа</span>
             </Link>
             <p className="mt-4 max-w-md text-slate-600 leading-relaxed">{footerCopy.blurb}</p>
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-medium">
-              <Link href="https://t.me" className="text-sky-700 hover:underline" target="_blank" rel="noreferrer">
+              <Link href={socialTelegram} className="text-mars-blue hover:underline" target="_blank" rel="noreferrer">
                 Telegram
               </Link>
-              <Link
-                href="https://youtube.com"
-                className="text-sky-700 hover:underline"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <Link href={socialYoutube} className="text-mars-blue hover:underline" target="_blank" rel="noreferrer">
                 YouTube
-              </Link>
-              <Link href="https://vk.com" className="text-sky-700 hover:underline" target="_blank" rel="noreferrer">
-                VK
               </Link>
             </div>
           </div>
@@ -68,7 +65,10 @@ export function SiteFooter() {
                 <ul className="mt-4 space-y-2">
                   {col.links.map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href} className="text-slate-700 hover:text-slate-900 focus-ring rounded">
+                      <Link
+                        href={l.href}
+                        className="focus-ring inline-flex min-h-10 items-center rounded-md py-1 text-slate-700 hover:text-slate-900"
+                      >
                         {l.label}
                       </Link>
                     </li>
@@ -80,11 +80,23 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-14 border-t border-slate-200 pt-10">
-          <NewsletterBlock />
+          <NewsletterBlock compact />
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} МарсМедиа. Все права защищены.</p>
+        <div className="relative mt-10 flex flex-col gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {siteName}. Все права защищены{" "}
+            {/* Скрытая точка входа: неочевидный URL; крошечная зона клика в конце строки */}
+            <Link
+              href={adminEntryPathname}
+              className="-m-1 inline-block size-2 rounded-sm opacity-[0.07] hover:opacity-25"
+              aria-hidden
+              tabIndex={-1}
+              title=""
+            >
+              <span className="block size-full" aria-hidden />
+            </Link>
+          </p>
           <Link href="/kontakty" className="text-slate-600 hover:text-slate-900">
             {footerCopy.contactCta}
           </Link>

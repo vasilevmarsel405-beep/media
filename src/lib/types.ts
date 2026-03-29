@@ -62,6 +62,10 @@ export interface Post {
   homeBadge?: string;
   /** Текст основной кнопки на главной */
   homeCta?: string;
+  /** Переопределение <title> и og:title (Make / ручной SEO) */
+  seoTitle?: string;
+  /** Meta description и og:description до ~320 символов */
+  seoDescription?: string;
 }
 
 export interface SpecialProject {

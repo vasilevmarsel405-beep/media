@@ -1,36 +1,47 @@
 import Image from "next/image";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
+import { HeroGlassVideoLink } from "@/components/home/HeroGlassVideoLink";
+import { HeroGradualBlur } from "@/components/home/HeroGradualBlur";
+import { HomeEditorialStats } from "@/components/home/HomeEditorialStats";
 import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 import { IconPlay } from "@/components/icons";
-import {
-  featuredHero,
-  popularPosts,
-  posts,
-  postsByKind,
-  rubrics,
-  secondaryHero,
-  specialProjects,
-  urgentFeed,
-} from "@/lib/content";
+import { rubrics, specialProjects } from "@/lib/content";
 import { homeCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
+import {
+  getAllPosts,
+  getFeaturedHero,
+  getPopularPosts,
+  getPostsByKind,
+  getSecondaryHero,
+  getUrgentFeed,
+} from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
 
-export default function HomePage() {
-  const hero = featuredHero();
-  const sec = secondaryHero();
+export default async function HomePage() {
+  const allPosts = await getAllPosts();
+  const hero = await getFeaturedHero();
+  const sec = await getSecondaryHero();
   const heroHref = postHref(hero);
-  const videoDigest = postsByKind("video")[0];
+  const urgentList = await getUrgentFeed();
+  const popular = await getPopularPosts();
+  const articles = await getPostsByKind("article");
+  const analyticsList = await getPostsByKind("analytics");
+  const interviews = await getPostsByKind("interview");
+  const videos = await getPostsByKind("video");
+  const videoDigest = videos[0];
 
   return (
     <div>
       <HomeTrendingTicker />
+      <HomeEditorialStats materials={allPosts.length} rubrics={rubrics.length} />
 
-      <section className="relative border-b border-slate-200/80 mars-hero-mesh mars-noise">
-        <div className="mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
+      <section className="relative overflow-hidden mars-hero-mesh">
+        <HeroGradualBlur />
+        <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
             <article className="mars-hero-frame mars-reveal flex flex-col overflow-hidden bg-slate-950 shadow-2xl">
               <Link
@@ -53,7 +64,7 @@ export default function HomePage() {
                     {hero.homeBadge ?? "Материал дня"}
                   </span>
                   {hero.readMin ? (
-                    <span className="rounded-md bg-red-600/90 px-2.5 py-1 text-white shadow-lg shadow-red-900/30">
+                    <span className="rounded-xl bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/30">
                       {hero.readMin} мин · без воды
                     </span>
                   ) : null}
@@ -68,19 +79,18 @@ export default function HomePage() {
                 <div className="mt-8 flex flex-wrap items-center gap-3">
                   <Link
                     href={heroHref}
-                    className="focus-ring inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-red-600 via-rose-500 to-orange-500 px-6 py-3 text-sm font-bold text-white shadow-[0_12px_40px_-8px_rgba(225,29,72,0.65)] transition hover:brightness-110"
+                    className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                   >
                     {hero.homeCta ?? "Читать сейчас"}
                     <span aria-hidden>→</span>
                   </Link>
                   {videoDigest ? (
-                    <Link
-                      href={`/video/${videoDigest.slug}`}
-                      className="focus-ring inline-flex items-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/20 backdrop-blur hover:bg-white/15"
-                    >
-                      <IconPlay className="h-4 w-4" />
-                      Видео-дайджест
-                    </Link>
+                    <div className="min-w-0 max-w-full shrink-0">
+                      <HeroGlassVideoLink href={`/video/${videoDigest.slug}`}>
+                        <IconPlay className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+                        Видео-дайджест
+                      </HeroGlassVideoLink>
+                    </div>
                   ) : null}
                 </div>
               </div>
@@ -88,7 +98,7 @@ export default function HomePage() {
 
             <div className="flex flex-col gap-5 lg:justify-center">
               <div>
-                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-red-600">
+                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-mars-accent">
                   {homeCopy.heroAsideEyebrow}
                 </p>
                 <h2 className="font-display mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
@@ -107,24 +117,27 @@ export default function HomePage() {
       </section>
 
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-        <SectionHeading
-          title={homeCopy.sections.urgent.title}
-          subtitle={homeCopy.sections.urgent.subtitle}
-          href="/novosti"
-          actionLabel={homeCopy.sections.urgent.action}
-        />
-        <div className="grid gap-4 lg:grid-cols-2">
-          {urgentFeed().map((p) => (
-            <PostCard key={p.slug} post={p} variant="compact" />
-          ))}
+        <div className="rounded-2xl border border-mars-line/70 bg-gradient-to-b from-mars-accent-soft/40 via-white/90 to-mars-paper/30 p-5 shadow-sm sm:p-8">
+          <SectionHeading
+            className="mb-6"
+            title={homeCopy.sections.urgent.title}
+            subtitle={homeCopy.sections.urgent.subtitle}
+            href="/novosti"
+            actionLabel={homeCopy.sections.urgent.action}
+          />
+          <div className="grid gap-4 lg:grid-cols-2">
+            {urgentList.map((p) => (
+              <PostCard key={p.slug} post={p} variant="urgent" />
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="border-y border-slate-200/80 bg-white/70 shadow-[inset_0_1px_0_rgb(255_255_255/0.8)] backdrop-blur-sm">
+      <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading title={homeCopy.sections.now.title} subtitle={homeCopy.sections.now.subtitle} />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.slice(0, 6).map((p) => (
+            {allPosts.slice(0, 6).map((p) => (
               <PostCard key={p.slug} post={p} />
             ))}
           </div>
@@ -139,13 +152,13 @@ export default function HomePage() {
           actionLabel={homeCopy.sections.picks.action}
         />
         <div className="grid gap-6 lg:grid-cols-2">
-          {postsByKind("article").map((p) => (
+          {articles.map((p) => (
             <PostCard key={p.slug} post={p} />
           ))}
         </div>
       </div>
 
-      <div className="border-t border-slate-200/80 bg-white/80">
+      <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading
             title={homeCopy.sections.analytics.title}
@@ -154,20 +167,20 @@ export default function HomePage() {
             actionLabel={homeCopy.sections.analytics.action}
           />
           <div className="grid gap-6 md:grid-cols-2">
-            {postsByKind("analytics").map((p) => (
+            {analyticsList.map((p) => (
               <article
                 key={p.slug}
-                className="card-hover group rounded-3xl border border-sky-200/80 bg-gradient-to-br from-sky-50 via-white to-white p-8 shadow-[0_20px_50px_-28px_rgb(14_165_233/0.35)]"
+                className="card-hover group rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white p-8 shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
               >
                 <Link href={`/analitika/${p.slug}`} className="block">
-                  <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-sky-700">
+                  <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-blue">
                     Глубокий разбор
                   </p>
-                  <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-sky-950">
+                  <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-mars-blue">
                     {p.title}
                   </h3>
                   <p className="mt-3 text-slate-600 leading-relaxed">{p.lead}</p>
-                  <span className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-sky-800">
+                  <span className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-mars-blue">
                     {homeCopy.sections.analytics.cardCta}
                   </span>
                 </Link>
@@ -185,13 +198,13 @@ export default function HomePage() {
           actionLabel={homeCopy.sections.interviews.action}
         />
         <div className="grid gap-6 lg:grid-cols-2">
-          {postsByKind("interview").map((p) => (
+          {interviews.map((p) => (
             <PostCard key={p.slug} post={p} />
           ))}
         </div>
       </div>
 
-      <div className="border-y border-slate-900/20 bg-slate-950 text-white">
+      <div className="bg-slate-950 text-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading
             title={homeCopy.sections.video.title}
@@ -201,11 +214,11 @@ export default function HomePage() {
             variant="dark"
           />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {postsByKind("video").map((p) => (
+            {videos.map((p) => (
               <Link
                 key={p.slug}
                 href={`/video/${p.slug}`}
-                className="group relative overflow-hidden rounded-2xl bg-slate-900 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.65)] ring-1 ring-white/10 transition hover:ring-red-500/40"
+                className="group relative overflow-hidden rounded-2xl bg-slate-900 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.65)] ring-1 ring-white/10 transition hover:ring-[#ff3100]/45"
               >
                 <div className="relative aspect-video">
                   <Image
@@ -243,13 +256,13 @@ export default function HomePage() {
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
         <SectionHeading title={homeCopy.sections.popular.title} subtitle={homeCopy.sections.popular.subtitle} />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {popularPosts().map((p) => (
+          {popular.map((p) => (
             <PostCard key={`pop-${p.slug}`} post={p} />
           ))}
         </div>
       </div>
 
-      <div className="border-t border-slate-200/80 bg-white/80">
+      <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading
             title={homeCopy.sections.topics.title}
@@ -299,7 +312,7 @@ export default function HomePage() {
                 <Image src={s.cover} alt="" fill className="object-cover" sizes="(max-width:1024px) 100vw, 50vw" />
               </div>
               <div className="p-8">
-                <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-red-600">{s.dek}</p>
+                <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-accent">{s.dek}</p>
                 <h3 className="font-display mt-2 text-2xl font-bold text-slate-900">{s.title}</h3>
                 <p className="mt-3 text-slate-600">{s.lead}</p>
               </div>
@@ -308,7 +321,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      <div className="border-t border-slate-200/80 bg-gradient-to-b from-white to-slate-100/90">
+      <div className="bg-gradient-to-b from-white to-slate-100/90">
         <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 lg:px-10">
           <NewsletterBlock />
         </div>

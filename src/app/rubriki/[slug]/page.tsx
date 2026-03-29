@@ -4,7 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostCard } from "@/components/cards/PostCard";
 import { TagPill } from "@/components/TagPill";
-import { posts, postsForRubric, rubricBySlug, rubrics, tags } from "@/lib/content";
+import { rubricBySlug, rubrics, tags } from "@/lib/content";
+import { getPostsByKind, getPostsForRubric } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
 import { siteUrl } from "@/lib/site";
 
@@ -31,7 +32,7 @@ export default async function RubricPage({ params }: Props) {
   const rubric = rubricBySlug(slug);
   if (!rubric) notFound();
 
-  const inRubric = postsForRubric(slug).sort(
+  const inRubric = (await getPostsForRubric(slug)).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)
   );
   const top = inRubric[0];
@@ -41,6 +42,7 @@ export default async function RubricPage({ params }: Props) {
     .slice(0, 4);
 
   const relatedTags = tags.slice(0, 10);
+  const videosInRubric = (await getPostsByKind("video")).filter((p) => p.rubricSlugs.includes(slug));
 
   return (
     <div>
@@ -70,7 +72,7 @@ export default async function RubricPage({ params }: Props) {
               <div className="flex flex-col justify-center p-8 lg:p-10">
                 <h3 className="font-display text-3xl font-semibold text-slate-900">{top.title}</h3>
                 <p className="mt-4 text-slate-600 leading-relaxed">{top.lead}</p>
-                <span className="mt-6 text-sm font-semibold text-sky-700">Открыть материал →</span>
+                <span className="mt-6 text-sm font-semibold text-mars-blue">Открыть материал →</span>
               </div>
             </Link>
           </section>
@@ -94,7 +96,7 @@ export default async function RubricPage({ params }: Props) {
               <ul className="mt-4 space-y-4">
                 {popular.map((p) => (
                   <li key={p.slug}>
-                    <Link href={postHref(p)} className="font-medium text-slate-900 hover:text-sky-800">
+                    <Link href={postHref(p)} className="font-medium text-slate-900 hover:text-mars-accent">
                       {p.title}
                     </Link>
                   </li>
@@ -118,7 +120,7 @@ export default async function RubricPage({ params }: Props) {
                   .filter((x) => x.slug !== slug)
                   .map((x) => (
                     <li key={x.slug}>
-                      <Link href={`/rubriki/${x.slug}`} className="text-sky-700 hover:underline">
+                      <Link href={`/rubriki/${x.slug}`} className="text-mars-blue hover:underline">
                         {x.name}
                       </Link>
                     </li>
@@ -131,9 +133,7 @@ export default async function RubricPage({ params }: Props) {
         <section className="mt-16 border-t border-slate-200 pt-10">
           <h2 className="font-display text-xl font-semibold text-slate-900">Видео по теме</h2>
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts
-              .filter((p) => p.kind === "video" && p.rubricSlugs.includes(slug))
-              .map((p) => (
+            {videosInRubric.map((p) => (
                 <PostCard key={p.slug} post={p} />
               ))}
           </div>

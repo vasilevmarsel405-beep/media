@@ -14,7 +14,7 @@ export function TagPill({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-red-100 hover:bg-red-100 focus-ring",
+        "inline-flex items-center rounded-xl bg-mars-blue-soft px-3 py-1 text-xs font-semibold text-mars-blue ring-1 ring-mars-blue/15 hover:bg-[#e0e5ff] focus-ring",
         className
       )}
     >

@@ -5,11 +5,15 @@ import { Breadcrumbs, type Crumb } from "@/components/Breadcrumbs";
 import { ShareRow } from "@/components/ShareRow";
 import { TagPill } from "@/components/TagPill";
 import { YouTubeEmbed } from "@/components/YouTubeEmbed";
-import { authorById, rubrics as allRubrics, tags as allTags } from "@/lib/content";
+import { authorById, authors, rubrics as allRubrics, tags as allTags } from "@/lib/content";
 import { publicationCopy } from "@/lib/copy";
 import { formatDateTime } from "@/lib/format";
 import type { Post } from "@/lib/types";
+import { ArticleJsonLd } from "@/components/seo/ArticleJsonLd";
+import { postCoverImageAlt } from "@/lib/seo/image-alt";
+import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TocAside } from "@/components/TocAside";
+import { cn } from "@/lib/cn";
 
 export function PublicationView({
   post,
@@ -22,102 +26,174 @@ export function PublicationView({
   related: Post[];
   tone?: "default" | "analytics" | "interview";
 }) {
-  const author = authorById(post.authorId);
+  const author = authorById(post.authorId) ?? authors[0];
   const tagLabel = (slug: string) => allTags.find((t) => t.slug === slug)?.name ?? slug;
 
-  const shell =
+  const headerGradient =
     tone === "analytics"
-      ? "border-sky-100 bg-gradient-to-b from-sky-50/60 to-white"
+      ? "from-mars-blue-soft/55 via-white to-white"
       : tone === "interview"
-        ? "border-violet-100 bg-gradient-to-b from-violet-50/50 to-white"
-        : "";
+        ? "from-violet-50/70 via-white to-white"
+        : "from-slate-50/95 via-white to-white";
+
+  const accentBar =
+    tone === "analytics"
+      ? "from-mars-blue to-mars-blue/70"
+      : tone === "interview"
+        ? "from-violet-500 to-violet-400"
+        : "from-mars-accent to-[#ff5c33]";
 
   return (
-    <article>
-      <div className={`border-b ${shell}`}>
-        <div className="mx-auto max-w-[1100px] px-4 py-8 sm:px-6 lg:px-10">
+    <>
+      <BreadcrumbJsonLd items={breadcrumbs} />
+      <ArticleJsonLd post={post} />
+      <article className="bg-white">
+      <header
+        className={cn(
+          "border-b border-slate-200/70 bg-gradient-to-b pb-6 pt-5 sm:pb-8 sm:pt-7",
+          headerGradient
+        )}
+      >
+        <div className="mx-auto max-w-[1180px] px-4 sm:px-6 lg:px-12">
           <Breadcrumbs items={breadcrumbs} />
-          <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5 sm:gap-2.5">
             {post.urgent ? (
-              <span className="rounded bg-red-600 px-2 py-1 text-xs font-bold uppercase tracking-wide text-white">
+              <span className="rounded-md bg-mars-accent px-2 py-1 text-[10px] font-black uppercase tracking-widest text-white shadow-sm">
                 Срочно
               </span>
             ) : null}
             {post.rubricSlugs.map((slug) => {
               const r = allRubrics.find((x) => x.slug === slug);
               return r ? (
-                <Link key={slug} href={`/rubriki/${slug}`} className="font-semibold text-sky-700 hover:underline">
+                <Link
+                  key={slug}
+                  href={`/rubriki/${slug}`}
+                  className="rounded-lg bg-white/90 px-2.5 py-1 text-xs font-bold text-mars-blue shadow-sm ring-1 ring-mars-blue/15 transition hover:bg-mars-blue-soft hover:ring-mars-blue/25"
+                >
                   {r.name}
                 </Link>
               ) : null;
             })}
-            <time dateTime={post.publishedAt} className="text-slate-500">
+            <span className="hidden h-3.5 w-px bg-slate-200 sm:block" aria-hidden />
+            <time
+              dateTime={post.publishedAt}
+              className="text-xs font-medium tabular-nums text-slate-500 sm:text-[13px]"
+            >
               {formatDateTime(post.publishedAt)}
             </time>
-            {post.readMin ? <span className="text-slate-500">· {post.readMin} мин</span> : null}
+            {post.readMin ? (
+              <>
+                <span className="text-slate-300 sm:px-0.5" aria-hidden>
+                  ·
+                </span>
+                <span className="text-xs font-medium text-slate-500 sm:text-[13px]">{post.readMin} мин чтения</span>
+              </>
+            ) : null}
+            {author ? (
+              <>
+                <span className="hidden h-3.5 w-px bg-slate-200 sm:block" aria-hidden />
+                <span className="text-xs font-medium text-slate-600 sm:text-[13px]">
+                  <span className="text-slate-400">Автор</span> · {author.name}
+                </span>
+              </>
+            ) : null}
           </div>
-          <h1 className="font-display mt-4 max-w-4xl text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+
+          <div
+            className={cn("mt-3.5 h-0.5 w-14 rounded-full bg-gradient-to-r shadow-sm sm:mt-4 sm:h-1 sm:w-16", accentBar)}
+            aria-hidden
+          />
+
+          <h1 className="font-display mt-4 max-w-[52rem] text-[1.75rem] font-bold leading-[1.1] tracking-tight text-slate-900 sm:mt-5 sm:text-[2.05rem] sm:leading-[1.08] lg:text-[2.35rem]">
             {post.title}
           </h1>
+
           {post.subtitle ? (
-            <p className="mt-4 max-w-3xl text-xl text-slate-600 leading-relaxed">{post.subtitle}</p>
-          ) : null}
-          {post.guestName ? (
-            <p className="mt-6 text-lg font-medium text-slate-800">
-              Гость: {post.guestName}
-              {post.guestBio ? <span className="mt-2 block text-base font-normal text-slate-600">{post.guestBio}</span> : null}
+            <p className="mt-3 max-w-[42rem] text-base font-medium leading-snug text-slate-700 sm:mt-4 sm:text-lg">
+              {post.subtitle}
             </p>
           ) : null}
+
+          {post.guestName ? (
+            <p className="mt-4 text-lg font-medium text-slate-800 sm:mt-5">
+              Гость: {post.guestName}
+              {post.guestBio ? (
+                <span className="mt-2 block text-base font-normal text-slate-600">{post.guestBio}</span>
+              ) : null}
+            </p>
+          ) : null}
+
           {author ? (
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Link href={`/avtor/${author.slug}`} className="flex items-center gap-3 focus-ring rounded-lg">
-                <span className="relative h-12 w-12 overflow-hidden rounded-full ring-2 ring-white shadow">
-                  <Image src={author.photo} alt="" fill className="object-cover" sizes="48px" />
+            <div className="mt-5 sm:mt-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Автор</p>
+              <Link
+                href={`/avtor/${author.slug}`}
+                className="focus-ring mt-2 inline-flex max-w-full items-center gap-3 rounded-xl border border-slate-200/90 bg-white/90 py-2 pl-2 pr-5 shadow-[0_4px_20px_-12px_rgb(15_23_42/0.1)] backdrop-blur-sm transition hover:border-slate-300 hover:shadow-[0_6px_28px_-12px_rgb(15_23_42/0.14)]"
+              >
+                <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full ring-2 ring-white shadow-md sm:h-12 sm:w-12">
+                  <Image src={author.photo} alt={author.name} fill className="object-cover" sizes="48px" />
                 </span>
-                <span>
-                  <span className="block text-sm font-semibold text-slate-900">{author.name}</span>
-                  <span className="block text-xs text-slate-500">{author.role}</span>
+                <span className="min-w-0 text-left">
+                  <span className="block text-sm font-bold text-slate-900">{author.name}</span>
+                  <span className="mt-0.5 block text-xs leading-snug text-slate-500">{author.role}</span>
                 </span>
               </Link>
             </div>
           ) : null}
-          <p className="mt-8 max-w-3xl text-lg leading-relaxed text-slate-700">{post.lead}</p>
-        </div>
-      </div>
 
-      <div className="mx-auto max-w-[1100px] px-4 py-10 sm:px-6 lg:px-10">
-        <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl bg-slate-100 shadow-inner ring-1 ring-slate-200">
-          <Image src={post.image} alt="" fill priority className="object-cover" sizes="(max-width:1100px) 100vw, 1100px" />
+          <p className="mt-5 max-w-[40.5rem] text-base leading-relaxed text-slate-600 sm:mt-6 sm:text-[1.0625rem] sm:leading-[1.65]">
+            {post.lead}
+          </p>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-12">
+        <div className="relative sm:-mt-1">
+          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-100 shadow-[0_28px_80px_-32px_rgb(15_23_42/0.45)] ring-1 ring-slate-900/[0.07] sm:aspect-[2.05/1] sm:rounded-3xl lg:aspect-[21/9]">
+            <Image
+              src={post.image}
+              alt={postCoverImageAlt(post.title)}
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width:1180px) 100vw, 1180px"
+            />
+          </div>
         </div>
 
         {post.youtubeId && post.kind !== "video" ? (
-          <div className="mt-10">
+          <div className="mt-10 sm:mt-12">
             <YouTubeEmbed id={post.youtubeId} title={post.title} />
           </div>
         ) : null}
 
-        <div className="mt-10 flex flex-wrap gap-2">
-          {post.tagSlugs.map((t) => (
-            <TagPill key={t} href={`/teg/${t}`}>
-              {tagLabel(t)}
-            </TagPill>
-          ))}
-        </div>
+        {post.tagSlugs.length > 0 ? (
+          <div className="mt-8 flex flex-wrap gap-2 sm:mt-10">
+            {post.tagSlugs.map((t) => (
+              <TagPill key={t} href={`/teg/${t}`}>
+                {tagLabel(t)}
+              </TagPill>
+            ))}
+          </div>
+        ) : null}
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y border-slate-100 py-6">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-4 sm:px-6 sm:py-5">
           <ShareRow title={post.title} />
           {post.materialType ? (
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{post.materialType}</span>
+            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200/80">
+              {post.materialType}
+            </span>
           ) : null}
         </div>
 
         {post.keyPoints?.length ? (
-          <aside className="mt-10 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Ключевые тезисы</p>
-            <ul className="mt-4 space-y-3 text-slate-800">
+          <aside className="mt-10 rounded-2xl border border-slate-200/90 bg-gradient-to-br from-white to-slate-50/90 p-6 shadow-sm sm:mt-12 sm:p-8">
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Ключевые тезисы</p>
+            <ul className="mt-5 space-y-3.5 text-slate-800">
               {post.keyPoints.map((k) => (
-                <li key={k} className="flex gap-3">
-                  <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-red-600" aria-hidden />
+                <li key={k} className="flex gap-3.5">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-br from-mars-accent to-[#ff3100]" aria-hidden />
                   <span className="leading-relaxed">{k}</span>
                 </li>
               ))}
@@ -125,27 +201,29 @@ export function PublicationView({
           </aside>
         ) : null}
 
-        <div className="mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-12">
+        <div className="mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_15.5rem] lg:gap-14 lg:gap-x-16">
           <div className="min-w-0">
             {post.quotes?.map((q, qi) => (
               <blockquote
                 key={`${qi}-${q.text.slice(0, 24)}`}
-                className="my-10 border-l-4 border-red-600 bg-red-50/50 py-4 pl-6 pr-4 text-lg font-medium leading-relaxed text-slate-800"
+                className="my-10 rounded-r-xl border-l-[3px] border-mars-accent bg-gradient-to-r from-mars-accent-soft/70 to-mars-accent-soft/20 py-5 pl-6 pr-5 text-[1.0625rem] font-medium leading-relaxed text-slate-800 sm:my-12 sm:pl-8 sm:text-lg"
               >
                 <p>«{q.text}»</p>
-                {q.attribution ? <footer className="mt-3 text-sm font-normal text-slate-600">— {q.attribution}</footer> : null}
+                {q.attribution ? (
+                  <footer className="mt-3 text-sm font-normal text-slate-600">— {q.attribution}</footer>
+                ) : null}
               </blockquote>
             ))}
 
-            <div className="prose-mars max-w-[42rem] text-slate-800">
+            <div className="prose-mars prose-mars--article text-slate-800">
               {post.toc ? (
                 <>
                   {post.toc.map((t, i) => (
-                    <section key={t.id} id={t.id} className="scroll-mt-28">
-                      <h2 className="font-display mt-12 text-2xl font-semibold text-slate-900 first:mt-0">{t.label}</h2>
-                      {post.paragraphs[i] ? (
-                        <p className="mt-4 leading-relaxed">{post.paragraphs[i]}</p>
-                      ) : null}
+                    <section key={t.id} id={t.id} className="scroll-mt-32">
+                      <h2 className="font-display mt-12 border-l-[3px] border-mars-accent pl-4 text-xl font-bold leading-snug text-slate-900 first:mt-0 sm:mt-14 sm:pl-5 sm:text-2xl">
+                        {t.label}
+                      </h2>
+                      {post.paragraphs[i] ? <p className="mt-5 leading-relaxed">{post.paragraphs[i]}</p> : null}
                     </section>
                   ))}
                   {post.paragraphs.slice(post.toc.length).map((text, i) => (
@@ -162,6 +240,21 @@ export function PublicationView({
                 ))
               )}
             </div>
+
+            {author ? (
+              <footer className="mt-12 border-t border-slate-200/90 pt-8">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-500">Автор</p>
+                <p className="mt-2 text-base text-slate-800">
+                  <Link
+                    href={`/avtor/${author.slug}`}
+                    className="font-semibold text-slate-900 underline decoration-slate-300 decoration-1 underline-offset-4 transition hover:text-mars-blue hover:decoration-mars-blue/40"
+                  >
+                    {author.name}
+                  </Link>
+                  <span className="text-slate-500"> — {author.role}</span>
+                </p>
+              </footer>
+            ) : null}
 
             {tone === "analytics" ? (
               <div className="mt-12 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -198,7 +291,7 @@ export function PublicationView({
                     <tr>
                       <td className="px-4 py-3 font-medium">Импортные цепочки</td>
                       <td className="px-4 py-3">
-                        <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-800 ring-1 ring-red-100">
+                        <span className="rounded-full bg-mars-accent-soft px-2 py-0.5 text-xs font-semibold text-mars-accent ring-1 ring-mars-accent/15">
                           Риск
                         </span>
                       </td>
@@ -211,44 +304,34 @@ export function PublicationView({
           </div>
 
           {post.toc?.length ? (
-            <aside className="mt-10 lg:mt-0">
-              <TocAside items={post.toc} />
+            <aside className="mt-10 lg:mt-2">
+              <TocAside items={post.toc} tone={tone} />
             </aside>
           ) : null}
         </div>
 
-        <section className="mt-16 border-t border-slate-200 pt-12">
-          <h2 className="font-display text-2xl font-semibold text-slate-900">{publicationCopy.relatedTitle}</h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">{publicationCopy.relatedSub}</p>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-16 border-t border-slate-200/90 pt-12 sm:mt-20 sm:pt-14">
+          <h2 className="font-display text-2xl font-bold text-slate-900">{publicationCopy.relatedTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">{publicationCopy.relatedSub}</p>
+          <div className="mt-8 grid grid-cols-1 items-start gap-5 sm:grid-cols-2 lg:grid-cols-2 lg:gap-6 xl:grid-cols-3">
             {related.map((r) => (
-              <PostCard key={r.slug} post={r} />
+              <PostCard key={r.slug} post={r} variant="related" />
             ))}
           </div>
         </section>
 
-        {author ? (
-          <section className="mt-14 rounded-2xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
-            <h2 className="font-display text-xl font-semibold text-slate-900">{publicationCopy.authorBlockTitle}</h2>
-            <p className="mt-2 text-slate-600">
-              <Link href={`/avtor/${author.slug}`} className="font-semibold text-sky-700 hover:underline">
-                {publicationCopy.authorProfileCta(author.name)}
-              </Link>
-            </p>
-          </section>
-        ) : null}
-
-        <section className="mt-14 rounded-2xl border border-dashed border-slate-200 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold text-slate-900">{publicationCopy.feedbackTitle}</h2>
-          <p className="mt-2 text-sm text-slate-600">
+        <section className="mt-12 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-6 sm:p-7">
+          <h2 className="font-display text-lg font-bold text-slate-900">{publicationCopy.feedbackTitle}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">
             {publicationCopy.feedbackBody}{" "}
-            <a href="mailto:red@marsmedia.example.com" className="font-semibold text-sky-700 hover:underline">
-              red@marsmedia.example.com
+            <a href="mailto:red@cryptomarsmedia.ru" className="font-semibold text-mars-blue hover:underline">
+              red@cryptomarsmedia.ru
             </a>
             .
           </p>
         </section>
       </div>
     </article>
+    </>
   );
 }

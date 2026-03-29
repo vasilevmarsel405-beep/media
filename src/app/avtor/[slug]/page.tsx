@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { PostCard } from "@/components/cards/PostCard";
-import { authorBySlug, authors, postsByAuthor } from "@/lib/content";
+import { authorBySlug, authors } from "@/lib/content";
+import { getPostsByAuthor } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -28,7 +29,7 @@ export default async function AuthorPage({ params }: Props) {
   const author = authorBySlug(slug);
   if (!author) notFound();
 
-  const materials = postsByAuthor(slug);
+  const materials = await getPostsByAuthor(slug);
 
   return (
     <div className="mx-auto max-w-[1100px] px-4 py-12 sm:px-6 lg:px-10">
@@ -39,12 +40,12 @@ export default async function AuthorPage({ params }: Props) {
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Автор</p>
           <h1 className="font-display mt-2 text-4xl font-semibold text-slate-900">{author.name}</h1>
-          <p className="mt-2 text-lg font-medium text-sky-800">{author.role}</p>
+          <p className="mt-2 text-lg font-medium text-mars-blue">{author.role}</p>
           <p className="mt-4 max-w-2xl text-slate-600 leading-relaxed">{author.bio}</p>
           {author.social?.length ? (
             <div className="mt-4 flex flex-wrap gap-3">
               {author.social.map((s) => (
-                <a key={s.href} href={s.href} className="text-sm font-semibold text-sky-700 hover:underline">
+                <a key={s.href} href={s.href} className="text-sm font-semibold text-mars-blue hover:underline">
                   {s.label}
                 </a>
               ))}

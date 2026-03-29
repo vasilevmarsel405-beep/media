@@ -4,7 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostCard } from "@/components/cards/PostCard";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { postBySlug, specialProjects } from "@/lib/content";
+import { specialProjects } from "@/lib/content";
+import { getPostBySlug } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -30,7 +31,9 @@ export default async function SpecialProjectPage({ params }: Props) {
   const project = specialProjects.find((s) => s.slug === slug);
   if (!project) notFound();
 
-  const related = project.relatedSlugs.map((s) => postBySlug(s)).filter(Boolean);
+  const related = (
+    await Promise.all(project.relatedSlugs.map((s) => getPostBySlug(s)))
+  ).filter((p): p is NonNullable<typeof p> => p != null);
 
   return (
     <article>
@@ -63,7 +66,7 @@ export default async function SpecialProjectPage({ params }: Props) {
               return (
                 <blockquote
                   key={i}
-                  className="rounded-3xl border border-red-100 bg-red-50/60 px-8 py-10 text-xl font-medium leading-relaxed text-slate-900"
+                  className="rounded-3xl border border-mars-accent/15 bg-mars-accent-soft/50 px-8 py-10 text-xl font-medium leading-relaxed text-slate-900"
                 >
                   <p>«{b.content}»</p>
                   {b.cite ? <footer className="mt-4 text-sm font-normal text-slate-600">— {b.cite}</footer> : null}
@@ -96,7 +99,7 @@ export default async function SpecialProjectPage({ params }: Props) {
             )}
           </div>
           <div className="mt-10 text-center">
-            <Link href="/specproekty" className="text-sm font-semibold text-sky-700 hover:underline">
+            <Link href="/specproekty" className="text-sm font-semibold text-mars-blue hover:underline">
               ← Все спецпроекты
             </Link>
           </div>

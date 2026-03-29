@@ -2,69 +2,75 @@ import Link from "next/link";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { IconSearch } from "@/components/icons";
 import { headerCopy } from "@/lib/copy";
+import { socialTelegram, socialYoutube } from "@/lib/site";
 import { cn } from "@/lib/cn";
 
 const nav = [
   { href: "/novosti", label: "Новости" },
-  { href: "/stati", label: "Статьи" },
   { href: "/analitika", label: "Аналитика" },
-  { href: "/intervyu", label: "Интервью" },
   { href: "/video", label: "Видео" },
   { href: "/rubriki", label: "Рубрики" },
   { href: "/specproekty", label: "Спецпроекты" },
-  { href: "/o-proekte", label: "О проекте" },
-  { href: "/kontakty", label: "Контакты" },
 ];
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-[100] border-b border-slate-200/80 bg-white/95 shadow-[0_8px_30px_-12px_rgb(15_23_42/0.12)] backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1400px] flex-nowrap items-center gap-3 overflow-x-auto px-4 py-4 sm:gap-4 sm:px-6 lg:px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <header className="sticky top-0 z-[100] border-b border-mars-line/90 bg-mars-surface/92 shadow-[0_8px_32px_-14px_rgb(19_21_26/0.1)] backdrop-blur-md backdrop-saturate-150">
+      <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 py-3 sm:px-6 lg:gap-5 lg:px-10">
         <Link
           href="/"
-          className="shrink-0 font-display text-2xl font-semibold tracking-tight text-slate-900 focus-ring rounded-sm"
+          className="shrink-0 font-display text-[1.35rem] font-semibold tracking-tight text-mars-ink focus-ring rounded-sm sm:text-2xl"
         >
-          Марс<span className="text-red-600">Медиа</span>
+          КриптоМарс <span className="text-mars-accent">Медиа</span>
         </Link>
 
-        <nav
+        {/* Центр полосы между логотипом и разделителем у блока действий */}
+        <div
           className={cn(
-            "ml-auto hidden shrink-0 flex-nowrap items-center gap-0.5 lg:flex lg:gap-1",
-            "text-sm font-medium text-slate-700"
+            "flex min-w-0 flex-1 items-center justify-center overflow-x-auto overflow-y-visible py-1",
+            "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+            "scroll-pl-2 scroll-pr-2"
           )}
-          aria-label="Основное меню"
         >
-          {nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="whitespace-nowrap rounded-lg px-2 py-2 hover:bg-slate-50 hover:text-slate-900 focus-ring lg:px-2.5"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+          <nav
+            className={cn(
+              "hidden w-max shrink-0 items-center gap-1 lg:flex",
+              "text-[0.8125rem] font-medium text-mars-muted"
+            )}
+            aria-label="Основное меню"
+          >
+            {nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="shrink-0 whitespace-nowrap rounded-xl px-2.5 py-2 text-mars-ink/88 transition-colors hover:bg-mars-accent-soft/80 hover:text-mars-ink focus-ring lg:px-3"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
-        <div className="flex shrink-0 flex-nowrap items-center gap-2 sm:gap-3 lg:ml-4">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-2.5 lg:gap-3 lg:border-l lg:border-mars-line/70 lg:pl-5">
           <Link
             href="/poisk"
-            className="focus-ring flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+            className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-mars-line bg-white/80 text-mars-muted transition-colors hover:border-stone-300 hover:bg-white hover:text-mars-ink"
             aria-label="Поиск"
           >
-            <IconSearch className="h-5 w-5" />
+            <IconSearch className="h-[1.125rem] w-[1.125rem]" />
           </Link>
-          <div className="hidden items-center gap-2 sm:flex">
+          <div className="hidden items-center gap-1 sm:flex">
             <Link
-              href="https://t.me"
-              className="text-xs font-medium text-slate-500 hover:text-sky-700 focus-ring rounded px-2"
+              href={socialTelegram}
+              className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl px-2 text-[0.6875rem] font-semibold uppercase tracking-wider text-mars-muted transition-colors hover:bg-stone-100 hover:text-[#229ED9] focus-ring"
               target="_blank"
               rel="noreferrer"
             >
               TG
             </Link>
             <Link
-              href="https://youtube.com"
-              className="text-xs font-medium text-slate-500 hover:text-sky-700 focus-ring rounded px-2"
+              href={socialYoutube}
+              className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-xl px-2 text-[0.6875rem] font-semibold uppercase tracking-wider text-mars-muted transition-colors hover:bg-stone-100 hover:text-[#c00] focus-ring"
               target="_blank"
               rel="noreferrer"
             >
@@ -73,15 +79,9 @@ export function SiteHeader() {
           </div>
           <Link
             href="/podpiska"
-            className="focus-ring hidden whitespace-nowrap rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-700 sm:inline-flex sm:items-center sm:justify-center"
+            className="focus-ring mars-cta-header hidden shrink-0 whitespace-nowrap sm:inline-flex sm:items-center sm:justify-center"
           >
             {headerCopy.subscribe}
-          </Link>
-          <Link
-            href="/kabinet"
-            className="focus-ring hidden whitespace-nowrap rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-800 hover:bg-slate-50 lg:inline-flex lg:items-center lg:justify-center"
-          >
-            {headerCopy.cabinet}
           </Link>
           <MobileNav items={nav} />
         </div>

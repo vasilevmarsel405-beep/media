@@ -1,37 +1,62 @@
-import type { Metadata } from "next";
-import { Rubik, Spectral, Geist } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import { metaCopy } from "@/lib/copy";
 import "./globals.css";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { TopBar } from "@/components/layout/TopBar";
+import { SiteChrome } from "@/components/layout/SiteChrome";
+import { WebSiteJsonLd } from "@/components/seo/WebSiteJsonLd";
 import { cn } from "@/lib/utils";
+import { getMetadataBaseUrl, siteName, siteUrl } from "@/lib/site";
 
-const spectral = Spectral({
-  weight: ["400", "600", "700"],
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-serif-display",
+/** Inter: кириллица, высокая читаемость в интерфейсе и длинных текстах — де-факто стандарт для медиа и веба. */
+const inter = Inter({
+  subsets: ["latin", "cyrillic", "cyrillic-ext"],
+  variable: "--font-sans-body",
   display: "swap",
+  adjustFontFallback: true,
 });
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const yandexVerify = process.env.NEXT_PUBLIC_YANDEX_VERIFICATION?.trim();
+const googleVerify = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+const verification =
+  yandexVerify || googleVerify
+    ? {
+        ...(yandexVerify ? { yandex: yandexVerify } : {}),
+        ...(googleVerify ? { google: googleVerify } : {}),
+      }
+    : undefined;
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+};
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://marsmedia.example.com"),
+  metadataBase: getMetadataBaseUrl(),
+  applicationName: siteName,
   title: {
-    default: "МарсМедиа — цифровое медиа",
-    template: "%s — МарсМедиа",
+    default: `${siteName} — экономика, крипто, финансы, технологии и политика`,
+    template: `%s — ${siteName}`,
   },
   description: metaCopy.description,
+  keywords: [...metaCopy.topics, siteName, "крипто", "биткоин", "инвестиции"],
+  category: "news",
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+  ...(verification ? { verification } : {}),
   openGraph: {
     type: "website",
     locale: "ru_RU",
-    siteName: "МарсМедиа",
+    url: siteUrl,
+    siteName,
+    title: `${siteName} — экономика, крипто, финансы, технологии и политика`,
     description: metaCopy.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: "МарсМедиа",
+    title: `${siteName} — экономика, крипто, финансы, технологии`,
     description: metaCopy.description,
   },
 };
@@ -42,20 +67,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={cn("h-full", spectral.variable, "font-sans", geist.variable)}>
-      <body className="mars-page-bg min-h-full flex flex-col antialiased text-slate-900">
+    <html
+      lang="ru"
+      className={cn("h-full font-sans antialiased", inter.variable)}
+      suppressHydrationWarning
+    >
+      <body
+        className="mars-page-bg text-mars-ink flex min-h-full touch-manipulation flex-col"
+        suppressHydrationWarning
+      >
         <a
           href="#main"
           className="focus-ring sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:shadow-lg"
         >
           К основному содержимому
         </a>
-        <TopBar />
-        <SiteHeader />
-        <main id="main" className="flex-1">
-          {children}
-        </main>
-        <SiteFooter />
+        <WebSiteJsonLd />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );

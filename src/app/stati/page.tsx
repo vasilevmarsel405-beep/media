@@ -1,13 +1,28 @@
 import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
-import { postsByKind } from "@/lib/content";
+import { ItemListJsonLd } from "@/components/seo/ItemListJsonLd";
+import { postHref } from "@/lib/routes";
+import { getPostsByKind } from "@/lib/posts-service";
+import { siteUrl } from "@/lib/site";
 
-export default function StatiPage() {
-  const list = postsByKind("article").sort(
+export default async function StatiPage() {
+  const list = (await getPostsByKind("article")).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)
   );
 
+  const itemListLd = list.slice(0, 40).map((p) => ({
+    url: `${siteUrl}${postHref(p)}`,
+    name: p.title,
+  }));
+
   return (
+    <>
+      <ItemListJsonLd
+        name="Статьи"
+        description="Колонки, обзоры и объясняющие материалы КриптоМарс Медиа."
+        path="/stati"
+        items={itemListLd}
+      />
     <div className="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10">
       <SectionHeading title="Статьи" />
       <p className="-mt-4 mb-10 max-w-2xl text-lg text-slate-600 leading-relaxed">
@@ -19,5 +34,6 @@ export default function StatiPage() {
         ))}
       </div>
     </div>
+    </>
   );
 }

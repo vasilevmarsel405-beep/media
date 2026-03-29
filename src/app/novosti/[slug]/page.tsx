@@ -1,39 +1,29 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicationView } from "@/components/PublicationView";
-import { postBySlug, postsByKind, relatedPosts } from "@/lib/content";
-import { siteUrl } from "@/lib/site";
+import { buildPostMetadata } from "@/lib/seo/post-metadata";
+import { getPostBySlug, getPostsByKind, getRelatedPosts } from "@/lib/posts-service";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return postsByKind("news").map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const list = await getPostsByKind("news");
+  return list.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = postBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || post.kind !== "news") return {};
-  return {
-    title: post.title,
-    description: post.lead,
-    openGraph: {
-      title: post.title,
-      description: post.lead,
-      images: [{ url: post.image }],
-      type: "article",
-      publishedTime: post.publishedAt,
-    },
-    alternates: { canonical: `${siteUrl}/novosti/${slug}` },
-  };
+  return buildPostMetadata(post, `/novosti/${slug}`);
 }
 
 export default async function NewsArticlePage({ params }: Props) {
   const { slug } = await params;
-  const post = postBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post || post.kind !== "news") notFound();
 
-  const related = relatedPosts(post);
+  const related = await getRelatedPosts(post);
 
   return (
     <PublicationView

@@ -18,11 +18,20 @@ export function MobileNav({ items }: { items: Item[] }) {
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   return (
     <div className="lg:hidden">
       <button
         type="button"
-        className="focus-ring flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 text-slate-800 hover:bg-slate-50"
+        className="focus-ring flex h-11 w-11 items-center justify-center rounded-xl border border-mars-line bg-white text-mars-ink hover:bg-stone-50"
         aria-expanded={open}
         aria-controls="mobile-drawer"
         onClick={() => setOpen((o) => !o)}
@@ -42,18 +51,18 @@ export function MobileNav({ items }: { items: Item[] }) {
       />
       <div
         className={cn(
-          "fixed inset-y-0 right-0 z-[170] w-[min(100%,20rem)] bg-white shadow-2xl transition-transform duration-200 ease-out",
+          "fixed inset-y-0 right-0 z-[170] w-[min(100%,20rem)] bg-mars-surface shadow-2xl transition-transform duration-200 ease-out",
           open ? "translate-x-0" : "translate-x-full"
         )}
         role="dialog"
         aria-modal="true"
         aria-label="Мобильное меню"
       >
-        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4">
-          <span className="font-display text-lg font-semibold">Меню</span>
+        <div className="flex items-center justify-between border-b border-mars-line px-4 py-4">
+          <span className="font-display text-lg font-semibold text-mars-ink">Меню</span>
           <button
             type="button"
-            className="focus-ring flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-50"
+            className="focus-ring flex h-11 w-11 items-center justify-center rounded-xl hover:bg-slate-50"
             onClick={() => setOpen(false)}
             aria-label="Закрыть меню"
           >
@@ -66,7 +75,7 @@ export function MobileNav({ items }: { items: Item[] }) {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="rounded-xl px-3 py-3 text-base font-medium text-slate-800 hover:bg-slate-50 focus-ring"
+              className="rounded-lg px-3 py-3 text-base font-medium text-mars-ink hover:bg-mars-accent-soft/50 focus-ring"
             >
               {item.label}
             </Link>
@@ -74,14 +83,14 @@ export function MobileNav({ items }: { items: Item[] }) {
           <Link
             href="/poisk"
             onClick={() => setOpen(false)}
-            className="rounded-xl px-3 py-3 text-base font-medium text-sky-800 hover:bg-sky-50 focus-ring"
+            className="rounded-lg px-3 py-3 text-base font-medium text-mars-blue hover:bg-mars-blue-soft focus-ring"
           >
             Поиск
           </Link>
           <Link
             href="/podpiska"
             onClick={() => setOpen(false)}
-            className="mt-2 rounded-xl bg-red-600 px-3 py-3 text-center text-base font-semibold text-white hover:bg-red-700 focus-ring"
+            className="focus-ring mars-cta-block mt-2 block"
           >
             {mobileNavCopy.subscribe}
           </Link>

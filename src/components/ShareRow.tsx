@@ -17,7 +17,7 @@ export function ShareRow({ title }: { title: string }) {
         {shareCopy.label}
       </span>
       <a
-        className="rounded-full bg-sky-50 px-3 py-1.5 text-xs font-semibold text-sky-800 ring-1 ring-sky-100 hover:bg-sky-100 focus-ring"
+        className="rounded-xl bg-mars-blue-soft px-3 py-1.5 text-xs font-semibold text-mars-blue ring-1 ring-mars-blue/20 hover:bg-[#e0e5ff] focus-ring"
         href={`https://t.me/share/url?url=${url}&text=${text}`}
         target="_blank"
         rel="noreferrer"
@@ -25,7 +25,7 @@ export function ShareRow({ title }: { title: string }) {
         {shareCopy.telegram}
       </a>
       <a
-        className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-200 focus-ring"
+        className="rounded-xl bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 hover:bg-slate-200 focus-ring"
         href={`https://vk.com/share.php?url=${url}&title=${text}`}
         target="_blank"
         rel="noreferrer"

@@ -5,37 +5,13 @@ const IMG = (id: string, w = 1600, h = 900) =>
 
 export const authors: Author[] = [
   {
-    id: "a1",
-    slug: "elena-orlova",
-    name: "Елена Орлова",
-    role: "Главный редактор",
-    bio: "15 лет переводит макроэкономику на человеческий: индустрии, ставки, последствия для бизнеса и кошелька.",
-    photo: IMG("photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3", 400, 400),
+    id: "mv1",
+    slug: "marsel-vasilyev",
+    name: "Васильев Марсель",
+    role: "CEO КриптоМарс Медиа",
+    bio: "Руководит редакцией КриптоМарс Медиа: экономика, технологии и медиа — с фокусом на ясность и проверяемые факты.",
+    photo: "/authors/marsel-vasilyev.jpg",
     social: [{ label: "Telegram", href: "#" }],
-  },
-  {
-    id: "a2",
-    slug: "mikhail-vektor",
-    name: "Михаил Вектор",
-    role: "Обозреватель, технологии",
-    bio: "Инженер по образованию, журналист по призванию: объясняет, как технологии меняют работу, регулирование и быт.",
-    photo: IMG("photo-1560250097-0b93528c311a?ixlib=rb-4.0.3", 400, 400),
-  },
-  {
-    id: "a3",
-    slug: "anna-sokolova",
-    name: "Анна Соколова",
-    role: "Редактор раздела «Культура»",
-    bio: "Пишет о кино, литературе и том, как платформы конкурируют за ваше внимание — без снобизма, с контекстом.",
-    photo: IMG("photo-1580489944761-15a19d654956?ixlib=rb-4.0.3", 400, 400),
-  },
-  {
-    id: "a4",
-    slug: "dmitry-lens",
-    name: "Дмитрий Ленский",
-    role: "Видеопродюсер",
-    bio: "Снимает и монтирует: от репортажа с улицы до студийных разговоров, где важен кадр и ритм.",
-    photo: IMG("photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3", 400, 400),
   },
 ];
 
@@ -135,7 +111,7 @@ export const posts: Post[] = [
     title: "Энергопереход бьёт по чеку? Что реально поменяется для вас этой весной",
     lead: "Тарифы, надбавки и тихие лимиты — собрали в одном материале, чтобы вы знали, куда смотреть в первую очередь. Паниковать рано: есть сценарии и запасные ходы.",
     image: IMG("photo-1473341304170-971dccb5ac1e?ixlib=rb-4.0.3"),
-    authorId: "a1",
+    authorId: "mv1",
     rubricSlugs: ["biznes", "trendy"],
     tagSlugs: ["ekonomika", "klimat", "potrebiteli"],
     publishedAt: "2026-03-28T08:00:00.000Z",
@@ -151,7 +127,7 @@ export const posts: Post[] = [
     title: "Цифровые платформы под прицелом: старт внеплановых проверок",
     lead: "Кто первым почувствует ограничения и какие сигналы уже шлют маркетплейсы — коротко, по фактам, без драмы.",
     image: IMG("photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3"),
-    authorId: "a2",
+    authorId: "mv1",
     rubricSlugs: ["tekhnologii", "media"],
     tagSlugs: ["regulirovanie", "data"],
     publishedAt: "2026-03-28T06:12:00.000Z",
@@ -164,7 +140,7 @@ export const posts: Post[] = [
     title: "Меньше пробок или новые очереди? Городская мобильность — 2026",
     lead: "MaaS, пересадки и скрытые доплаты: как изменится ваш маршрут «дом — работа», если не смотреть только на карту.",
     image: IMG("photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3"),
-    authorId: "a3",
+    authorId: "mv1",
     rubricSlugs: ["obshchestvo"],
     tagSlugs: ["goroda", "potrebiteli"],
     publishedAt: "2026-03-27T14:30:00.000Z",
@@ -176,7 +152,7 @@ export const posts: Post[] = [
     title: "IT-найм в зеркале ИИ: вилки, роли и кто реально в дефиците",
     lead: "Рекрутёры и работодатели сходятся на одном: «просто кодить» мало — нужен продуктовый нюх и умение работать с моделями.",
     image: IMG("photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3"),
-    authorId: "a2",
+    authorId: "mv1",
     rubricSlugs: ["biznes", "tekhnologii"],
     tagSlugs: ["ai", "startapy"],
     publishedAt: "2026-03-27T09:00:00.000Z",
@@ -189,7 +165,7 @@ export const posts: Post[] = [
     subtitle: "Методика редакции — для вас и для авторов",
     lead: "Покажем, как не утонуть в абзацах: от якорей до проверки источников. Заберите чек-лист и применяйте сегодня же.",
     image: IMG("photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3"),
-    authorId: "a1",
+    authorId: "mv1",
     rubricSlugs: ["media", "mneniya"],
     tagSlugs: ["obrazovanie"],
     publishedAt: "2026-03-26T10:00:00.000Z",
@@ -220,7 +196,7 @@ export const posts: Post[] = [
     title: "Между фестивалями зритель не спит: куда уходит внимание",
     lead: "Стриминг, зал и гибриды — разобрали, зачем платформы ускоряют ритм релизов и что выигрывают нишевые подборки.",
     image: IMG("photo-1485846234645-a62644f84728?ixlib=rb-4.0.3"),
-    authorId: "a3",
+    authorId: "mv1",
     rubricSlugs: ["kultura"],
     tagSlugs: ["potrebiteli", "media"],
     publishedAt: "2026-03-25T16:00:00.000Z",
@@ -238,7 +214,7 @@ export const posts: Post[] = [
     title: "II квартал: три сценария для экономики — и какие цифры их спалят",
     lead: "Без обещаний «всё будет хорошо»: только индикаторы, допущения и честные «если». Вы поймёте, за чем следить раньше рынка.",
     image: IMG("photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3"),
-    authorId: "a1",
+    authorId: "mv1",
     rubricSlugs: ["biznes", "trendy"],
     tagSlugs: ["ekonomika", "rynki"],
     publishedAt: "2026-03-24T09:00:00.000Z",
@@ -263,7 +239,7 @@ export const posts: Post[] = [
     title: "ИИ после демо: сколько реально стоит инфраструктура моделей",
     lead: "GPU, SLA, лицензии на данные и ответственность за ответы — разбор для тех, кто считает деньги, а не только токены.",
     image: IMG("photo-1677442136019-21780ecad995?ixlib=rb-4.0.3"),
-    authorId: "a2",
+    authorId: "mv1",
     rubricSlugs: ["tekhnologii"],
     tagSlugs: ["ai", "data", "startapy"],
     publishedAt: "2026-03-23T11:00:00.000Z",
@@ -281,7 +257,7 @@ export const posts: Post[] = [
     title: "«Зритель чувствует монтаж раньше, чем понимает сюжет»",
     lead: "Илья Кран — о доверии, манипуляции ритмом и границе между журналистикой и рекламой в нон-фикшн.",
     image: IMG("photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3"),
-    authorId: "a3",
+    authorId: "mv1",
     rubricSlugs: ["kultura", "media"],
     tagSlugs: ["media", "potrebiteli"],
     publishedAt: "2026-03-22T12:00:00.000Z",
@@ -308,7 +284,7 @@ export const posts: Post[] = [
     title: "Блиц для CTO: найм «звёзд», метрики и рефакторинг без пользователя",
     lead: "Три жёстких вопроса — три честных ответа. Заберите, если растите продукт и команду.",
     image: IMG("photo-1553877522-43269d4ea984?ixlib=rb-4.0.3"),
-    authorId: "a2",
+    authorId: "mv1",
     rubricSlugs: ["tekhnologii", "biznes"],
     tagSlugs: ["startapy", "ai"],
     publishedAt: "2026-03-21T09:30:00.000Z",
@@ -327,7 +303,7 @@ export const posts: Post[] = [
     title: "Неделя за 8 минут: что важно знать до понедельника",
     lead: "Голос, таймкоды и ссылки на тексты — посмотрите один раз и вернитесь к темам, которые касаются именно вас.",
     image: IMG("photo-1492691527719-9d1e07e534b4?ixlib=rb-4.0.3"),
-    authorId: "a4",
+    authorId: "mv1",
     rubricSlugs: ["media"],
     tagSlugs: ["media", "ekonomika"],
     publishedAt: "2026-03-28T07:00:00.000Z",
@@ -350,7 +326,7 @@ export const posts: Post[] = [
     title: "Акции в марте: куда текли деньги и что это значит не-трейдеру",
     lead: "Студийный разбор с доской: без жаргона, с определениями — чтобы вы поняли логику, а не только увидели график.",
     image: IMG("photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3"),
-    authorId: "a1",
+    authorId: "mv1",
     rubricSlugs: ["biznes"],
     tagSlugs: ["rynki", "data"],
     publishedAt: "2026-03-27T11:00:00.000Z",
@@ -366,13 +342,13 @@ export const posts: Post[] = [
     title: "Город до и после ночных ограничений: ритм улиц и сервисов",
     lead: "Неделя съёмок — как меняются такси, кафе и ощущение безопасности, когда правила сдвигаются на несколько часов.",
     image: IMG("photo-1514565131-fce0801e5785?ixlib=rb-4.0.3"),
-    authorId: "a3",
+    authorId: "mv1",
     rubricSlugs: ["obshchestvo"],
     tagSlugs: ["goroda"],
     publishedAt: "2026-03-26T18:00:00.000Z",
     youtubeId: "dQw4w9WgXcQ",
     durationLabel: "6:44",
-    paragraphs: ["Съёмка в течение недели, монтаж — Дмитрий Ленский."],
+    paragraphs: ["Съёмка в течение недели, монтаж — редакция КриптоМарс Медиа."],
   }),
 ];
 
@@ -396,7 +372,7 @@ export const specialProjects: SpecialProject[] = [
       {
         type: "quote",
         content: "Энергопереход — это не мораль, а инженерия и финансы.",
-        cite: "Елена Орлова",
+        cite: "Васильев Марсель",
       },
     ],
     relatedSlugs: [
@@ -419,7 +395,7 @@ export const specialProjects: SpecialProject[] = [
       {
         type: "quote",
         content: "Доверие растёт там, где виден процесс проверки.",
-        cite: "Анна Соколова",
+        cite: "Васильев Марсель",
       },
     ],
     relatedSlugs: ["dlinnyy-tekst-kak-chitat-vnimatelno"],
@@ -442,74 +418,5 @@ export function tagBySlug(slug: string) {
   return tags.find((t) => t.slug === slug);
 }
 
-export function postBySlug(slug: string) {
-  return posts.find((p) => p.slug === slug);
-}
-
-export function postsByKind(kind: Post["kind"]) {
-  return posts.filter((p) => p.kind === kind);
-}
-
-export function postsForRubric(slug: string) {
-  return posts.filter((p) => p.rubricSlugs.includes(slug));
-}
-
-export function postsForTag(slug: string) {
-  return posts.filter((p) => p.tagSlugs.includes(slug));
-}
-
-export function postsByAuthor(authorSlug: string) {
-  const a = authors.find((x) => x.slug === authorSlug);
-  if (!a) return [];
-  return posts.filter((p) => p.authorId === a.id);
-}
-
-export function relatedPosts(post: Post, limit = 4) {
-  const tagSet = new Set(post.tagSlugs);
-  const scored = posts
-    .filter((x) => x.slug !== post.slug)
-    .map((x) => ({
-      x,
-      s: x.rubricSlugs.filter((r) => post.rubricSlugs.includes(r)).length * 2 +
-        x.tagSlugs.filter((t) => tagSet.has(t)).length,
-    }))
-    .sort((a, b) => b.s - a.s);
-  return scored.slice(0, limit).map((z) => z.x);
-}
-
-export function searchPosts(q: string) {
-  const n = q.trim().toLowerCase();
-  if (!n) return [];
-  return posts.filter(
-    (p) =>
-      p.title.toLowerCase().includes(n) ||
-      p.lead.toLowerCase().includes(n) ||
-      p.tagSlugs.some((t) => t.includes(n)) ||
-      p.rubricSlugs.some((r) => r.includes(n))
-  );
-}
-
-export function featuredHero() {
-  return posts.find((p) => p.pinned) ?? posts[0];
-}
-
-export function secondaryHero() {
-  const hero = featuredHero();
-  return posts
-    .filter((p) => p.kind === "news" && p.slug !== hero.slug)
-    .slice(0, 4);
-}
-
-export function urgentFeed() {
-  return posts.filter((p) => p.urgent || p.kind === "news").slice(0, 8);
-}
-
-export function popularPosts() {
-  return [...posts]
-    .sort(
-      (a, b) =>
-        (b.readMin ?? 0) - (a.readMin ?? 0) ||
-        +new Date(b.publishedAt) - +new Date(a.publishedAt)
-    )
-    .slice(0, 6);
-}
+/** Статический каталог в репо; динамика — см. `posts-service` и webhook Make. */
+export const staticPosts = posts;

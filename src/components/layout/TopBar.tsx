@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { topBarCopy } from "@/lib/copy";
+import { TopBarOnlineCount } from "@/components/layout/TopBarOnlineCount";
 
 function formatToday() {
   return new Intl.DateTimeFormat("ru-RU", {
@@ -12,34 +12,26 @@ function formatToday() {
 
 export function TopBar() {
   return (
-    <div className="border-b border-slate-200/80 bg-white/90 text-sm text-slate-600 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3 px-4 py-2.5 sm:px-6 lg:px-10">
-        <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
-          <time dateTime={new Date().toISOString()} className="capitalize text-slate-700">
+    <div className="border-b border-mars-line/80 bg-mars-surface/95 text-[11px] text-mars-muted backdrop-blur-md sm:text-xs">
+      <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-x-3 gap-y-1 px-4 py-1.5 sm:px-6 lg:px-10">
+        <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
+          <time
+            dateTime={new Date().toISOString()}
+            className="capitalize text-mars-ink/90"
+            suppressHydrationWarning
+          >
             {formatToday()}
           </time>
-          <span className="hidden h-4 w-px bg-slate-200 sm:block" aria-hidden />
-          <span className="font-eyebrow hidden items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-500 sm:flex">
+          <span className="hidden h-3 w-px shrink-0 bg-mars-line sm:block" aria-hidden />
+          <span className="font-eyebrow flex min-w-0 flex-wrap items-center gap-1.5 font-bold tracking-widest text-mars-muted sm:gap-2">
             <span className="mars-pulse-dot" aria-hidden />
-            <span className="text-emerald-700">{topBarCopy.live}</span>
-            <span className="font-normal normal-case tracking-normal text-slate-400">{topBarCopy.online}</span>
+            <span className="shrink-0 uppercase font-semibold text-[#ff3100]">{topBarCopy.live}</span>
+            <TopBarOnlineCount />
           </span>
         </div>
-        <p className="order-last hidden w-full text-center text-xs font-medium text-slate-500 lg:order-none lg:flex lg:w-auto lg:flex-1 lg:justify-center">
+        <p className="order-last w-full text-center font-medium text-mars-muted lg:order-none lg:flex lg:w-auto lg:flex-1 lg:justify-center">
           {topBarCopy.tagline}
         </p>
-        <div className="flex items-center gap-4">
-          <span className="hidden text-slate-400 sm:inline">{topBarCopy.lang}</span>
-          <Link
-            href="/podpiska"
-            className="font-semibold text-red-600 hover:text-red-700 focus-ring rounded"
-          >
-            {topBarCopy.subscription}
-          </Link>
-          <Link href="/kabinet" className="font-medium text-slate-700 hover:text-slate-900 focus-ring rounded">
-            {topBarCopy.login}
-          </Link>
-        </div>
       </div>
     </div>
   );

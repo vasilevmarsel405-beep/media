@@ -1,9 +1,9 @@
 import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
-import { postsByKind } from "@/lib/content";
+import { getPostsByKind } from "@/lib/posts-service";
 
-export default function IntervyuPage() {
-  const list = postsByKind("interview").sort(
+export default async function IntervyuPage() {
+  const list = (await getPostsByKind("interview")).sort(
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)
   );
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Рекламодателям и партнёрам",
-  description: "Форматы сотрудничества с МарсМедиа.",
+  description: "Форматы сотрудничества с КриптоМарс Медиа.",
 };
 
 export default function AdsPage() {
@@ -20,8 +20,8 @@ export default function AdsPage() {
         <li>— Видеоинтеграции в плеере и на главной.</li>
       </ul>
       <p className="mt-8">
-        <a href="mailto:ads@marsmedia.example.com" className="font-semibold text-sky-700 hover:underline">
-          ads@marsmedia.example.com
+        <a href="mailto:ads@cryptomarsmedia.ru" className="font-semibold text-mars-blue hover:underline">
+          ads@cryptomarsmedia.ru
         </a>
       </p>
       <p className="mt-6">

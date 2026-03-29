@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { ContactForm } from "@/components/ContactForm";
 import { kontaktyCopy } from "@/lib/copy";
+import { commercialEmail, editorialEmail } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Контакты",
-  description: "Как связаться с редакцией и коммерческой службой МарсМедиа.",
+  description: "Как связаться с редакцией и коммерческой службой КриптоМарс Медиа.",
 };
 
 export default function KontaktyPage() {
@@ -17,8 +19,8 @@ export default function KontaktyPage() {
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">{kontaktyCopy.editorTitle}</h2>
           <p className="mt-2 text-slate-800">
             Email:{" "}
-            <a href="mailto:red@marsmedia.example.com" className="font-semibold text-sky-700 hover:underline">
-              red@marsmedia.example.com
+            <a href={`mailto:${editorialEmail}`} className="font-semibold text-mars-blue hover:underline">
+              {editorialEmail}
             </a>
           </p>
         </section>
@@ -26,57 +28,15 @@ export default function KontaktyPage() {
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">{kontaktyCopy.adsTitle}</h2>
           <p className="mt-2 text-slate-800">
             Email:{" "}
-            <a href="mailto:ads@marsmedia.example.com" className="font-semibold text-sky-700 hover:underline">
-              ads@marsmedia.example.com
+            <a href={`mailto:${commercialEmail}`} className="font-semibold text-mars-blue hover:underline">
+              {commercialEmail}
             </a>
           </p>
         </section>
         <section>
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">{kontaktyCopy.formTitle}</h2>
-          <form className="mt-4 space-y-4" action="#" method="post">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-slate-700">
-                Как к вам обращаться
-              </label>
-              <input
-                id="name"
-                name="name"
-                className="focus-ring mt-1 w-full rounded-xl border border-slate-200 px-4 py-3"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700">
-                Email для ответа
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                className="focus-ring mt-1 w-full rounded-xl border border-slate-200 px-4 py-3"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="msg" className="block text-sm font-medium text-slate-700">
-                Суть вопроса
-              </label>
-              <textarea
-                id="msg"
-                name="message"
-                rows={5}
-                className="focus-ring mt-1 w-full rounded-xl border border-slate-200 px-4 py-3"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="focus-ring rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white hover:bg-red-700"
-            >
-              {kontaktyCopy.submit}
-            </button>
-            <p className="text-xs text-slate-500">{kontaktyCopy.formNote}</p>
-          </form>
+          <ContactForm />
+          <p className="mt-3 text-xs text-slate-500">{kontaktyCopy.formNote}</p>
         </section>
       </div>
     </div>

@@ -4,21 +4,49 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Липкий TopBar + шапка: якоря и фокус не прячутся под верхним краем */
+html {
+  scroll-padding-top: 5.75rem;
+}
+
+@media (min-width: 640px) {
+  html {
+    scroll-padding-top: 6.25rem;
+  }
+}
+
 :root {
-  --muted: oklch(0.97 0 0);
-  --border: oklch(0.922 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-hover: #be123c;
-  --accent-soft: #fff1f2;
-  --nav-active: #0284c7;
-  --mars-coral: #ff4d6d;
-  --mars-ink: #0b1220;
+  /* Бренд: PRIMARY RED #C4001C, ORANGE #FF3100, BLUE #2B3EF7, GRAY #A7A7A7 + чуть смягчённые нейтрали для чтения */
+  --brand-red: #c4001c;
+  --brand-red-deep: #c8021f;
+  --brand-orange: #ff3100;
+  --brand-blue: #2b3ef7;
+  --brand-gray: #a7a7a7;
+  --mars-ink: #0a0a0a;
+  --mars-paper: #ffffff;
+  --mars-accent: var(--brand-red);
+  --mars-accent-hover: #9e0016;
+  --mars-accent-soft: #ffedef;
+  --mars-orange: var(--brand-orange);
+  --mars-blue: var(--brand-blue);
+  --mars-blue-soft: #eef0ff;
+  --mars-line: #d9d9d9;
+  --mars-muted: #525252;
+  --mars-surface: #ffffff;
+  --mars-radius-btn: 0.75rem;
+  --muted: #f0f0f0;
+  --border: #e0e0e0;
+  --accent: #fff0f0;
+  --accent-hover: var(--mars-accent-hover);
+  --accent-soft: var(--mars-accent-soft);
+  --nav-active: var(--brand-blue);
+  --mars-coral: var(--brand-orange);
   --radius-card: 1rem;
-  --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04),
-    0 12px 40px -12px rgb(15 23 42 / 0.12);
-  --shadow-glow: 0 20px 60px -20px rgb(225 29 72 / 0.45);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.05),
+    0 12px 40px -12px rgb(0 0 0 / 0.12);
+  --shadow-glow: 0 24px 60px -16px rgb(196 0 28 / 0.35);
+  --background: var(--mars-paper);
+  --foreground: var(--mars-ink);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -31,7 +59,7 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: #4d5ef8;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -51,9 +79,20 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-serif: var(--font-serif-display);
-  --font-heading: var(--font-sans);
+  --color-mars-ink: var(--mars-ink);
+  --color-mars-paper: var(--mars-paper);
+  --color-mars-accent: var(--mars-accent);
+  --color-mars-accent-hover: var(--mars-accent-hover);
+  --color-mars-accent-soft: var(--mars-accent-soft);
+  --color-mars-line: var(--mars-line);
+  --color-mars-muted: var(--mars-muted);
+  --color-mars-surface: var(--mars-surface);
+  --color-mars-orange: var(--mars-orange);
+  --color-mars-blue: var(--mars-blue);
+  --color-mars-blue-soft: var(--mars-blue-soft);
+  --font-sans: var(--font-sans-body);
+  --font-serif: var(--font-sans-body);
+  --font-heading: var(--font-sans-body);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -107,7 +146,8 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-serif-display), ui-serif, Georgia, serif;
+  font-family: var(--font-sans-body), system-ui, sans-serif;
+  letter-spacing: -0.02em;
 }
 
 .font-eyebrow {
@@ -115,18 +155,13 @@ body {
   letter-spacing: 0.14em;
 }
 
-/* Лёгкая «бумага» + глубина */
+/* Фон страницы и hero — сплошной белый, без градиентов */
 .mars-page-bg {
-  background-color: #fafafa;
-  background-image: radial-gradient(1200px 600px at 10% -10%, rgb(254 226 226 / 0.45), transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, rgb(224 242 254 / 0.5), transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgb(241 245 249 / 0.9), transparent 55%);
+  background-color: #ffffff;
 }
 
 .mars-hero-mesh {
-  background: radial-gradient(ellipse 80% 60% at 20% 20%, rgb(254 202 202 / 0.35), transparent),
-    radial-gradient(ellipse 70% 50% at 85% 10%, rgb(186 230 253 / 0.4), transparent),
-    radial-gradient(ellipse 60% 40% at 50% 100%, rgb(226 232 240 / 0.5), transparent);
+  background-color: #ffffff;
 }
 
 .mars-noise {
@@ -150,7 +185,7 @@ body {
 .mars-hero-frame {
   position: relative;
   border-radius: 1.75rem;
-  box-shadow: var(--shadow-glow), 0 0 0 1px rgb(15 23 42 / 0.06);
+  box-shadow: var(--shadow-glow), 0 0 0 1px rgb(0 0 0 / 0.06);
 }
 
 .mars-hero-frame::before {
@@ -159,12 +194,29 @@ body {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgb(225 29 72 / 0.55), rgb(14 165 233 / 0.35), rgb(225 29 72 / 0.25));
+  background: linear-gradient(
+    135deg,
+    rgb(196 0 28 / 0.55),
+    rgb(255 49 0 / 0.45),
+    rgb(43 62 247 / 0.35)
+  );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* React Bits GlassSurface: убираем лишний padding у pill-кнопки в hero */
+.mars-glass-pill .glass-surface__content {
+  padding: 0;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.mars-glass-pill .glass-surface__content > a {
+  width: 100%;
+  justify-content: center;
 }
 
 .mars-clip-hero-media {
@@ -188,6 +240,12 @@ body {
 
 .mars-marquee {
   animation: mars-marquee 42s linear infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mars-marquee:hover {
+    animation-play-state: paused;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -235,17 +293,82 @@ body {
 
 .prose-mars {
   font-size: 1.0625rem;
-  line-height: 1.75;
+  line-height: 1.78;
   letter-spacing: -0.01em;
 }
 
 .prose-mars p + p {
-  margin-top: 1.25em;
+  margin-top: 1.35em;
+}
+
+/* Длинные материалы: комфортная мера строки */
+.prose-mars--article {
+  max-width: 40.5rem;
+}
+
+.prose-mars--article h2 {
+  scroll-margin-top: 6rem;
 }
 
 .focus-ring:focus-visible {
   outline: 2px solid var(--nav-active);
   outline-offset: 2px;
+}
+
+/* CTA: единый радиус с остальными кнопками интерфейса (rounded-xl) */
+.mars-cta-header {
+  border-radius: var(--mars-radius-btn);
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background-color: var(--mars-accent);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.14) 0%, transparent 52%);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.12) inset,
+    0 1px 2px rgb(0 0 0 / 0.08),
+    0 4px 16px -2px rgb(196 0 28 / 0.35);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.mars-cta-header:hover {
+  background-color: var(--mars-accent-hover);
+  box-shadow:
+    0 1px 0 rgb(255 255 255 / 0.1) inset,
+    0 1px 2px rgb(0 0 0 / 0.1),
+    0 6px 22px -2px rgb(196 0 28 / 0.42);
+}
+
+.mars-cta-header:active {
+  transform: translateY(0.5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mars-cta-header {
+    transition: none;
+  }
+  .mars-cta-header:active {
+    transform: none;
+  }
+}
+
+.mars-cta-block {
+  border-radius: var(--mars-radius-btn);
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  background-color: var(--mars-accent);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 0.12) 0%, transparent 50%);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.1) inset, 0 2px 10px rgb(196 0 28 / 0.28);
+  transition: background-color 0.15s ease;
+}
+
+.mars-cta-block:hover {
+  background-color: var(--mars-accent-hover);
 }
 
 .card-hover {
@@ -326,7 +449,8 @@ body {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    /* фон задаёт .mars-page-bg (сплошной белый) */
+    @apply text-foreground;
   }
   html {
     @apply font-sans;

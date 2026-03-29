@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { cn } from "@/lib/cn";
+import { cn } from "@/lib/utils";
 
 export function SectionHeading({
   title,
@@ -24,8 +24,8 @@ export function SectionHeading({
     variant === "dark" ? "mt-1 max-w-2xl text-sm text-white/65" : "mt-1 max-w-2xl text-sm text-slate-600";
   const link =
     variant === "dark"
-      ? "text-sm font-semibold text-sky-300 hover:text-white focus-ring rounded"
-      : "text-sm font-semibold text-sky-700 hover:text-sky-900 focus-ring rounded";
+      ? "inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-blue-200 hover:text-white focus-ring rounded-md"
+      : "inline-flex min-h-10 shrink-0 items-center text-sm font-semibold text-mars-blue hover:text-mars-accent focus-ring rounded-md";
 
   return (
     <div className={cn("mb-8 flex flex-wrap items-end justify-between gap-4", className)}>
