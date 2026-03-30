@@ -36,11 +36,11 @@ export function PostCard({
       >
         <Link
           href={href}
-          className="relative aspect-[1/1] w-[5.6rem] shrink-0 overflow-hidden rounded-xl sm:aspect-[4/3] sm:w-36 md:w-44"
+          className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:aspect-[4/3] sm:w-36 md:w-44"
         >
           <Image
             src={cover}
-            alt={postCoverImageAlt(post.title)}
+            alt=""
             fill
             className="object-cover transition duration-300 group-hover:scale-[1.03]"
             sizes="200px"
