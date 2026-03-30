@@ -10,6 +10,9 @@ const LEGACY_POSTS_KEY = "marsmedia:posts:v1";
 /** Новый формат: пост отдельно, индекс — Redis SET slug'ов. */
 const POST_SLUGS_SET = "marsmedia:posts:v2:slugs";
 
+/** Версия коллекции постов (для синхронизации in-memory кеша между воркерами PM2). */
+const POSTS_VERSION_KEY = "marsmedia:posts:v2:version";
+
 function postItemKey(slug: string): string {
   return `marsmedia:posts:v2:item:${slug}`;
 }
@@ -73,6 +76,16 @@ function getClient(): Redis | null {
     retry: upstashRetry(),
   });
   return cachedRedis;
+}
+
+/** Текущая версия постов в Redis. При изменении (upsert/delete) воркеры должны перечитать ленту. */
+export async function getPostsCacheVersion(): Promise<number> {
+  const redis = getClient();
+  if (!redis) return 0;
+  const raw = await redis.get(POSTS_VERSION_KEY);
+  if (raw == null) return 0;
+  const n = typeof raw === "number" ? raw : parseInt(String(raw), 10);
+  return Number.isFinite(n) ? n : 0;
 }
 
 function redisReadTimeoutMs(): number {
@@ -240,6 +253,8 @@ export async function writeRemotePostsRaw(posts: Post[]): Promise<void> {
       pipe.set(postItemKey(p.slug), JSON.stringify(p));
       pipe.sadd(POST_SLUGS_SET, p.slug);
     }
+    // Одна инкремент-операция после полной перезаписи.
+    pipe.incr(POSTS_VERSION_KEY);
     await pipe.exec();
     return;
   }
@@ -259,6 +274,7 @@ export async function upsertRemotePost(post: Post): Promise<void> {
     const pipe = redis.pipeline();
     pipe.set(postItemKey(post.slug), JSON.stringify(post));
     pipe.sadd(POST_SLUGS_SET, post.slug);
+    pipe.incr(POSTS_VERSION_KEY);
     await pipe.exec();
     return;
   }
@@ -284,6 +300,7 @@ export async function deleteRemotePost(slug: string): Promise<boolean> {
     if (prev == null) return false;
     await redis.del(key);
     await redis.srem(POST_SLUGS_SET, slug);
+    await redis.incr(POSTS_VERSION_KEY);
     return true;
   }
   if (mode === "local") {

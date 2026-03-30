@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { authors, posts as staticPosts } from "./content";
 import { postsMemoryCacheTtlMs } from "./posts-cache-config";
-import { readRemotePostsRaw } from "./redis-posts";
+import { getPostsCacheVersion, getPostsStorageMode, readRemotePostsRaw } from "./redis-posts";
 import type { Post } from "./types";
 
 const DEFAULT_AUTHOR_ID = authors[0]?.id ?? "mv1";
@@ -52,24 +52,37 @@ let cachedPosts: Post[] | null = null;
 let cacheTs = 0;
 /** Один «стекер» загрузки между воркерами; внутри одного запроса RSC помогает `cache()` из React. */
 let loadInFlight: Promise<Post[]> | null = null;
+let cachedVersion = 0;
 
 async function getAllPostsForRequest(): Promise<Post[]> {
   const now = Date.now();
   const ttl = postsMemoryCacheTtlMs();
-  if (cachedPosts && now - cacheTs < ttl) return cachedPosts;
+  const mode = getPostsStorageMode();
+  if (cachedPosts && now - cacheTs < ttl) {
+    // Между воркерами PM2 in-memory кеш не шарится.
+    // Сверяемся с версией в Redis (дешевый GET), чтобы все воркеры увидели обновление сразу.
+    if (mode === "upstash") {
+      const v = await getPostsCacheVersion();
+      if (v === cachedVersion) return cachedPosts;
+    } else {
+      return cachedPosts;
+    }
+  }
   if (loadInFlight) return loadInFlight;
 
-  loadInFlight = loadPostsForFeed()
-    .then((data) => {
-      cachedPosts = data;
-      cacheTs = Date.now();
-      loadInFlight = null;
-      return data;
-    })
-    .catch((e) => {
-      loadInFlight = null;
-      throw e;
-    });
+  loadInFlight = (async () => {
+    const data = await loadPostsForFeed();
+    if (mode === "upstash") {
+      cachedVersion = await getPostsCacheVersion();
+    }
+    cachedPosts = data;
+    cacheTs = Date.now();
+    loadInFlight = null;
+    return data;
+  })().catch((e) => {
+    loadInFlight = null;
+    throw e;
+  });
 
   return loadInFlight;
 }
