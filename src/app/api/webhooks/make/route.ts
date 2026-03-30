@@ -11,15 +11,23 @@ export const runtime = "nodejs";
 
 function useLightRevalidate(): boolean {
   const v = process.env.MAKE_WEBHOOK_LIGHT_REVALIDATE?.trim();
-  /** По умолчанию в webhook — быстрый режим (меньше шанс 504 на nginx). */
   return v == null || v === "" ? true : v === "1";
 }
 
+function cacheModeForResponse(): string {
+  if (process.env.MAKE_WEBHOOK_REVALIDATE_PATHS?.trim() !== "1") return "isr-only";
+  return useLightRevalidate() ? "deferred-light" : "deferred-full";
+}
+
 /**
- * Синхронный `revalidatePath` в том же запросе, что и Redis, на VPS часто грузит worker Next.js —
- * остальные визиты получают 504. Сброс памяти сразу, пути — в следующий тик event loop (после ответа клиенту).
+ * `revalidatePath` из API route на self-hosted Next часто «подвешивает» весь процесс:
+ * сайт перестаёт отвечать даже через setImmediate. По умолчанию webhook **только** пишет Redis
+ * и сбрасывает in-memory ленту (`invalidatePostsCache`). HTML обновляется по ISR (`revalidate` на страницах).
+ *
+ * Если очень нужен мгновенный сброс кеша маршрутов — задайте `MAKE_WEBHOOK_REVALIDATE_PATHS=1` (на свой риск).
  */
-function scheduleRevalidate(post: Post | null, opts?: { slugDeleted?: string }) {
+function maybeScheduleOnDemandRevalidate(post: Post | null, opts?: { slugDeleted?: string }) {
+  if (process.env.MAKE_WEBHOOK_REVALIDATE_PATHS?.trim() !== "1") return;
   setImmediate(() => {
     try {
       if (useLightRevalidate()) {
@@ -76,7 +84,7 @@ function urlPathForPost(post: Post): string {
 /**
  * Сохранение в Upstash и сброс кеша — **синхронно до ответа 200**.
  * На VPS `after()` для фоновых задач ненадёжен: Make видел ok, а Redis пустой.
- * При 504 на nginx — увеличьте `proxy_read_timeout` (см. docs/nginx-cryptomarsmedia.conf.example).
+ * При 504 у nginx см. `docs/nginx-cryptomarsmedia.conf.example`.
  */
 export async function POST(request: Request) {
   if (!checkSecret(request)) {
@@ -113,7 +121,7 @@ export async function POST(request: Request) {
     try {
       const removed = await deleteRemotePost(slug);
       invalidatePostsCache();
-      scheduleRevalidate(null, { slugDeleted: slug });
+      maybeScheduleOnDemandRevalidate(null, { slugDeleted: slug });
       return NextResponse.json({ ok: true, deleted: removed, slug });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Storage error";
@@ -131,7 +139,7 @@ export async function POST(request: Request) {
   try {
     await upsertRemotePost(post);
     invalidatePostsCache();
-    scheduleRevalidate(post);
+    maybeScheduleOnDemandRevalidate(post);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Storage error";
     console.error("[webhooks/make] upsert failed", post.slug, e);
@@ -144,6 +152,6 @@ export async function POST(request: Request) {
     slug: post.slug,
     kind: post.kind,
     urlPath: urlPathForPost(post),
-    cache: useLightRevalidate() ? "deferred-light" : "deferred-full",
+    cache: cacheModeForResponse(),
   });
 }
