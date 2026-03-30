@@ -20,6 +20,21 @@ function postItemKey(slug: string): string {
 
 const MGET_CHUNK = 120;
 
+function toStringList(raw: unknown): string[] {
+  if (raw == null) return [];
+  if (Array.isArray(raw)) return raw.map(String);
+  if (raw instanceof Set) return Array.from(raw, (v) => String(v));
+  if (typeof raw === "object") {
+    const rec = raw as Record<string, unknown>;
+    if (Array.isArray(rec.result)) return rec.result.map(String);
+    if (Array.isArray(rec.keys)) return rec.keys.map(String);
+    if (Array.isArray(rec.members)) return rec.members.map(String);
+    const values = Object.values(rec);
+    if (values.length === 1 && Array.isArray(values[0])) return (values[0] as unknown[]).map(String);
+  }
+  return [];
+}
+
 function localPostsFile(): string {
   return path.join(process.cwd(), ".local", "remote-posts.json");
 }
@@ -183,7 +198,7 @@ async function ensureSlugsIndexType(redis: Redis): Promise<void> {
 
 async function rebuildSlugsIndexFromItems(redis: Redis): Promise<number> {
   const keys = await redis.keys(`${POST_ITEM_KEY_PREFIX}*`);
-  const list = Array.isArray(keys) ? keys.map(String) : [];
+  const list = toStringList(keys);
   if (list.length === 0) return 0;
   const pipe = redis.pipeline();
   for (const k of list) {
@@ -253,14 +268,14 @@ async function readRemotePostsFromUpstash(): Promise<Post[]> {
   await ensureSlugsIndexType(redis);
 
   let slugs = await redis.smembers(POST_SLUGS_SET);
-  let list = Array.isArray(slugs) ? slugs.map(String) : [];
+  let list = toStringList(slugs);
   if (list.length === 0) {
     const version = await getPostsCacheVersion();
     if (version > 0) {
       const repaired = await rebuildSlugsIndexFromItems(redis);
       if (repaired > 0) {
         slugs = await redis.smembers(POST_SLUGS_SET);
-        list = Array.isArray(slugs) ? slugs.map(String) : [];
+        list = toStringList(slugs);
       }
     }
   }
@@ -304,7 +319,7 @@ export async function writeRemotePostsRaw(posts: Post[]): Promise<void> {
     await ensureSlugsIndexType(redis);
 
     const existing = await redis.smembers(POST_SLUGS_SET);
-    const oldSlugs = new Set((Array.isArray(existing) ? existing : []).map(String));
+    const oldSlugs = new Set(toStringList(existing));
     const pipe = redis.pipeline();
     for (const s of oldSlugs) {
       pipe.del(postItemKey(s));
