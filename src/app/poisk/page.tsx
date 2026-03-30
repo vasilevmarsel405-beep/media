@@ -179,7 +179,7 @@ export default async function PoiskPage({ searchParams }: Props) {
               <div>
                 <SectionHeader title={poiskCopy.sectionMaterials} count={materialCount} />
                 {materialCount === 0 ? (
-                  <p className="text-slate-600">Р’ С‚РµРєСЃС‚Р°С… Рё Р·Р°РіРѕР»РѕРІРєР°С… РјР°С‚РµСЂРёР°Р»РѕРІ СЃРѕРІРїР°РґРµРЅРёР№ РЅРµС‚ вЂ” СЃРјРѕС‚СЂРёС‚Рµ Р±Р»РѕРє СЃРїСЂР°РІР°.</p>
+                  <p className="text-slate-600">В текстах и заголовках материалов совпадений нет — смотрите блок справа.</p>
                 ) : (
                   <div className="space-y-12">
                     {(
@@ -216,7 +216,7 @@ export default async function PoiskPage({ searchParams }: Props) {
                 <div className="space-y-4">
                   {authorHits.length ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">РђРІС‚РѕСЂС‹</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Авторы</h3>
                       <ul className="mt-4 space-y-3">
                         {authorHits.map((a) => (
                           <li key={a.slug}>
@@ -231,7 +231,7 @@ export default async function PoiskPage({ searchParams }: Props) {
                   ) : null}
                   {rubricHits.length ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Р СѓР±СЂРёРєРё</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Рубрики</h3>
                       <ul className="mt-4 space-y-2">
                         {rubricHits.map((r) => (
                           <li key={r.slug}>
@@ -245,7 +245,7 @@ export default async function PoiskPage({ searchParams }: Props) {
                   ) : null}
                   {tagHits.length ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">РўРµРіРё</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Теги</h3>
                       <ul className="mt-4 flex flex-wrap gap-2">
                         {tagHits.map((t) => (
                           <li key={t.slug}>

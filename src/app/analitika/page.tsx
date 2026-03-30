@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 import { getPostsByKind } from "@/lib/posts-service";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
-/** РќРµ Р±Р»РѕРєРёСЂСѓРµРј build СЃРµС‚РµРІС‹РјРё Р·Р°РїСЂРѕСЃР°РјРё Рє Redis/РІРЅРµС€РЅРёРј API. */
+/** Не блокируем build сетевыми запросами к Redis/внешним API. */
 export const revalidate = 30;
 
 export default async function AnalitikaPage() {
@@ -31,8 +31,8 @@ export default async function AnalitikaPage() {
           <p className="text-[11px] font-black uppercase tracking-[0.28em] text-mars-blue">Исследование и аргумент</p>
           <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Аналитика</h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-700 sm:text-xl">
-            Р Р°Р·Р±РѕСЂС‹, СЃСЂР°РІРЅРµРЅРёСЏ, РїСЂРѕРіРЅРѕР·С‹ Рё РёСЃСЃР»РµРґРѕРІР°С‚РµР»СЊСЃРєРёРµ РјР°С‚РµСЂРёР°Р»С‹. Р—РґРµСЃСЊ РїСЂРёРѕСЂРёС‚РµС‚ вЂ” СЃС‚СЂСѓРєС‚СѓСЂР° Р°СЂРіСѓРјРµРЅС‚Р° Рё РїСЂРѕРІРµСЂСЏРµРјС‹Рµ
-            РѕРїРѕСЂРЅС‹Рµ С‚РѕС‡РєРё.
+            Разборы, сравнения, прогнозы и исследовательские материалы. Здесь приоритет — структура аргумента и проверяемые
+            опорные точки.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export default async function AnalitikaPage() {
               </div>
               <div className="relative flex flex-col justify-center border-t border-mars-blue/10 p-7 sm:p-9 md:border-l md:border-t-0 md:border-mars-blue/15 md:pl-10">
                 <span className="inline-flex w-fit rounded-md bg-mars-blue-soft px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-mars-blue">
-                  РђРЅР°Р»РёС‚РёС‡РµСЃРєРёР№ РјР°С‚РµСЂРёР°Р»
+                  Аналитический материал
                 </span>
                 <h2 className="font-display mt-4 text-2xl font-bold leading-snug text-slate-900 sm:text-3xl group-hover:text-mars-blue">
                   {p.title}
@@ -67,11 +67,11 @@ export default async function AnalitikaPage() {
                 <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-5">
                   {p.readMin ? (
                     <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-500">
-                      {p.readMin} РјРёРЅ В· С‡С‚РµРЅРёРµ
+                      {p.readMin} мин · чтение
                     </span>
                   ) : null}
                   <span className="text-sm font-bold text-mars-blue">
-                    РћС‚РєСЂС‹С‚СЊ СЂР°Р·Р±РѕСЂ <span aria-hidden>→</span>
+                    Открыть разбор <span aria-hidden>→</span>
                   </span>
                 </div>
               </div>

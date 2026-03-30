@@ -43,7 +43,7 @@ export default async function HomePage() {
   const interviews = byKind("interview");
   const videos = byKind("video");
   const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
-  const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Р’РёРґРµРѕ-РґР°Р№РґР¶РµСЃС‚";
+  const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
 
   return (
     <div>

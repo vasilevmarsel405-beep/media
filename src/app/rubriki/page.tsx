@@ -29,7 +29,7 @@ export default function RubrikiPage() {
           <p className="text-[11px] font-black uppercase tracking-[0.26em] text-slate-400">Навигация</p>
           <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Рубрики и темы</h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            РќР°РІРёРіР°С†РёСЏ РїРѕ РёРЅС‚РµСЂРµСЃР°Рј: РїРѕР»РёС‚РёРєР°, Р±РёР·РЅРµСЃ, С‚РµС…РЅРѕР»РѕРіРёРё, РєСѓР»СЊС‚СѓСЂР° Рё РґСЂСѓРіРёРµ РЅР°РїСЂР°РІР»РµРЅРёСЏ СЂРµРґР°РєС†РёРё.
+            Навигация по интересам: политика, бизнес, технологии, культура, общество, медиа, мнения и тренды. В каждой рубрике — связанные новости, видео и аналитика по одной линии сюжета.
           </p>
         </div>
 
