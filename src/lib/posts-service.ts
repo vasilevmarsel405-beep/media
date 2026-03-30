@@ -226,25 +226,18 @@ export function pickSecondaryHero(all: Post[], hero: Post | null): Post[] {
 }
 
 /**
- * Срочная лента: сначала все материалы с urgent (любой kind), по дате;
- * если слотов не хватает — добиваем свежими новостями без дубликатов.
+ * Срочная лента и бегущая строка: только материалы с `urgent`, порядок как в общей ленте (по дате).
  */
 export function pickUrgentFeed(all: Post[]): Post[] {
-  const picked = new Set<string>();
+  const seen = new Set<string>();
   const out: Post[] = [];
 
   for (const p of all) {
     if (!p.urgent) continue;
-    if (picked.has(p.slug) || out.length >= URGENT_FEED_LIMIT) continue;
+    if (seen.has(p.slug)) continue;
+    if (out.length >= URGENT_FEED_LIMIT) break;
     out.push(p);
-    picked.add(p.slug);
-  }
-
-  for (const p of all) {
-    if (p.kind !== "news") continue;
-    if (picked.has(p.slug) || out.length >= URGENT_FEED_LIMIT) continue;
-    out.push(p);
-    picked.add(p.slug);
+    seen.add(p.slug);
   }
 
   return out;

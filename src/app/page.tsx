@@ -52,7 +52,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <HomeTrendingTicker />
+      <HomeTrendingTicker posts={urgentList} />
       <HomeEditorialStats materials={allPosts.length} rubrics={rubrics.length} />
 
       <section className="relative overflow-hidden mars-hero-mesh">
