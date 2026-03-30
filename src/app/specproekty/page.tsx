@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { specialProjects } from "@/lib/content";
 import { cn } from "@/lib/cn";
@@ -45,9 +45,7 @@ export default function SpecproektyPage() {
                   <p className="mt-5 text-lg leading-relaxed text-slate-600">{s.lead}</p>
                   <span className="mt-10 inline-flex items-center gap-2 text-sm font-bold text-mars-blue">
                     РџРµСЂРµР№С‚Рё Рє РїСЂРѕРµРєС‚Сѓ
-                    <span aria-hidden className="transition group-hover:translate-x-1.5">
-                      в†’
-                    </span>
+                    <span aria-hidden className="transition group-hover:translate-x-1.5">→</span>
                   </span>
                 </div>
               </Link>

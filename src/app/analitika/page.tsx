@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 import { getPostsByKind } from "@/lib/posts-service";
@@ -71,7 +71,7 @@ export default async function AnalitikaPage() {
                     </span>
                   ) : null}
                   <span className="text-sm font-bold text-mars-blue">
-                    РћС‚РєСЂС‹С‚СЊ СЂР°Р·Р±РѕСЂ <span aria-hidden>в†’</span>
+                    РћС‚РєСЂС‹С‚СЊ СЂР°Р·Р±РѕСЂ <span aria-hidden>→</span>
                   </span>
                 </div>
               </div>

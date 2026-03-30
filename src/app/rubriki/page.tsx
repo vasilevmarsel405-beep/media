@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { rubrics } from "@/lib/content";
 import { cn } from "@/lib/cn";
@@ -83,9 +83,7 @@ export default function RubrikiPage() {
                     </p>
                     <span className="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white">
                       РћС‚РєСЂС‹С‚СЊ СЂСѓР±СЂРёРєСѓ
-                      <span aria-hidden className="transition group-hover:translate-x-1">
-                        в†’
-                      </span>
+                      <span aria-hidden className="transition group-hover:translate-x-1">→</span>
                     </span>
                   </div>
                 </div>

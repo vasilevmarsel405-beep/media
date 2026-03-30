@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { HeroGlassVideoLink } from "@/components/home/HeroGlassVideoLink";
@@ -92,7 +92,7 @@ export default async function HomePage() {
                       className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                     >
                       {hero.homeCta ?? "Р§РёС‚Р°С‚СЊ СЃРµР№С‡Р°СЃ"}
-                      <span aria-hidden>в†’</span>
+                      <span aria-hidden>→</span>
                     </Link>
                     {heroVideoHref ? (
                       <div className="min-w-0 max-w-full shrink-0">
@@ -124,7 +124,7 @@ export default async function HomePage() {
                     className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                   >
                     РџРµСЂРµР№С‚Рё Рє РЅРѕРІРѕСЃС‚СЏРј
-                    <span aria-hidden>в†’</span>
+                    <span aria-hidden>→</span>
                   </Link>
                   <Link
                     href="/admin/posts"
