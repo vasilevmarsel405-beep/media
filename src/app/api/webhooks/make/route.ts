@@ -5,7 +5,7 @@ import { makeIngestBodySchema, normalizeIngestToPost } from "@/lib/post-ingest-s
 import type { Post } from "@/lib/types";
 import { deleteRemotePost, isRemotePostsConfigured, upsertRemotePost } from "@/lib/redis-posts";
 import { invalidatePostsCache } from "@/lib/posts-service";
-import { revalidateAfterPostChange, revalidatePostPathsLight } from "@/lib/revalidate-post";
+import { revalidateAfterPostChange, revalidatePostPathsExact, revalidatePostPathsLight } from "@/lib/revalidate-post";
 
 export const runtime = "nodejs";
 
@@ -37,6 +37,21 @@ function maybeScheduleOnDemandRevalidate(post: Post | null, opts?: { slugDeleted
       }
     } catch (e) {
       console.error("[webhooks/make] revalidate failed", e);
+    }
+  });
+}
+
+function maybeScheduleOnDemandRevalidateExact(post: Post | null, opts?: { slugDeleted?: string }) {
+  // Default: включаем “exact-only” в production — это лечит кейс,
+  // когда Next кэширует `notFound` для нового slug и до следующей ISR-генерации его не видно.
+  if (process.env.NODE_ENV !== "production") return;
+  if (process.env.MAKE_WEBHOOK_REVALIDATE_EXACT?.trim() === "0") return;
+
+  setImmediate(() => {
+    try {
+      revalidatePostPathsExact(post, opts);
+    } catch (e) {
+      console.error("[webhooks/make] exact revalidate failed", e);
     }
   });
 }
@@ -122,6 +137,7 @@ export async function POST(request: Request) {
       const removed = await deleteRemotePost(slug);
       invalidatePostsCache();
       maybeScheduleOnDemandRevalidate(null, { slugDeleted: slug });
+      maybeScheduleOnDemandRevalidateExact(null, { slugDeleted: slug });
       return NextResponse.json({ ok: true, deleted: removed, slug });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Storage error";
@@ -140,6 +156,7 @@ export async function POST(request: Request) {
     await upsertRemotePost(post);
     invalidatePostsCache();
     maybeScheduleOnDemandRevalidate(post);
+    maybeScheduleOnDemandRevalidateExact(post);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Storage error";
     console.error("[webhooks/make] upsert failed", post.slug, e);

@@ -29,6 +29,27 @@ export function revalidatePostPathsLight(post: Post | null, opts?: { slugDeleted
   }
 }
 
+/**
+ * Максимально “узкое” on-demand переcоздание:
+ * только список для конкретного вида (base) и точная страница материала (base/slug).
+ * Это снижает риск подвисаний относительно полного revalidate.
+ */
+export function revalidatePostPathsExact(post: Post | null, opts?: { slugDeleted?: string }) {
+  if (post) {
+    const base = KIND_PREFIX[post.kind];
+    revalidatePath(base);
+    revalidatePath(`${base}/${post.slug}`);
+    return;
+  }
+
+  if (opts?.slugDeleted) {
+    // При delete мы не знаем kind — поэтому минимально обновим точные маршруты по всем видам.
+    for (const base of Object.values(KIND_PREFIX)) {
+      revalidatePath(`${base}/${opts.slugDeleted}`);
+    }
+  }
+}
+
 /** Полный сброс кеша списков и страниц материала после ingest из Make. */
 export function revalidateAfterPostChange(post: Post | null, opts?: { slugDeleted?: string }) {
   invalidatePostsCache();
