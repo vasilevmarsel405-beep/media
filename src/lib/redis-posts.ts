@@ -138,9 +138,10 @@ function assertPipelineOk(result: unknown): void {
 
 function redisReadTimeoutMs(): number {
   const raw = process.env.REDIS_READ_TIMEOUT_MS?.trim();
-  const n = raw ? Number(raw) : 12_000;
-  if (!Number.isFinite(n)) return 12_000;
-  return Math.min(120_000, Math.max(4000, n));
+  // Более быстрый fail-fast по умолчанию: сайт не должен "висеть" по 10+ секунд.
+  const n = raw ? Number(raw) : 7_000;
+  if (!Number.isFinite(n)) return 7_000;
+  return Math.min(120_000, Math.max(2500, n));
 }
 
 async function withTimeout<T>(label: string, ms: number, fn: () => Promise<T>): Promise<T> {
@@ -301,14 +302,24 @@ async function readRemotePostsFromUpstash(): Promise<Post[]> {
   return posts;
 }
 
+let lastGoodRemotePosts: Post[] | null = null;
+
 export async function readRemotePostsRaw(): Promise<Post[]> {
   const mode = getPostsStorageMode();
   if (mode === "upstash") {
     const ms = redisReadTimeoutMs();
     try {
-      return await withTimeout("readRemotePostsRaw", ms, () => readRemotePostsFromUpstash());
+      const posts = await withTimeout("readRemotePostsRaw", ms, () => readRemotePostsFromUpstash());
+      // Запоминаем последний успешный снимок, чтобы при кратком сбое сети
+      // не отдавать "пустую" remote-ленту и не мигать старой/неполной версией.
+      lastGoodRemotePosts = posts;
+      return posts;
     } catch (e) {
-      console.error("[redis-posts] readRemotePostsRaw failed — отдаём пустой remote, сайт не должен висеть", e);
+      if (lastGoodRemotePosts) {
+        console.error("[redis-posts] readRemotePostsRaw failed — fallback to last good snapshot", e);
+        return lastGoodRemotePosts;
+      }
+      console.error("[redis-posts] readRemotePostsRaw failed — no snapshot, отдаём пустой remote", e);
       return [];
     }
   }

@@ -54,13 +54,20 @@ let loadInFlight: Promise<Post[]> | null = null;
 let cachedVersion = 0;
 /** Дедуп GET версии Redis в рамках одновременных запросов. */
 let versionReadInFlight: Promise<number> | null = null;
+const VERSION_CHECK_TIMEOUT_MS = 1500;
+
+function timeoutVersionCheck(ms: number): Promise<never> {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(`version-check-timeout:${ms}ms`)), ms);
+  });
+}
 
 async function getPostsCacheVersionDeduped(): Promise<number> {
   if (versionReadInFlight) return versionReadInFlight;
-  versionReadInFlight = getPostsCacheVersion()
+  versionReadInFlight = Promise.race([getPostsCacheVersion(), timeoutVersionCheck(VERSION_CHECK_TIMEOUT_MS)])
     .then((v) => {
       versionReadInFlight = null;
-      return v;
+      return Number(v);
     })
     .catch((e) => {
       versionReadInFlight = null;
@@ -79,8 +86,14 @@ export async function getAllPosts(): Promise<Post[]> {
     if (mode === "upstash") {
       // В upstash-режиме строго сверяемся с версией Redis на каждый запрос,
       // чтобы воркеры и клиентские переходы не видели "старую" ленту.
-      const v = await getPostsCacheVersionDeduped();
-      if (v === cachedVersion) return cachedPosts;
+      try {
+        const v = await getPostsCacheVersionDeduped();
+        if (v === cachedVersion) return cachedPosts;
+      } catch {
+        // Если Redis недоступен/медленный, лучше быстро отдать последний кеш,
+        // чем держать TTFB и "подвешивать" открытие страницы.
+        return cachedPosts;
+      }
       // Если версия изменилась — обновим кеш ниже через полный reload.
     } else {
       return cachedPosts;
