@@ -7,7 +7,7 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 type Props = { params: Promise<{ slug: string }> };
 
 /** Не предрендерим при сборке: чтение Redis/Upstash с VPS часто даёт ETIMEDOUT при десятках страниц подряд. */
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

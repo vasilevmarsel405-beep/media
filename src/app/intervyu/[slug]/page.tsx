@@ -6,7 +6,7 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

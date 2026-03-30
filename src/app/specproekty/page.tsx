@@ -3,6 +3,8 @@ import Link from "next/link";
 import { specialProjects } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
+export const revalidate = 60;
+
 export default function SpecproektyPage() {
   return (
     <div className="bg-[#f7f6f4]">

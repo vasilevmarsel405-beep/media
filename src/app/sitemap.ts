@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 import type { MetadataRoute } from "next";
 import { authors, rubrics, specialProjects, tags } from "@/lib/content";

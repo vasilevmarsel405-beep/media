@@ -3,6 +3,8 @@ import Link from "next/link";
 import { rubrics } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
+export const revalidate = 60;
+
 function rubricCellClass(i: number) {
   if (i === 0) {
     return "sm:col-span-2 lg:col-span-7 lg:row-span-2 lg:row-start-1 lg:col-start-1";

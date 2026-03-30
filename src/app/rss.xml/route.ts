@@ -1,4 +1,4 @@
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 import { getAllPosts } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";

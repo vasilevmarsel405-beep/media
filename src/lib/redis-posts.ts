@@ -70,8 +70,13 @@ function parsePostsArray(raw: unknown): Post[] {
   }
 }
 
-/** Однократный перенос монолита v1 → ключи v2 (идемпотентно: v1 удаляется после успеха). */
+let migrationDone = false;
+
+/** Однократный перенос монолита v1 → ключи v2 (запускается максимум один раз за жизнь процесса). */
 async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
+  if (migrationDone) return;
+  migrationDone = true;
+
   const legacyRaw = await redis.get(LEGACY_POSTS_KEY);
   if (legacyRaw == null) return;
 
@@ -82,7 +87,6 @@ async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
     pipe.set(postItemKey(p.slug), JSON.stringify(p));
     pipe.sadd(POST_SLUGS_SET, p.slug);
   }
-  /** Пустой или битый v1 — всё равно убираем ключ, иначе каждый запрос гоняет миграцию. */
   pipe.del(LEGACY_POSTS_KEY);
   await pipe.exec();
 }

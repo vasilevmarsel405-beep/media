@@ -7,7 +7,7 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 type Props = { params: Promise<{ slug: string }> };
 
 /** См. analitika/[slug]: без предрендера при build — меньше таймаутов к Upstash. */
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
