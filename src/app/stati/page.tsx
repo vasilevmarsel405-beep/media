@@ -1,11 +1,11 @@
-import { PostCard } from "@/components/cards/PostCard";
+﻿import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ItemListJsonLd } from "@/components/seo/ItemListJsonLd";
 import { postHref } from "@/lib/routes";
 import { getPostsByKind } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 export default async function StatiPage() {
   const list = (await getPostsByKind("article")).sort(
@@ -20,15 +20,15 @@ export default async function StatiPage() {
   return (
     <>
       <ItemListJsonLd
-        name="Статьи"
-        description="Колонки, обзоры и объясняющие материалы КриптоМарс Медиа."
+        name="РЎС‚Р°С‚СЊРё"
+        description="РљРѕР»РѕРЅРєРё, РѕР±Р·РѕСЂС‹ Рё РѕР±СЉСЏСЃРЅСЏСЋС‰РёРµ РјР°С‚РµСЂРёР°Р»С‹ РљСЂРёРїС‚РѕРњР°СЂСЃ РњРµРґРёР°."
         path="/stati"
         items={itemListLd}
       />
     <div className="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:px-10">
-      <SectionHeading title="Статьи" />
+      <SectionHeading title="РЎС‚Р°С‚СЊРё" />
       <p className="-mt-4 mb-10 max-w-2xl text-lg text-slate-600 leading-relaxed">
-        Спокойный формат для вдумчивого чтения: колонки, обзоры и объясняющие материалы с сильной типографикой.
+        РЎРїРѕРєРѕР№РЅС‹Р№ С„РѕСЂРјР°С‚ РґР»СЏ РІРґСѓРјС‡РёРІРѕРіРѕ С‡С‚РµРЅРёСЏ: РєРѕР»РѕРЅРєРё, РѕР±Р·РѕСЂС‹ Рё РѕР±СЉСЏСЃРЅСЏСЋС‰РёРµ РјР°С‚РµСЂРёР°Р»С‹ СЃ СЃРёР»СЊРЅРѕР№ С‚РёРїРѕРіСЂР°С„РёРєРѕР№.
       </p>
       <div className="grid gap-8 lg:grid-cols-2">
         {list.map((p) => (
@@ -39,3 +39,4 @@ export default async function StatiPage() {
     </>
   );
 }
+

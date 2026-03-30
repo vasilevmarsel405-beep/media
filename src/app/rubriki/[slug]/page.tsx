@@ -13,7 +13,7 @@ import { resolvePostImage } from "@/lib/youtube-thumbnail";
 type Props = { params: Promise<{ slug: string }> };
 
 /** Лента рубрики читает посты из Redis — не дёргать хранилище N раз на этапе `next build`. */
-export const revalidate = 120;
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

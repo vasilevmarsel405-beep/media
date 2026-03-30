@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { IconPlay } from "@/components/icons";
 import { videoHubCopy } from "@/lib/copy";
@@ -6,15 +6,15 @@ import { getPostsByKind } from "@/lib/posts-service";
 import { formatDateTime } from "@/lib/format";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 const categories = [
-  { slug: "news", label: "Сводки дня" },
-  { slug: "interview", label: "Разговоры" },
-  { slug: "analysis", label: "Разборы на доске" },
-  { slug: "opinion", label: "Позиция" },
-  { slug: "report", label: "С улицы" },
-  { slug: "special", label: "Спецэфиры" },
+  { slug: "news", label: "РЎРІРѕРґРєРё РґРЅСЏ" },
+  { slug: "interview", label: "Р Р°Р·РіРѕРІРѕСЂС‹" },
+  { slug: "analysis", label: "Р Р°Р·Р±РѕСЂС‹ РЅР° РґРѕСЃРєРµ" },
+  { slug: "opinion", label: "РџРѕР·РёС†РёСЏ" },
+  { slug: "report", label: "РЎ СѓР»РёС†С‹" },
+  { slug: "special", label: "РЎРїРµС†СЌС„РёСЂС‹" },
 ];
 
 export default async function VideoHubPage() {
@@ -31,7 +31,7 @@ export default async function VideoHubPage() {
       />
       <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-12 sm:px-6 lg:px-10">
         <div className="max-w-3xl">
-          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/45">Эфир и записи</p>
+          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/45">Р­С„РёСЂ Рё Р·Р°РїРёСЃРё</p>
           <h1 className="font-display mt-3 text-4xl font-bold tracking-tight sm:text-5xl lg:text-[3.25rem]">
             {videoHubCopy.title}
           </h1>
@@ -75,7 +75,7 @@ export default async function VideoHubPage() {
                 </span>
               ) : null}
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#ff6b6b]">Смотреть сейчас</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#ff6b6b]">РЎРјРѕС‚СЂРµС‚СЊ СЃРµР№С‡Р°СЃ</span>
                 <h2 className="font-display mt-2 max-w-3xl text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
                   {featured.title}
                 </h2>
@@ -128,3 +128,4 @@ export default async function VideoHubPage() {
     </div>
   );
 }
+

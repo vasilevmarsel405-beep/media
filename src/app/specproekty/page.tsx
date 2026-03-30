@@ -1,19 +1,19 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import { specialProjects } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 export default function SpecproektyPage() {
   return (
     <div className="bg-[#f7f6f4]">
       <div className="mx-auto max-w-[1200px] px-4 py-14 sm:px-6 lg:px-8">
         <div className="border-l-4 border-mars-accent pl-6 sm:pl-8">
-          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-mars-accent/90">Серии и расследования</p>
-          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-[2.75rem]">Спецпроекты</h1>
+          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-mars-accent/90">РЎРµСЂРёРё Рё СЂР°СЃСЃР»РµРґРѕРІР°РЅРёСЏ</p>
+          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-[2.75rem]">РЎРїРµС†РїСЂРѕРµРєС‚С‹</h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Большие темы, сезонные серии и мультимедийные истории с собственной визуальной логикой.
+            Р‘РѕР»СЊС€РёРµ С‚РµРјС‹, СЃРµР·РѕРЅРЅС‹Рµ СЃРµСЂРёРё Рё РјСѓР»СЊС‚РёРјРµРґРёР№РЅС‹Рµ РёСЃС‚РѕСЂРёРё СЃ СЃРѕР±СЃС‚РІРµРЅРЅРѕР№ РІРёР·СѓР°Р»СЊРЅРѕР№ Р»РѕРіРёРєРѕР№.
           </p>
         </div>
 
@@ -44,9 +44,9 @@ export default function SpecproektyPage() {
                   <h2 className="font-display mt-4 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">{s.title}</h2>
                   <p className="mt-5 text-lg leading-relaxed text-slate-600">{s.lead}</p>
                   <span className="mt-10 inline-flex items-center gap-2 text-sm font-bold text-mars-blue">
-                    Перейти к проекту
+                    РџРµСЂРµР№С‚Рё Рє РїСЂРѕРµРєС‚Сѓ
                     <span aria-hidden className="transition group-hover:translate-x-1.5">
-                      →
+                      в†’
                     </span>
                   </span>
                 </div>
@@ -58,3 +58,4 @@ export default function SpecproektyPage() {
     </div>
   );
 }
+

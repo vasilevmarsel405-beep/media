@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { TagPill } from "@/components/TagPill";
@@ -7,7 +7,7 @@ import { authors, rubrics, tags } from "@/lib/content";
 import { getAllPosts, searchPosts } from "@/lib/posts-service";
 import { cn } from "@/lib/cn";
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 type Props = { searchParams: Promise<{ q?: string }> };
 
@@ -15,26 +15,26 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const { q } = await searchParams;
   const query = (q ?? "").trim();
   if (query) {
-    const short = query.length > 48 ? `${query.slice(0, 45)}…` : query;
+    const short = query.length > 48 ? `${query.slice(0, 45)}вЂ¦` : query;
     return {
-      title: `Поиск: ${short}`,
-      description: `Результаты по запросу «${short}». ${poiskCopy.metaDescription}`,
+      title: `РџРѕРёСЃРє: ${short}`,
+      description: `Р РµР·СѓР»СЊС‚Р°С‚С‹ РїРѕ Р·Р°РїСЂРѕСЃСѓ В«${short}В». ${poiskCopy.metaDescription}`,
       robots: { index: false, follow: true },
     };
   }
   return {
-    title: "Поиск",
+    title: "РџРѕРёСЃРє",
     description: poiskCopy.metaDescription,
-    openGraph: { title: "Поиск по КриптоМарс Медиа", description: poiskCopy.metaDescription, locale: "ru_RU" },
+    openGraph: { title: "РџРѕРёСЃРє РїРѕ РљСЂРёРїС‚РѕРњР°СЂСЃ РњРµРґРёР°", description: poiskCopy.metaDescription, locale: "ru_RU" },
   };
 }
 
 const kindLabel: Record<string, string> = {
-  news: "Новости",
-  article: "Статьи",
-  analytics: "Аналитика",
-  interview: "Интервью",
-  video: "Видео",
+  news: "РќРѕРІРѕСЃС‚Рё",
+  article: "РЎС‚Р°С‚СЊРё",
+  analytics: "РђРЅР°Р»РёС‚РёРєР°",
+  interview: "РРЅС‚РµСЂРІСЊСЋ",
+  video: "Р’РёРґРµРѕ",
 };
 
 function SectionHeader({ title, count }: { title: string; count: number }) {
@@ -106,7 +106,7 @@ export default async function PoiskPage({ searchParams }: Props) {
 
           <form action="/poisk" method="get" className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:items-center">
             <label htmlFor="q" className="sr-only">
-              Запрос
+              Р—Р°РїСЂРѕСЃ
             </label>
             <input
               id="q"
@@ -151,7 +151,7 @@ export default async function PoiskPage({ searchParams }: Props) {
           >
             {poiskCopy.resultsSummary(materialCount, query)}
             {navHits > 0 ? (
-              <span className="text-slate-500"> · плюс совпадения в разделах и авторах</span>
+              <span className="text-slate-500"> В· РїР»СЋСЃ СЃРѕРІРїР°РґРµРЅРёСЏ РІ СЂР°Р·РґРµР»Р°С… Рё Р°РІС‚РѕСЂР°С…</span>
             ) : null}
           </p>
         ) : null}
@@ -179,7 +179,7 @@ export default async function PoiskPage({ searchParams }: Props) {
               <div>
                 <SectionHeader title={poiskCopy.sectionMaterials} count={materialCount} />
                 {materialCount === 0 ? (
-                  <p className="text-slate-600">В текстах и заголовках материалов совпадений нет — смотрите блок справа.</p>
+                  <p className="text-slate-600">Р’ С‚РµРєСЃС‚Р°С… Рё Р·Р°РіРѕР»РѕРІРєР°С… РјР°С‚РµСЂРёР°Р»РѕРІ СЃРѕРІРїР°РґРµРЅРёР№ РЅРµС‚ вЂ” СЃРјРѕС‚СЂРёС‚Рµ Р±Р»РѕРє СЃРїСЂР°РІР°.</p>
                 ) : (
                   <div className="space-y-12">
                     {(
@@ -216,7 +216,7 @@ export default async function PoiskPage({ searchParams }: Props) {
                 <div className="space-y-4">
                   {authorHits.length ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Авторы</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">РђРІС‚РѕСЂС‹</h3>
                       <ul className="mt-4 space-y-3">
                         {authorHits.map((a) => (
                           <li key={a.slug}>
@@ -231,7 +231,7 @@ export default async function PoiskPage({ searchParams }: Props) {
                   ) : null}
                   {rubricHits.length ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Рубрики</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Р СѓР±СЂРёРєРё</h3>
                       <ul className="mt-4 space-y-2">
                         {rubricHits.map((r) => (
                           <li key={r.slug}>
@@ -245,7 +245,7 @@ export default async function PoiskPage({ searchParams }: Props) {
                   ) : null}
                   {tagHits.length ? (
                     <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">Теги</h3>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">РўРµРіРё</h3>
                       <ul className="mt-4 flex flex-wrap gap-2">
                         {tagHits.map((t) => (
                           <li key={t.slug}>
@@ -264,3 +264,4 @@ export default async function PoiskPage({ searchParams }: Props) {
     </div>
   );
 }
+

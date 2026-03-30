@@ -6,7 +6,7 @@ function parseBoundedInt(raw: string | undefined, fallback: number, min: number,
 }
 
 /**
- * ISR с лентой: в каждом `page.tsx` задано `export const revalidate = 120` (литерал — требование Next.js 16 для статического анализа).
+ * ISR с лентой: в каждом `page.tsx` задано `export const revalidate = 30` (литерал — требование Next.js 16 для статического анализа).
  * При смене интервала — find/replace по проекту или поменяйте только нужные страницы.
  */
 

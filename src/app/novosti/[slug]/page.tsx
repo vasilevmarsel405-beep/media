@@ -7,7 +7,7 @@ import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
 type Props = { params: Promise<{ slug: string }> };
 
 /** См. analitika/[slug]: без предрендера при build — меньше таймаутов к Upstash. */
-export const revalidate = 120;
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

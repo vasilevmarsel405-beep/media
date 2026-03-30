@@ -1,9 +1,9 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import Link from "next/link";
 import { rubrics } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 function rubricCellClass(i: number) {
   if (i === 0) {
@@ -26,10 +26,10 @@ export default function RubrikiPage() {
     <div className="bg-[#fafafa]">
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
         <div className="max-w-2xl">
-          <p className="text-[11px] font-black uppercase tracking-[0.26em] text-slate-400">Навигация</p>
-          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Рубрики и темы</h1>
+          <p className="text-[11px] font-black uppercase tracking-[0.26em] text-slate-400">РќР°РІРёРіР°С†РёСЏ</p>
+          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Р СѓР±СЂРёРєРё Рё С‚РµРјС‹</h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600">
-            Навигация по интересам: политика, бизнес, технологии, культура и другие направления редакции.
+            РќР°РІРёРіР°С†РёСЏ РїРѕ РёРЅС‚РµСЂРµСЃР°Рј: РїРѕР»РёС‚РёРєР°, Р±РёР·РЅРµСЃ, С‚РµС…РЅРѕР»РѕРіРёРё, РєСѓР»СЊС‚СѓСЂР° Рё РґСЂСѓРіРёРµ РЅР°РїСЂР°РІР»РµРЅРёСЏ СЂРµРґР°РєС†РёРё.
           </p>
         </div>
 
@@ -82,9 +82,9 @@ export default function RubrikiPage() {
                       {r.description}
                     </p>
                     <span className="mt-4 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white">
-                      Открыть рубрику
+                      РћС‚РєСЂС‹С‚СЊ СЂСѓР±СЂРёРєСѓ
                       <span aria-hidden className="transition group-hover:translate-x-1">
-                        →
+                        в†’
                       </span>
                     </span>
                   </div>
@@ -97,3 +97,4 @@ export default function RubrikiPage() {
     </div>
   );
 }
+

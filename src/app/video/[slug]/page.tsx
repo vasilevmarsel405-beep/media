@@ -8,7 +8,7 @@ import { getYoutubeVideoEnrichment } from "@/lib/youtube-enrichment";
 type Props = { params: Promise<{ slug: string }> };
 
 /** Видео тянет YouTube API при рендере — предрендер при build многократно обрывается по таймауту. */
-export const revalidate = 120;
+export const revalidate = 30;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

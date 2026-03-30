@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { FeaturedNewsCard } from "@/components/novosti/FeaturedNewsCard";
 import { ItemListJsonLd } from "@/components/seo/ItemListJsonLd";
@@ -9,7 +9,7 @@ import { postHref } from "@/lib/routes";
 import { getPostsByKind } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
-export const revalidate = 120;
+export const revalidate = 30;
 
 type Search = { rubric?: string; tag?: string };
 
@@ -46,7 +46,7 @@ export default async function NovostiPage({
   return (
     <>
       <ItemListJsonLd
-        name="Новости"
+        name="РќРѕРІРѕСЃС‚Рё"
         description={novostiCopy.intro}
         path={listPath}
         items={itemListLd}
@@ -58,17 +58,17 @@ export default async function NovostiPage({
       />
       <div className="relative mx-auto max-w-[1400px] px-4 pb-14 pt-10 sm:px-6 lg:px-10">
         <div className="mb-2 inline-flex items-center gap-2 rounded-md bg-mars-accent/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-mars-accent">
-          Лента
+          Р›РµРЅС‚Р°
         </div>
-        <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Новости</h1>
+        <h1 className="font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">РќРѕРІРѕСЃС‚Рё</h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">{novostiCopy.intro}</p>
 
         <div className="mt-10 space-y-5 rounded-xl border border-slate-200/90 bg-white/90 p-4 shadow-sm backdrop-blur-sm sm:p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-            <span className="w-20 shrink-0 text-[10px] font-black uppercase tracking-widest text-slate-400">Рубрика</span>
+            <span className="w-20 shrink-0 text-[10px] font-black uppercase tracking-widest text-slate-400">Р СѓР±СЂРёРєР°</span>
             <div className="flex min-w-0 flex-1 flex-wrap gap-2">
               <Link href="/novosti" className={chip(!sp.rubric && !sp.tag)}>
-                Все
+                Р’СЃРµ
               </Link>
               {rubrics.map((r) => (
                 <Link
@@ -83,7 +83,7 @@ export default async function NovostiPage({
           </div>
           <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" aria-hidden />
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
-            <span className="w-20 shrink-0 text-[10px] font-black uppercase tracking-widest text-slate-400">Теги</span>
+            <span className="w-20 shrink-0 text-[10px] font-black uppercase tracking-widest text-slate-400">РўРµРіРё</span>
             <div className="flex min-w-0 flex-1 flex-wrap gap-2">
               {tags.slice(0, 8).map((t) => (
                 <Link key={t.slug} href={`/novosti?tag=${t.slug}`} className={chip(sp.tag === t.slug)}>
@@ -118,7 +118,7 @@ export default async function NovostiPage({
             pinned.length > 0 && !sp.rubric && !sp.tag ? "" : "mt-10 border-transparent pl-0 sm:pl-0"
           )}
         >
-          <h2 className="mb-6 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Все материалы</h2>
+          <h2 className="mb-6 text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">Р’СЃРµ РјР°С‚РµСЂРёР°Р»С‹</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((p) => (
               <PostCard key={p.slug} post={p} />
@@ -134,3 +134,4 @@ export default async function NovostiPage({
     </>
   );
 }
+
