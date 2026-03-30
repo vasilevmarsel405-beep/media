@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { authors, posts as staticPosts } from "./content";
 import { postsMemoryCacheTtlMs } from "./posts-cache-config";
 import { getPostsCacheVersion, getPostsStorageMode, readRemotePostsRaw } from "./redis-posts";
@@ -50,11 +49,13 @@ async function loadPostsForFeed(): Promise<Post[]> {
 
 let cachedPosts: Post[] | null = null;
 let cacheTs = 0;
-/** Один «стекер» загрузки между воркерами; внутри одного запроса RSC помогает `cache()` из React. */
+/** Один «стекер» загрузки между воркерами процесса. */
 let loadInFlight: Promise<Post[]> | null = null;
 let cachedVersion = 0;
+let versionCheckedAtTs = 0;
+const VERSION_CHECK_MIN_INTERVAL_MS = 5000;
 
-async function getAllPostsForRequest(): Promise<Post[]> {
+export async function getAllPosts(): Promise<Post[]> {
   const now = Date.now();
   const ttl = postsMemoryCacheTtlMs();
   const mode = getPostsStorageMode();
@@ -62,7 +63,10 @@ async function getAllPostsForRequest(): Promise<Post[]> {
     // Между воркерами PM2 in-memory кеш не шарится.
     // Сверяемся с версией в Redis (дешевый GET), чтобы все воркеры увидели обновление сразу.
     if (mode === "upstash") {
+      // Не дергаем Redis на КАЖДЫЙ заход в пределах TTL.
+      if (now - versionCheckedAtTs < VERSION_CHECK_MIN_INTERVAL_MS) return cachedPosts;
       const v = await getPostsCacheVersion();
+      versionCheckedAtTs = now;
       if (v === cachedVersion) return cachedPosts;
     } else {
       return cachedPosts;
@@ -74,6 +78,7 @@ async function getAllPostsForRequest(): Promise<Post[]> {
     const data = await loadPostsForFeed();
     if (mode === "upstash") {
       cachedVersion = await getPostsCacheVersion();
+      versionCheckedAtTs = Date.now();
     }
     cachedPosts = data;
     cacheTs = Date.now();
@@ -87,17 +92,11 @@ async function getAllPostsForRequest(): Promise<Post[]> {
   return loadInFlight;
 }
 
-/** Одна загрузка на дерево RSC за запрос + memory TTL между запросами. */
-const getAllPostsMemo = cache(getAllPostsForRequest);
-
-export async function getAllPosts(): Promise<Post[]> {
-  return getAllPostsMemo();
-}
-
 export function invalidatePostsCache() {
   cachedPosts = null;
   cacheTs = 0;
   loadInFlight = null;
+  versionCheckedAtTs = 0;
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {

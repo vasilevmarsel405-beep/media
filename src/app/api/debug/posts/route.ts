@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { readRemotePostsRaw, getPostsStorageMode } from "@/lib/redis-posts";
+import { getPostsCacheVersion, getPostsStorageMode, readRemotePostsRaw } from "@/lib/redis-posts";
 import { getAllPosts } from "@/lib/posts-service";
 
 export const dynamic = "force-dynamic";
@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const mode = getPostsStorageMode();
   const feedMode = process.env.POSTS_FEED_MODE ?? "(not set)";
+  const version = await getPostsCacheVersion();
 
   let rawPosts: { slug: string; kind: string; title: string }[] = [];
   let rawError: string | null = null;
@@ -29,6 +30,7 @@ export async function GET() {
   return NextResponse.json({
     storageMode: mode,
     feedMode,
+    version,
     redis: {
       count: rawPosts.length,
       error: rawError,
