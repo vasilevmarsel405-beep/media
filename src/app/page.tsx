@@ -14,6 +14,7 @@ import { formatDateTime, formatTime } from "@/lib/format";
 import {
   getAllPosts,
   pickFeaturedHero,
+  pickEditorialPicks,
   pickPopularPosts,
   pickSecondaryHero,
   pickUrgentFeed,
@@ -37,16 +38,14 @@ export default async function HomePage() {
   const heroHref = hero ? postHref(hero) : "/novosti";
   const urgentList = pickUrgentFeed(allPosts);
   const popular = pickPopularPosts(allPosts);
-  const articles: Post[] = [];
   const analyticsList: Post[] = [];
-  const interviews: Post[] = [];
   const videos: Post[] = [];
   for (const p of allPosts) {
-    if (p.kind === "article") articles.push(p);
-    else if (p.kind === "analytics") analyticsList.push(p);
-    else if (p.kind === "interview") interviews.push(p);
+    if (p.kind === "analytics") analyticsList.push(p);
     else if (p.kind === "video") videos.push(p);
   }
+
+  const editorialPicks = pickEditorialPicks(allPosts);
   const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
   const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
 
@@ -199,9 +198,13 @@ export default async function HomePage() {
           actionLabel={homeCopy.sections.picks.action}
         />
         <div className="grid gap-6 lg:grid-cols-2">
-          {articles.map((p) => (
-            <PostCard key={p.slug} post={p} />
-          ))}
+          {editorialPicks.length ? (
+            editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
+          ) : (
+            <p className="col-span-full text-sm font-medium text-slate-500">
+              Пока редакция не отметила материалы для этого блока.
+            </p>
+          )}
         </div>
       </div>
 
@@ -221,7 +224,7 @@ export default async function HomePage() {
               >
                 <Link href={`/analitika/${p.slug}`} className="block">
                   <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-blue">
-                    Р“Р»СѓР±РѕРєРёР№ СЂР°Р·Р±РѕСЂ
+                    Аналитика: разбор
                   </p>
                   <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-mars-blue">
                     {p.title}
@@ -234,20 +237,6 @@ export default async function HomePage() {
               </article>
             ))}
           </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-        <SectionHeading
-          title={homeCopy.sections.interviews.title}
-          subtitle={homeCopy.sections.interviews.subtitle}
-          href="/intervyu"
-          actionLabel={homeCopy.sections.interviews.action}
-        />
-        <div className="grid gap-6 lg:grid-cols-2">
-          {interviews.map((p) => (
-            <PostCard key={p.slug} post={p} />
-          ))}
         </div>
       </div>
 

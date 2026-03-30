@@ -170,6 +170,7 @@ export const posts: Post[] = [
     tagSlugs: ["obrazovanie"],
     publishedAt: "2026-03-26T10:00:00.000Z",
     readMin: 12,
+    homePick: true,
     materialType: "Колонка",
     keyPoints: [
       "Режьте текст на блоки: один тезис — один абзац в ваших конспектах.",
@@ -201,6 +202,7 @@ export const posts: Post[] = [
     tagSlugs: ["potrebiteli", "media"],
     publishedAt: "2026-03-25T16:00:00.000Z",
     readMin: 9,
+    homePick: true,
     materialType: "Обзор",
     paragraphs: [
       "Между крупными релизами аудитория не «отдыхает» — она переключается на короткие форматы и нишевые подборки.",

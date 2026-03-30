@@ -34,7 +34,10 @@ export function PostCard({
             : "card-hover group flex min-w-0 max-w-full gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm sm:gap-4"
         }
       >
-        <Link href={href} className="relative aspect-[4/3] w-[7.5rem] shrink-0 overflow-hidden rounded-xl sm:w-36 md:w-44">
+        <Link
+          href={href}
+          className="relative aspect-[1/1] w-[5.6rem] shrink-0 overflow-hidden rounded-xl sm:aspect-[4/3] sm:w-36 md:w-44"
+        >
           <Image
             src={cover}
             alt={postCoverImageAlt(post.title)}

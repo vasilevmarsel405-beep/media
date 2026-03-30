@@ -70,6 +70,7 @@ export function AdminPostForm({
       homeBadge: initial?.homeBadge ?? "",
       homeCta: initial?.homeCta ?? "",
       homeHero: initial?.homeHero ?? false,
+      homePick: initial?.homePick ?? false,
       homeVideoUrl: initial?.homeVideoUrl ?? "",
       homeVideoLabel: initial?.homeVideoLabel ?? "",
     }),
@@ -138,6 +139,7 @@ export function AdminPostForm({
         if (form.homeVideoUrl.trim()) body.homeVideoUrl = form.homeVideoUrl.trim();
         if (form.homeVideoLabel.trim()) body.homeVideoLabel = form.homeVideoLabel.trim();
         body.homeHero = form.homeHero;
+        body.homePick = form.homePick;
         body.urgent = form.urgent;
         body.pinned = form.pinned;
 
@@ -589,6 +591,15 @@ export function AdminPostForm({
             onChange={(e) => setForm((f) => ({ ...f, homeHero: e.target.checked }))}
           />
           Поставить в главный слот слева на главной
+        </label>
+        <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2">
+          <input
+            type="checkbox"
+            disabled={!canSave}
+            checked={form.homePick}
+            onChange={(e) => setForm((f) => ({ ...f, homePick: e.target.checked }))}
+          />
+          Показывать в блоке «Выбор редакции» на главной
         </label>
       </section>
 

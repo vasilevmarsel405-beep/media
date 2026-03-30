@@ -208,6 +208,7 @@ export async function searchPosts(q: string): Promise<Post[]> {
 }
 
 const URGENT_FEED_LIMIT = 8;
+const EDITORIAL_PICKS_LIMIT = 4;
 
 /** Герой из уже загруженного списка (`getAllPosts` уже отсортирован по дате). */
 export function pickFeaturedHero(all: Post[]): Post | null {
@@ -251,6 +252,25 @@ export function pickPopularPosts(all: Post[]): Post[] {
         +new Date(b.publishedAt) - +new Date(a.publishedAt)
     )
     .slice(0, 6);
+}
+
+/**
+ * «Выбор редакции» на главной: только материалы с флагом `homePick` (по дате).
+ */
+export function pickEditorialPicks(all: Post[]): Post[] {
+  const seen = new Set<string>();
+  const out: Post[] = [];
+
+  for (const p of all) {
+    if (p.kind !== "article") continue;
+    if (!p.homePick) continue;
+    if (seen.has(p.slug)) continue;
+    if (out.length >= EDITORIAL_PICKS_LIMIT) break;
+    out.push(p);
+    seen.add(p.slug);
+  }
+
+  return out;
 }
 
 export async function getFeaturedHero(): Promise<Post | null> {
