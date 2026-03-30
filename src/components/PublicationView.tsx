@@ -15,6 +15,43 @@ import { BreadcrumbJsonLd } from "@/components/seo/BreadcrumbJsonLd";
 import { TocAside } from "@/components/TocAside";
 import { cn } from "@/lib/cn";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+function MarkdownParagraph({ text, className }: { text: string; className?: string }) {
+  return (
+    <div className={className}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        // По умолчанию HTML из markdown не рендерится (без rehypeRaw),
+        // поэтому форматирование безопасно: поддерживаем markdown-синтаксис.
+        components={{
+          p: ({ children }) => <>{children}</>,
+          a: ({ href, children }) => (
+            <a
+              href={href}
+              className="font-semibold text-mars-blue underline decoration-mars-blue/35 underline-offset-2 hover:decoration-mars-blue"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {children}
+            </a>
+          ),
+          ul: ({ children }) => <ul className="my-3 list-disc space-y-1 pl-6">{children}</ul>,
+          ol: ({ children }) => <ol className="my-3 list-decimal space-y-1 pl-6">{children}</ol>,
+          li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+          strong: ({ children }) => <strong className="font-bold text-slate-900">{children}</strong>,
+          em: ({ children }) => <em className="italic">{children}</em>,
+          code: ({ children }) => (
+            <code className="rounded bg-slate-100 px-1.5 py-0.5 text-[0.92em] text-slate-800">{children}</code>
+          ),
+        }}
+      >
+        {text}
+      </ReactMarkdown>
+    </div>
+  );
+}
 
 export function PublicationView({
   post,
@@ -229,20 +266,18 @@ export function PublicationView({
                       <h2 className="font-display mt-12 border-l-[3px] border-mars-accent pl-4 text-xl font-bold leading-snug text-slate-900 first:mt-0 sm:mt-14 sm:pl-5 sm:text-2xl">
                         {t.label}
                       </h2>
-                      {post.paragraphs[i] ? <p className="mt-5 leading-relaxed">{post.paragraphs[i]}</p> : null}
+                      {post.paragraphs[i] ? (
+                        <MarkdownParagraph text={post.paragraphs[i]} className="mt-5 leading-relaxed" />
+                      ) : null}
                     </section>
                   ))}
                   {post.paragraphs.slice(post.toc.length).map((text, i) => (
-                    <p key={i} className="mt-6 leading-relaxed">
-                      {text}
-                    </p>
+                    <MarkdownParagraph key={i} text={text} className="mt-6 leading-relaxed" />
                   ))}
                 </>
               ) : (
                 post.paragraphs.map((text, i) => (
-                  <p key={i} className="mt-6 leading-relaxed first:mt-0">
-                    {text}
-                  </p>
+                  <MarkdownParagraph key={i} text={text} className="mt-6 leading-relaxed first:mt-0" />
                 ))
               )}
             </div>
