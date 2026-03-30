@@ -8,6 +8,10 @@ import { resolveAdminSessionSecret } from "@/lib/admin-session-secret";
 function attachNoStore(res: NextResponse) {
   // Жёстко запрещаем кеш HTML на клиенте/прокси/CDN.
   res.headers.set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate, proxy-revalidate");
+  // Некоторые CDN/прокси ориентируются на surrogate/CDN-заголовки.
+  // Дублируем запрет, чтобы исключить «иногда старая версия».
+  res.headers.set("Surrogate-Control", "no-store");
+  res.headers.set("CDN-Cache-Control", "no-store");
   res.headers.set("Pragma", "no-cache");
   res.headers.set("Expires", "0");
   return res;

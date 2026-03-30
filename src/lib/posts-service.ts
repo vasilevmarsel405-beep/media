@@ -52,6 +52,22 @@ let cacheTs = 0;
 /** Один «стекер» загрузки между воркерами процесса. */
 let loadInFlight: Promise<Post[]> | null = null;
 let cachedVersion = 0;
+/** Дедуп GET версии Redis в рамках одновременных запросов. */
+let versionReadInFlight: Promise<number> | null = null;
+
+async function getPostsCacheVersionDeduped(): Promise<number> {
+  if (versionReadInFlight) return versionReadInFlight;
+  versionReadInFlight = getPostsCacheVersion()
+    .then((v) => {
+      versionReadInFlight = null;
+      return v;
+    })
+    .catch((e) => {
+      versionReadInFlight = null;
+      throw e;
+    });
+  return versionReadInFlight;
+}
 
 export async function getAllPosts(): Promise<Post[]> {
   const now = Date.now();
@@ -63,7 +79,7 @@ export async function getAllPosts(): Promise<Post[]> {
     if (mode === "upstash") {
       // В upstash-режиме строго сверяемся с версией Redis на каждый запрос,
       // чтобы воркеры и клиентские переходы не видели "старую" ленту.
-      const v = await getPostsCacheVersion();
+      const v = await getPostsCacheVersionDeduped();
       if (v === cachedVersion) return cachedPosts;
       // Если версия изменилась — обновим кеш ниже через полный reload.
     } else {
@@ -75,7 +91,7 @@ export async function getAllPosts(): Promise<Post[]> {
   loadInFlight = (async () => {
     const data = await loadPostsForFeed();
     if (mode === "upstash") {
-      cachedVersion = await getPostsCacheVersion();
+      cachedVersion = await getPostsCacheVersionDeduped();
     }
     cachedPosts = data;
     cacheTs = Date.now();

@@ -37,11 +37,16 @@ export default async function HomePage() {
   const heroHref = hero ? postHref(hero) : "/novosti";
   const urgentList = pickUrgentFeed(allPosts);
   const popular = pickPopularPosts(allPosts);
-  const byKind = (k: Post["kind"]) => allPosts.filter((p) => p.kind === k);
-  const articles = byKind("article");
-  const analyticsList = byKind("analytics");
-  const interviews = byKind("interview");
-  const videos = byKind("video");
+  const articles: Post[] = [];
+  const analyticsList: Post[] = [];
+  const interviews: Post[] = [];
+  const videos: Post[] = [];
+  for (const p of allPosts) {
+    if (p.kind === "article") articles.push(p);
+    else if (p.kind === "analytics") analyticsList.push(p);
+    else if (p.kind === "interview") interviews.push(p);
+    else if (p.kind === "video") videos.push(p);
+  }
   const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
   const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
 

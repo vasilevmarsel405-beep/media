@@ -8,6 +8,12 @@ export async function GET() {
   const mode = getPostsStorageMode();
   const feedMode = process.env.POSTS_FEED_MODE ?? "(not set)";
   const version = await getPostsCacheVersion();
+  const build =
+    process.env.MARS_BUILD_ID?.trim() ||
+    process.env.NEXT_PUBLIC_MARS_BUILD_ID?.trim() ||
+    process.env.GIT_COMMIT_SHA?.trim() ||
+    process.env.SOURCE_VERSION?.trim() ||
+    "unknown";
 
   let rawPosts: { slug: string; kind: string; title: string }[] = [];
   let rawError: string | null = null;
@@ -28,6 +34,7 @@ export async function GET() {
   }
 
   return NextResponse.json({
+    build,
     storageMode: mode,
     feedMode,
     version,
