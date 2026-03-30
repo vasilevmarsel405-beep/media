@@ -33,7 +33,11 @@ function mergeBySlug(remote: Post[], local: Post[]): Post[] {
 /** См. POSTS_FEED_MODE в .env — по умолчанию мерж статики и облака. */
 function isRemoteOnlyFeed(): boolean {
   const m = process.env.POSTS_FEED_MODE?.trim().toLowerCase();
-  return m === "remote_only" || m === "remote-only";
+  if (m === "remote_only" || m === "remote-only") return true;
+  // В production при подключенном Upstash по умолчанию работаем в "живом" режиме
+  // только от удалённых постов, чтобы не откатываться к устаревшей статике.
+  if (process.env.NODE_ENV === "production" && getPostsStorageMode() === "upstash") return true;
+  return false;
 }
 
 async function loadPostsForFeed(): Promise<Post[]> {
@@ -90,9 +94,8 @@ export async function getAllPosts(): Promise<Post[]> {
         const v = await getPostsCacheVersionDeduped();
         if (v === cachedVersion) return cachedPosts;
       } catch {
-        // Если Redis недоступен/медленный, лучше быстро отдать последний кеш,
-        // чем держать TTFB и "подвешивать" открытие страницы.
-        return cachedPosts;
+        // В live-режиме при сбое проверки версии пытаемся перечитать данные ниже,
+        // чтобы не удерживать устаревший in-memory снимок слишком долго.
       }
       // Если версия изменилась — обновим кеш ниже через полный reload.
     } else {
