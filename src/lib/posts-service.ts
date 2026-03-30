@@ -137,6 +137,28 @@ export async function getRelatedPosts(post: Post, limit = 4): Promise<Post[]> {
   return scored.slice(0, limit).map((z) => z.x);
 }
 
+export async function getPostAndRelatedBySlug(
+  slug: string,
+  opts?: { kind?: Post["kind"]; relatedLimit?: number }
+): Promise<{ post?: Post; related: Post[] }> {
+  const all = await getAllPosts();
+  const post = all.find((p) => p.slug === slug);
+  if (!post) return { post: undefined, related: [] };
+  if (opts?.kind && post.kind !== opts.kind) return { post: undefined, related: [] };
+  const limit = opts?.relatedLimit ?? 4;
+  const tagSet = new Set(post.tagSlugs);
+  const scored = all
+    .filter((x) => x.slug !== post.slug)
+    .map((x) => ({
+      x,
+      s:
+        x.rubricSlugs.filter((r) => post.rubricSlugs.includes(r)).length * 2 +
+        x.tagSlugs.filter((t) => tagSet.has(t)).length,
+    }))
+    .sort((a, b) => b.s - a.s);
+  return { post, related: scored.slice(0, limit).map((z) => z.x) };
+}
+
 export async function searchPosts(q: string): Promise<Post[]> {
   const n = q.trim().toLowerCase();
   if (!n) return [];

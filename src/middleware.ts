@@ -5,6 +5,26 @@ import { adminCookieName } from "@/lib/admin-constants";
 import { adminEntryPathname } from "@/lib/admin-entry-path";
 import { resolveAdminSessionSecret } from "@/lib/admin-session-secret";
 
+function attachNoStore(res: NextResponse) {
+  // Жёстко запрещаем кеш HTML на клиенте/прокси/CDN.
+  res.headers.set("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate, proxy-revalidate");
+  res.headers.set("Pragma", "no-cache");
+  res.headers.set("Expires", "0");
+  return res;
+}
+
+function attachBuildMarker(res: NextResponse) {
+  // Помогает поймать ситуацию, когда разные процессы/билды отдают разные страницы.
+  const build =
+    process.env.MARS_BUILD_ID?.trim() ||
+    process.env.NEXT_PUBLIC_MARS_BUILD_ID?.trim() ||
+    process.env.GIT_COMMIT_SHA?.trim() ||
+    process.env.SOURCE_VERSION?.trim() ||
+    "unknown";
+  res.headers.set("X-Mars-Build", build);
+  return res;
+}
+
 function secretBytes(): Uint8Array | null {
   const s = resolveAdminSessionSecret();
   if (!s) return null;
@@ -15,6 +35,14 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isAdminUi = pathname.startsWith("/admin");
   const isAdminApi = pathname.startsWith("/api/admin");
+  const isHome = pathname === "/";
+  const isDebugPosts = pathname === "/api/debug/posts";
+
+  // Для главной и debug — всегда отдаем без кеша и с маркером билда.
+  if ((isHome || isDebugPosts) && request.method === "GET") {
+    return attachBuildMarker(attachNoStore(NextResponse.next()));
+  }
+
   if (!isAdminUi && !isAdminApi) return NextResponse.next();
 
   if (pathname === "/admin/login" || pathname.startsWith("/admin/login/")) {
@@ -69,5 +97,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/", "/api/debug/posts", "/admin/:path*", "/api/admin/:path*"],
 };

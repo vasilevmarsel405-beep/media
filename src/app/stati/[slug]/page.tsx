@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicationView } from "@/components/PublicationView";
 import { buildPostMetadata } from "@/lib/seo/post-metadata";
-import { getPostBySlug, getRelatedPosts } from "@/lib/posts-service";
+import { getPostAndRelatedBySlug, getPostBySlug } from "@/lib/posts-service";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticlePage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
-  if (!post || post.kind !== "article") notFound();
+  const { post, related } = await getPostAndRelatedBySlug(slug, { kind: "article" });
+  if (!post) notFound();
 
   return (
     <PublicationView
@@ -28,7 +28,7 @@ export default async function ArticlePage({ params }: Props) {
         { href: "/stati", label: "Статьи" },
         { href: `/stati/${slug}`, label: post.title },
       ]}
-      related={await getRelatedPosts(post)}
+      related={related}
     />
   );
 }
