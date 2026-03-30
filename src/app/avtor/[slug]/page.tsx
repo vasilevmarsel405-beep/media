@@ -8,7 +8,7 @@ import { siteUrl } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

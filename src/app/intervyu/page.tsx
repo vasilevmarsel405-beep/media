@@ -2,7 +2,7 @@ import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getPostsByKind } from "@/lib/posts-service";
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 export default async function IntervyuPage() {
   const list = (await getPostsByKind("interview")).sort(

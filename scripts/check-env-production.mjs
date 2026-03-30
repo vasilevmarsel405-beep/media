@@ -53,6 +53,7 @@ const optional = [
   "NEXT_PUBLIC_IMAGE_REMOTE_HOSTS",
   "YOUTUBE_DATA_API_KEY",
   "POSTS_FEED_MODE",
+  "POSTS_MEMORY_CACHE_MS",
 ];
 
 const missing = required.filter((k) => !merged[k]?.trim());

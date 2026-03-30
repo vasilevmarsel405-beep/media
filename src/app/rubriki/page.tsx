@@ -3,7 +3,7 @@ import Link from "next/link";
 import { rubrics } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 function rubricCellClass(i: number) {
   if (i === 0) {

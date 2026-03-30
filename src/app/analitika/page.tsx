@@ -5,7 +5,7 @@ import { getPostsByKind } from "@/lib/posts-service";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 /** Не блокируем build сетевыми запросами к Redis/внешним API. */
-export const revalidate = 60;
+export const revalidate = 120;
 
 export default async function AnalitikaPage() {
   const list = (await getPostsByKind("analytics")).sort(

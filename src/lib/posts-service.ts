@@ -1,4 +1,6 @@
+import { cache } from "react";
 import { authors, posts as staticPosts } from "./content";
+import { postsMemoryCacheTtlMs } from "./posts-cache-config";
 import { readRemotePostsRaw } from "./redis-posts";
 import type { Post } from "./types";
 
@@ -48,18 +50,13 @@ async function loadPostsForFeed(): Promise<Post[]> {
 
 let cachedPosts: Post[] | null = null;
 let cacheTs = 0;
-const CACHE_TTL_MS = 30_000;
-/** Один «стекер» загрузки: главная вызывает getAllPosts ~8 раз параллельно → без этого 8× Redis. */
+/** Один «стекер» загрузки между воркерами; внутри одного запроса RSC помогает `cache()` из React. */
 let loadInFlight: Promise<Post[]> | null = null;
 
-/**
- * Все посты для ленты сайта (in-memory кеш 30 с, сбрасывается через invalidatePostsCache).
- * unstable_cache на self-hosted VPS ненадёжен: revalidateTag может не сбрасывать дисковый кеш,
- * из-за чего после билда лента остаётся пустой навсегда.
- */
-export async function getAllPosts(): Promise<Post[]> {
+async function getAllPostsForRequest(): Promise<Post[]> {
   const now = Date.now();
-  if (cachedPosts && now - cacheTs < CACHE_TTL_MS) return cachedPosts;
+  const ttl = postsMemoryCacheTtlMs();
+  if (cachedPosts && now - cacheTs < ttl) return cachedPosts;
   if (loadInFlight) return loadInFlight;
 
   loadInFlight = loadPostsForFeed()
@@ -75,6 +72,13 @@ export async function getAllPosts(): Promise<Post[]> {
     });
 
   return loadInFlight;
+}
+
+/** Одна загрузка на дерево RSC за запрос + memory TTL между запросами. */
+const getAllPostsMemo = cache(getAllPostsForRequest);
+
+export async function getAllPosts(): Promise<Post[]> {
+  return getAllPostsMemo();
 }
 
 export function invalidatePostsCache() {

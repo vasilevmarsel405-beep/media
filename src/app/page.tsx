@@ -1,5 +1,3 @@
-export const revalidate = 60;
-
 import Image from "next/image";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
@@ -23,6 +21,8 @@ import {
 import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
+
+export const revalidate = 120;
 
 function isExternalUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);

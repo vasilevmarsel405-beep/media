@@ -14,7 +14,7 @@ function postItemKey(slug: string): string {
   return `marsmedia:posts:v2:item:${slug}`;
 }
 
-const MGET_CHUNK = 80;
+const MGET_CHUNK = 120;
 
 function localPostsFile(): string {
   return path.join(process.cwd(), ".local", "remote-posts.json");

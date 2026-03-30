@@ -3,7 +3,7 @@ import Link from "next/link";
 import { specialProjects } from "@/lib/content";
 import { cn } from "@/lib/cn";
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 export default function SpecproektyPage() {
   return (

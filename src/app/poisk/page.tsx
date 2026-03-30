@@ -1,5 +1,3 @@
-export const revalidate = 60;
-
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
@@ -8,6 +6,8 @@ import { poiskCopy } from "@/lib/copy";
 import { authors, rubrics, tags } from "@/lib/content";
 import { getAllPosts, searchPosts } from "@/lib/posts-service";
 import { cn } from "@/lib/cn";
+
+export const revalidate = 120;
 
 type Props = { searchParams: Promise<{ q?: string }> };
 

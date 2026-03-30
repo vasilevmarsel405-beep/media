@@ -9,7 +9,7 @@ import { postHref } from "@/lib/routes";
 import { getPostsByKind } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 type Search = { rubric?: string; tag?: string };
 

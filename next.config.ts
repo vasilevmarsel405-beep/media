@@ -37,10 +37,16 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: turbopackRoot,
   },
+  poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
+  },
   async headers() {
     return [{ source: "/:path*", headers: [...securityHeaders] }];
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86_400,
     remotePatterns: [
       {
         protocol: "https",

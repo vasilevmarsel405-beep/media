@@ -6,7 +6,7 @@ import { getPostsByKind } from "@/lib/posts-service";
 import { formatDateTime } from "@/lib/format";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
-export const revalidate = 60;
+export const revalidate = 120;
 
 const categories = [
   { slug: "news", label: "Сводки дня" },

@@ -27,6 +27,9 @@ nano /var/www/cryptomars/.env.production
 | `UPSTASH_REDIS_REST_TOKEN` | То же |
 | `REDIS_READ_TIMEOUT_MS` (необяз.) | Лимит ожидания чтения **ленты постов** из Upstash (по умолчанию 12000 мс). Если не задать, при плохой связи с Upstash страница могла «висеть» из‑за многократных ретраев SDK. |
 | `UPSTASH_REDIS_RETRIES` (необяз.) | Число повторов HTTP к Upstash, 0–5 (по умолчанию 2). |
+| `POSTS_MEMORY_CACHE_MS` (необяз.) | Кеш списка постов в памяти процесса Node (по умолчанию 60000 в prod). Выше — меньше запросов в Upstash при частом трафике. |
+
+Страницы с лентой используют **ISR ~120 с** (`export const revalidate = 120` в `src/app`): nginx и браузер чаще получают готовую страницу без холодного рендера. Изменить интервал — правкой этого литерала в нужных `page.tsx`.
 | `MAKE_WEBHOOK_SECRET` | Секрет для `POST /api/webhooks/make` |
 | `ADMIN_PASSWORD` | Вход в админку |
 | `ADMIN_SESSION_SECRET` | JWT сессии (не короче 16 символов) |
