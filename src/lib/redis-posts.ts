@@ -198,8 +198,8 @@ async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
 }
 
 async function ensureSlugsIndexType(redis: Redis): Promise<void> {
-  const t = await redis.type(POST_SLUGS_SET);
-  const type = String(t ?? "");
+  const t = unwrapRedisResult(await redis.type(POST_SLUGS_SET));
+  const type = String(t ?? "").toLowerCase();
   if (type === "" || type === "none" || type === "set") return;
   // WRONGTYPE на индексе ломает публикации: SADD/SMEMBERS тихо деградируют в pipeline.
   await redis.del(POST_SLUGS_SET);
