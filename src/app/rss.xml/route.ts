@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllPosts } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
 import { siteName, siteUrl } from "@/lib/site";

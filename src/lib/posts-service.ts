@@ -1,4 +1,3 @@
-import { unstable_cache } from "next/cache";
 import { authors, posts as staticPosts } from "./content";
 import { readRemotePostsRaw } from "./redis-posts";
 import type { Post } from "./types";
@@ -47,14 +46,27 @@ async function loadPostsForFeed(): Promise<Post[]> {
   return sortPostsByPublishedDesc(normalized);
 }
 
+let cachedPosts: Post[] | null = null;
+let cacheTs = 0;
+const CACHE_TTL_MS = 30_000;
+
 /**
- * Все посты для ленты сайта.
- * - По умолчанию: статика из репозитория + Redis/Make, облако перезаписывает совпадающие slug.
- * - `POSTS_FEED_MODE=remote_only` — только облако (кодовые демо-материалы на сайте не показываются).
+ * Все посты для ленты сайта (in-memory кеш 30 с, сбрасывается через invalidatePostsCache).
+ * unstable_cache на self-hosted VPS ненадёжен: revalidateTag может не сбрасывать дисковый кеш,
+ * из-за чего после билда лента остаётся пустой навсегда.
  */
-export const getAllPosts = unstable_cache(loadPostsForFeed, ["posts-feed-v1", process.env.POSTS_FEED_MODE ?? ""], {
-  tags: ["posts"],
-});
+export async function getAllPosts(): Promise<Post[]> {
+  const now = Date.now();
+  if (cachedPosts && now - cacheTs < CACHE_TTL_MS) return cachedPosts;
+  cachedPosts = await loadPostsForFeed();
+  cacheTs = now;
+  return cachedPosts;
+}
+
+export function invalidatePostsCache() {
+  cachedPosts = null;
+  cacheTs = 0;
+}
 
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {
   const all = await getAllPosts();

@@ -1,5 +1,6 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { authorById, authors } from "./content";
+import { invalidatePostsCache } from "./posts-service";
 import type { Post } from "./types";
 
 const KIND_PREFIX: Record<Post["kind"], string> = {
@@ -11,18 +12,17 @@ const KIND_PREFIX: Record<Post["kind"], string> = {
 };
 
 /**
- * Только теги `posts` / `youtube-videos` — быстро, хватает для `unstable_cache` в `getAllPosts`.
- * На VPS при 504 после webhook задайте `MAKE_WEBHOOK_LIGHT_REVALIDATE=1` и используйте это вместо полного сброса путей.
+ * Быстрый сброс: только in-memory кеш + корневые пути.
+ * На VPS при 504 после webhook — задайте `MAKE_WEBHOOK_LIGHT_REVALIDATE=1`.
  */
 export function revalidatePostFeedTagsOnly() {
-  revalidateTag("posts", "max");
-  revalidateTag("youtube-videos", "max");
+  invalidatePostsCache();
+  revalidatePath("/");
 }
 
-/** Сброс кеша списков и страниц материала после ingest из Make. */
+/** Полный сброс кеша списков и страниц материала после ingest из Make. */
 export function revalidateAfterPostChange(post: Post | null, opts?: { slugDeleted?: string }) {
-  revalidateTag("posts", "max");
-  revalidateTag("youtube-videos", "max");
+  invalidatePostsCache();
 
   const roots = ["/", "/poisk", "/novosti", "/stati", "/analitika", "/intervyu", "/video", "/rubriki", "/teg"];
 

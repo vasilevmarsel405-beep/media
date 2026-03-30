@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import type { MetadataRoute } from "next";
 import { authors, rubrics, specialProjects, tags } from "@/lib/content";
 import { getAllPosts } from "@/lib/posts-service";
