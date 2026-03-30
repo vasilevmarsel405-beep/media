@@ -25,6 +25,8 @@ nano /var/www/cryptomars/.env.production
 | `NEXT_PUBLIC_SITE_URL` | URL сайта с `https://` |
 | `UPSTASH_REDIS_REST_URL` | Redis — посты, формы, аналитика, webhook Make |
 | `UPSTASH_REDIS_REST_TOKEN` | То же |
+| `REDIS_READ_TIMEOUT_MS` (необяз.) | Лимит ожидания чтения **ленты постов** из Upstash (по умолчанию 12000 мс). Если не задать, при плохой связи с Upstash страница могла «висеть» из‑за многократных ретраев SDK. |
+| `UPSTASH_REDIS_RETRIES` (необяз.) | Число повторов HTTP к Upstash, 0–5 (по умолчанию 2). |
 | `MAKE_WEBHOOK_SECRET` | Секрет для `POST /api/webhooks/make` |
 | `ADMIN_PASSWORD` | Вход в админку |
 | `ADMIN_SESSION_SECRET` | JWT сессии (не короче 16 символов) |

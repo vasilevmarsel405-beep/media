@@ -54,14 +54,44 @@ export function isRemotePostsConfigured(): boolean {
 /** Один клиент на процесс — меньше накладных расходов и риска вложенных коннектов. */
 let cachedRedis: Redis | null = null;
 
+function upstashRetry() {
+  const raw = process.env.UPSTASH_REDIS_RETRIES?.trim();
+  const n = raw ? Math.min(5, Math.max(0, parseInt(raw, 10) || 2)) : 2;
+  return {
+    retries: n,
+    backoff: (retryCount: number) => Math.min(400 * (retryCount + 1), 2500),
+  };
+}
+
 function getClient(): Redis | null {
   if (!hasUpstash()) return null;
   if (cachedRedis) return cachedRedis;
   cachedRedis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL!,
     token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    /** По умолчанию в SDK 5 попыток и exp backoff — при тупняке сети страница «висит» минутами. */
+    retry: upstashRetry(),
   });
   return cachedRedis;
+}
+
+function redisReadTimeoutMs(): number {
+  const raw = process.env.REDIS_READ_TIMEOUT_MS?.trim();
+  const n = raw ? Number(raw) : 12_000;
+  if (!Number.isFinite(n)) return 12_000;
+  return Math.min(120_000, Math.max(4000, n));
+}
+
+async function withTimeout<T>(label: string, ms: number, fn: () => Promise<T>): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, rej) => {
+    timer = setTimeout(() => rej(new Error(`${label}: timeout ${ms}ms`)), ms);
+  });
+  try {
+    return await Promise.race([fn(), timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
 }
 
 function parsePostsArray(raw: unknown): Post[] {
@@ -154,27 +184,37 @@ async function writeToLocalFile(posts: Post[]): Promise<void> {
   await writeFile(file, `${JSON.stringify(posts, null, 2)}\n`, "utf8");
 }
 
+async function readRemotePostsFromUpstash(): Promise<Post[]> {
+  const redis = getClient();
+  if (!redis) return [];
+  await migrateLegacyToV2IfPresent(redis);
+
+  const slugs = await redis.smembers(POST_SLUGS_SET);
+  const list = Array.isArray(slugs) ? slugs.map(String) : [];
+  if (list.length === 0) return [];
+
+  const keys = list.map(postItemKey);
+  const values = await mgetValues(redis, keys);
+  const posts: Post[] = [];
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    if (v == null) continue;
+    const post = parsePostRecord(v);
+    if (post) posts.push(post);
+  }
+  return posts;
+}
+
 export async function readRemotePostsRaw(): Promise<Post[]> {
   const mode = getPostsStorageMode();
   if (mode === "upstash") {
-    const redis = getClient();
-    if (!redis) return [];
-    await migrateLegacyToV2IfPresent(redis);
-
-    const slugs = await redis.smembers(POST_SLUGS_SET);
-    const list = Array.isArray(slugs) ? slugs.map(String) : [];
-    if (list.length === 0) return [];
-
-    const keys = list.map(postItemKey);
-    const values = await mgetValues(redis, keys);
-    const posts: Post[] = [];
-    for (let i = 0; i < values.length; i++) {
-      const v = values[i];
-      if (v == null) continue;
-      const post = parsePostRecord(v);
-      if (post) posts.push(post);
+    const ms = redisReadTimeoutMs();
+    try {
+      return await withTimeout("readRemotePostsRaw", ms, () => readRemotePostsFromUpstash());
+    } catch (e) {
+      console.error("[redis-posts] readRemotePostsRaw failed — отдаём пустой remote, сайт не должен висеть", e);
+      return [];
     }
-    return posts;
   }
   if (mode === "local") {
     return readFromLocalFile();
