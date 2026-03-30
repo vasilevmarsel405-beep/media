@@ -52,8 +52,6 @@ let cacheTs = 0;
 /** Один «стекер» загрузки между воркерами процесса. */
 let loadInFlight: Promise<Post[]> | null = null;
 let cachedVersion = 0;
-let versionCheckedAtTs = 0;
-const VERSION_CHECK_MIN_INTERVAL_MS = 5000;
 
 export async function getAllPosts(): Promise<Post[]> {
   const now = Date.now();
@@ -63,11 +61,11 @@ export async function getAllPosts(): Promise<Post[]> {
     // Между воркерами PM2 in-memory кеш не шарится.
     // Сверяемся с версией в Redis (дешевый GET), чтобы все воркеры увидели обновление сразу.
     if (mode === "upstash") {
-      // Не дергаем Redis на КАЖДЫЙ заход в пределах TTL.
-      if (now - versionCheckedAtTs < VERSION_CHECK_MIN_INTERVAL_MS) return cachedPosts;
+      // В upstash-режиме строго сверяемся с версией Redis на каждый запрос,
+      // чтобы воркеры и клиентские переходы не видели "старую" ленту.
       const v = await getPostsCacheVersion();
-      versionCheckedAtTs = now;
       if (v === cachedVersion) return cachedPosts;
+      // Если версия изменилась — обновим кеш ниже через полный reload.
     } else {
       return cachedPosts;
     }
@@ -78,7 +76,6 @@ export async function getAllPosts(): Promise<Post[]> {
     const data = await loadPostsForFeed();
     if (mode === "upstash") {
       cachedVersion = await getPostsCacheVersion();
-      versionCheckedAtTs = Date.now();
     }
     cachedPosts = data;
     cacheTs = Date.now();
@@ -96,7 +93,6 @@ export function invalidatePostsCache() {
   cachedPosts = null;
   cacheTs = 0;
   loadInFlight = null;
-  versionCheckedAtTs = 0;
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {

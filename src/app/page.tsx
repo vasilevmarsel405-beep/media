@@ -22,7 +22,9 @@ import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 function isExternalUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);
@@ -71,11 +73,11 @@ export default async function HomePage() {
                 <div className="relative flex flex-1 flex-col justify-end bg-gradient-to-b from-slate-950 via-slate-950 to-black px-6 pb-9 pt-8 sm:px-10 sm:pb-11 sm:pt-10">
                   <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/70">
                     <span className="rounded-md bg-white/10 px-2.5 py-1 text-white ring-1 ring-white/15 backdrop-blur">
-                      {hero.homeBadge ?? "РњР°С‚РµСЂРёР°Р» РґРЅСЏ"}
+                      {hero.homeBadge ?? "Материал дня"}
                     </span>
                     {hero.readMin ? (
                       <span className="rounded-xl bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/30">
-                        {hero.readMin} РјРёРЅ В· Р±РµР· РІРѕРґС‹
+                        {hero.readMin} мин · без воды
                       </span>
                     ) : null}
                     <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
@@ -91,7 +93,7 @@ export default async function HomePage() {
                       href={heroHref}
                       className="focus-ring inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                     >
-                      {hero.homeCta ?? "Р§РёС‚Р°С‚СЊ СЃРµР№С‡Р°СЃ"}
+                      {hero.homeCta ?? "Читать сейчас"}
                       <span aria-hidden>→</span>
                     </Link>
                     {heroVideoHref ? (
@@ -110,27 +112,27 @@ export default async function HomePage() {
               </article>
             ) : (
               <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col justify-center overflow-hidden bg-slate-950 px-6 py-14 shadow-2xl sm:px-10 sm:py-16">
-                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">РњР°С‚РµСЂРёР°Р»С‹</p>
+                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Материалы</p>
                 <h1 className="font-display mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
-                  РџРѕРєР° РЅРµС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹С… РјР°С‚РµСЂРёР°Р»РѕРІ РІ Р»РµРЅС‚Рµ
+                  Пока нет опубликованных материалов в ленте
                 </h1>
                 <p className="mt-4 max-w-lg text-base leading-relaxed text-white/70">
-                  Р•СЃР»Рё РІРєР»СЋС‡С‘РЅ СЂРµР¶РёРј С‚РѕР»СЊРєРѕ РѕР±Р»Р°РєР° (<code className="rounded bg-white/10 px-1.5 py-0.5 text-[13px]">POSTS_FEED_MODE=remote_only</code>
-                  ), РґРѕР±Р°РІСЊС‚Рµ РјР°С‚РµСЂРёР°Р»С‹ С‡РµСЂРµР· Р°РґРјРёРЅРєСѓ РёР»Рё Make вЂ” С‚РѕРіРґР° РѕРЅРё РїРѕСЏРІСЏС‚СЃСЏ Р·РґРµСЃСЊ.
+                  Если включён режим только облака (<code className="rounded bg-white/10 px-1.5 py-0.5 text-[13px]">POSTS_FEED_MODE=remote_only</code>
+                  ), добавьте материалы через админку или Make — тогда они появятся здесь.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link
                     href="/novosti"
                     className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                   >
-                    РџРµСЂРµР№С‚Рё Рє РЅРѕРІРѕСЃС‚СЏРј
+                    Перейти к новостям
                     <span aria-hidden>→</span>
                   </Link>
                   <Link
                     href="/admin/posts"
                     className="inline-flex min-h-[44px] items-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
                   >
-                    РђРґРјРёРЅРєР°
+                    Админка
                   </Link>
                 </div>
               </article>

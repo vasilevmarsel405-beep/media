@@ -12,6 +12,8 @@ function parseBoundedInt(raw: string | undefined, fallback: number, min: number,
 
 /** Кеш массива постов в памяти одного процесса Node (между HTTP-запросами). Меньше походов в Upstash. */
 export function postsMemoryCacheTtlMs(): number {
-  const def = process.env.NODE_ENV === "production" ? 60_000 : 30_000;
+  // Короткий TTL: чтобы серверные воркеры не отдавали устаревшую ленту.
+  // Версия в Redis всё равно проверяется при каждом запросе (см. posts-service.ts).
+  const def = process.env.NODE_ENV === "production" ? 5_000 : 30_000;
   return parseBoundedInt(process.env.POSTS_MEMORY_CACHE_MS, def, 5000, 600_000);
 }

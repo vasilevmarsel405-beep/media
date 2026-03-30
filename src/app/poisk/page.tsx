@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { TagPill } from "@/components/TagPill";
@@ -15,26 +15,26 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const { q } = await searchParams;
   const query = (q ?? "").trim();
   if (query) {
-    const short = query.length > 48 ? `${query.slice(0, 45)}вЂ¦` : query;
+    const short = query.length > 48 ? `${query.slice(0, 45)}…` : query;
     return {
-      title: `РџРѕРёСЃРє: ${short}`,
-      description: `Р РµР·СѓР»СЊС‚Р°С‚С‹ РїРѕ Р·Р°РїСЂРѕСЃСѓ В«${short}В». ${poiskCopy.metaDescription}`,
+      title: `Поиск: ${short}`,
+      description: `Результаты по запросу «${short}». ${poiskCopy.metaDescription}`,
       robots: { index: false, follow: true },
     };
   }
   return {
-    title: "РџРѕРёСЃРє",
+    title: "Поиск",
     description: poiskCopy.metaDescription,
-    openGraph: { title: "РџРѕРёСЃРє РїРѕ РљСЂРёРїС‚РѕРњР°СЂСЃ РњРµРґРёР°", description: poiskCopy.metaDescription, locale: "ru_RU" },
+    openGraph: { title: "Поиск по КриптоМарс Медиа", description: poiskCopy.metaDescription, locale: "ru_RU" },
   };
 }
 
 const kindLabel: Record<string, string> = {
-  news: "РќРѕРІРѕСЃС‚Рё",
-  article: "РЎС‚Р°С‚СЊРё",
-  analytics: "РђРЅР°Р»РёС‚РёРєР°",
-  interview: "РРЅС‚РµСЂРІСЊСЋ",
-  video: "Р’РёРґРµРѕ",
+  news: "Новости",
+  article: "Статьи",
+  analytics: "Аналитика",
+  interview: "Интервью",
+  video: "Видео",
 };
 
 function SectionHeader({ title, count }: { title: string; count: number }) {

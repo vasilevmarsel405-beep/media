@@ -28,8 +28,8 @@ export default async function AnalitikaPage() {
       />
       <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-12 sm:px-6 lg:px-10">
         <div className="max-w-3xl">
-          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-mars-blue">РСЃСЃР»РµРґРѕРІР°РЅРёРµ Рё Р°СЂРіСѓРјРµРЅС‚</p>
-          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">РђРЅР°Р»РёС‚РёРєР°</h1>
+          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-mars-blue">Исследование и аргумент</p>
+          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Аналитика</h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-700 sm:text-xl">
             Р Р°Р·Р±РѕСЂС‹, СЃСЂР°РІРЅРµРЅРёСЏ, РїСЂРѕРіРЅРѕР·С‹ Рё РёСЃСЃР»РµРґРѕРІР°С‚РµР»СЊСЃРєРёРµ РјР°С‚РµСЂРёР°Р»С‹. Р—РґРµСЃСЊ РїСЂРёРѕСЂРёС‚РµС‚ вЂ” СЃС‚СЂСѓРєС‚СѓСЂР° Р°СЂРіСѓРјРµРЅС‚Р° Рё РїСЂРѕРІРµСЂСЏРµРјС‹Рµ
             РѕРїРѕСЂРЅС‹Рµ С‚РѕС‡РєРё.
