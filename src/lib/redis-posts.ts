@@ -35,6 +35,14 @@ function toStringList(raw: unknown): string[] {
   return [];
 }
 
+function unwrapRedisResult(raw: unknown): unknown {
+  if (raw == null) return raw;
+  if (typeof raw !== "object" || Array.isArray(raw)) return raw;
+  const rec = raw as Record<string, unknown>;
+  if ("result" in rec) return rec.result;
+  return raw;
+}
+
 function localPostsFile(): string {
   return path.join(process.cwd(), ".local", "remote-posts.json");
 }
@@ -98,7 +106,7 @@ function getClient(): Redis | null {
 export async function getPostsCacheVersion(): Promise<number> {
   const redis = getClient();
   if (!redis) return 0;
-  const raw = await redis.get(POSTS_VERSION_KEY);
+  const raw = unwrapRedisResult(await redis.get(POSTS_VERSION_KEY));
   if (raw == null) return 0;
   const n = typeof raw === "number" ? raw : parseInt(String(raw), 10);
   return Number.isFinite(n) ? n : 0;
@@ -216,7 +224,7 @@ async function mgetValues(redis: Redis, keys: string[]): Promise<(string | objec
   const out: (string | object | null)[] = [];
   for (let i = 0; i < keys.length; i += MGET_CHUNK) {
     const slice = keys.slice(i, i + MGET_CHUNK);
-    const raw = await redis.mget(...slice);
+    const raw = unwrapRedisResult(await redis.mget(...slice));
     const batch = Array.isArray(raw) ? raw : raw == null ? [] : [raw];
     for (const item of batch) {
       if (item == null) out.push(null);
