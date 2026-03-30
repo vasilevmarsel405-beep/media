@@ -1,34 +1,45 @@
-import { Redis } from "@upstash/redis";
+import { updateStore } from "./vps-json-store";
 
-const P = "mars:forms";
+type FormsStore = {
+  newsletterEmails: string[];
+  contactLog: { name: string; email: string; message: string; createdAt: string }[];
+  rateLimit: Record<string, { count: number; resetAt: number }>;
+};
 
-function client(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
+const FALLBACK: FormsStore = { newsletterEmails: [], contactLog: [], rateLimit: {} };
+const STORE = "forms";
 
 export function isFormsBackendAvailable(): boolean {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return process.env.DISABLE_LOCAL_FORMS !== "1";
 }
 
-const EMAIL_KEY = `${P}:newsletter:emails`;
-const CONTACT_KEY = `${P}:contact:log`;
-const RL_NEWS = `${P}:ratelimit:newsletter`;
-const RL_CONTACT = `${P}:ratelimit:contact`;
+const RL_NEWS = "newsletter";
+const RL_CONTACT = "contact";
 
 const RL_MAX = 10;
-const RL_WINDOW_SEC = 3600;
+const RL_WINDOW_MS = 3600 * 1000;
 
 async function incrRl(keyPrefix: string, clientKey: string): Promise<boolean> {
-  const redis = client();
-  if (!redis) return true;
   const safe = clientKey.replace(/[^a-zA-Z0-9.:_-]/g, "").slice(0, 128) || "unknown";
   const key = `${keyPrefix}:${safe}`;
-  const n = await redis.incr(key);
-  if (n === 1) await redis.expire(key, RL_WINDOW_SEC);
-  return n <= RL_MAX;
+  let allowed = true;
+  await updateStore(STORE, FALLBACK, (prev) => {
+    const now = Date.now();
+    const rl = { ...prev.rateLimit };
+    for (const [k, v] of Object.entries(rl)) {
+      if (v.resetAt <= now) delete rl[k];
+    }
+    const cur = rl[key];
+    if (!cur || cur.resetAt <= now) {
+      rl[key] = { count: 1, resetAt: now + RL_WINDOW_MS };
+      allowed = true;
+    } else {
+      cur.count += 1;
+      allowed = cur.count <= RL_MAX;
+    }
+    return { ...prev, rateLimit: rl };
+  });
+  return allowed;
 }
 
 export async function checkNewsletterRateLimit(ipKey: string): Promise<boolean> {
@@ -40,10 +51,11 @@ export async function checkContactRateLimit(ipKey: string): Promise<boolean> {
 }
 
 export async function saveNewsletterEmail(email: string): Promise<void> {
-  const redis = client();
-  if (!redis) throw new Error("Redis unavailable");
   const e = email.trim().toLowerCase();
-  await redis.sadd(EMAIL_KEY, e);
+  await updateStore(STORE, FALLBACK, (prev) => {
+    if (prev.newsletterEmails.includes(e)) return prev;
+    return { ...prev, newsletterEmails: [...prev.newsletterEmails, e] };
+  });
 }
 
 export async function saveContactMessage(payload: {
@@ -52,9 +64,8 @@ export async function saveContactMessage(payload: {
   message: string;
   createdAt: string;
 }): Promise<void> {
-  const redis = client();
-  if (!redis) throw new Error("Redis unavailable");
-  const line = JSON.stringify(payload);
-  await redis.lpush(CONTACT_KEY, line);
-  await redis.ltrim(CONTACT_KEY, 0, 499);
+  await updateStore(STORE, FALLBACK, (prev) => ({
+    ...prev,
+    contactLog: [payload, ...prev.contactLog].slice(0, 500),
+  }));
 }

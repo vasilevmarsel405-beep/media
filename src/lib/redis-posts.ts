@@ -56,13 +56,29 @@ function hasUpstash(): boolean {
 export type PostsStorageMode = "upstash" | "local" | "off";
 
 /**
- * upstash — облако (Upstash Redis): прод, Make, аналитика.
- * local — только development: JSON в .local/remote-posts.json без регистрации.
- * off — production без переменных: чтение материалов только из кода, правки недоступны.
+ * Режимы хранения материалов:
+ * - upstash: облачный Redis (если заданы UPSTASH_REDIS_REST_URL/TOKEN)
+ * - local: локальный JSON-файл на VPS (.local/remote-posts.json)
+ * - off: удалённое хранилище отключено, доступны только материалы из кода
+ *
+ * Можно явно выбрать режим через POSTS_STORAGE_MODE:
+ * - POSTS_STORAGE_MODE=upstash
+ * - POSTS_STORAGE_MODE=local
+ * - POSTS_STORAGE_MODE=off
  */
 export function getPostsStorageMode(): PostsStorageMode {
+  const explicit = process.env.POSTS_STORAGE_MODE?.trim().toLowerCase();
+  if (explicit === "upstash") {
+    return hasUpstash() ? "upstash" : "off";
+  }
+  if (explicit === "local") return "local";
+  if (explicit === "off") return "off";
+
   if (hasUpstash()) return "upstash";
-  if (process.env.NODE_ENV === "development" && process.env.DISABLE_LOCAL_POSTS_FILE !== "1") {
+
+  // Без Upstash по умолчанию работаем через локальный файл
+  // (удобно для single-VPS без внешнего Redis).
+  if (process.env.DISABLE_LOCAL_POSTS_FILE !== "1") {
     return "local";
   }
   return "off";

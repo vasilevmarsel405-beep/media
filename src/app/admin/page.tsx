@@ -47,11 +47,10 @@ export default async function AdminHomePage() {
 
       {store === "off" ? (
         <div className="rounded-xl border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-          <strong className="font-semibold text-white">Нет облачного Redis:</strong> на сайте видны только материалы из
-          кода; сохранять правки из админки и собирать аналитику нельзя. Задайте{" "}
-          <code className="rounded bg-black/30 px-1">UPSTASH_REDIS_REST_URL</code> и{" "}
-          <code className="rounded bg-black/30 px-1">UPSTASH_REDIS_REST_TOKEN</code> — см. пошагово в{" "}
-          <code className="rounded bg-black/30 px-1">.env.example</code>.
+          <strong className="font-semibold text-white">Хранилище материалов отключено:</strong> на сайте видны только
+          материалы из кода; сохранять правки из админки нельзя. Включите{" "}
+          <code className="rounded bg-black/30 px-1">POSTS_STORAGE_MODE=local</code> (VPS) или настройте{" "}
+          <code className="rounded bg-black/30 px-1">UPSTASH_REDIS_REST_URL</code>/<code className="rounded bg-black/30 px-1">UPSTASH_REDIS_REST_TOKEN</code>.
         </div>
       ) : null}
 

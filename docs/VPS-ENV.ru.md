@@ -1,6 +1,9 @@
 # Переменные окружения на VPS (REG.RU и аналоги)
 
-Код уже использует **Upstash Redis** и **Make webhook** — дописывать логику в репозитории не нужно. Нужно только, чтобы **на сервере** были те же ключи, что локально.
+Код уже использует **Make webhook** и поддерживает два режима хранения материалов:
+- **upstash** (внешний Redis),
+- **local** (локальный файл на VPS).
+Дописывать логику в репозитории не нужно — достаточно корректно настроить env.
 
 ## Как Next.js подхватывает env
 
@@ -23,8 +26,9 @@ nano /var/www/cryptomars/.env.production
 | Переменная | Зачем |
 |------------|--------|
 | `NEXT_PUBLIC_SITE_URL` | URL сайта с `https://` |
-| `UPSTASH_REDIS_REST_URL` | Redis — посты, формы, аналитика, webhook Make |
-| `UPSTASH_REDIS_REST_TOKEN` | То же |
+| `POSTS_STORAGE_MODE` | Режим хранения материалов: `local` (рекомендуется для single-VPS) или `upstash` |
+| `UPSTASH_REDIS_REST_URL` | Нужен только при `POSTS_STORAGE_MODE=upstash` |
+| `UPSTASH_REDIS_REST_TOKEN` | Нужен только при `POSTS_STORAGE_MODE=upstash` |
 | `REDIS_READ_TIMEOUT_MS` (необяз.) | Лимит ожидания чтения **ленты постов** из Upstash (по умолчанию 12000 мс). Если не задать, при плохой связи с Upstash страница могла «висеть» из‑за многократных ретраев SDK. |
 | `UPSTASH_REDIS_RETRIES` (необяз.) | Число повторов HTTP к Upstash, 0–5 (по умолчанию 2). |
 | `POSTS_MEMORY_CACHE_MS` (необяз.) | Кеш списка постов в памяти процесса Node (по умолчанию 60000 в prod). Выше — меньше запросов в Upstash при частом трафике. |
@@ -36,7 +40,8 @@ nano /var/www/cryptomars/.env.production
 
 Опционально: `NEXT_PUBLIC_YANDEX_METRIKA_ID`, `YANDEX_METRIKA_OAUTH_TOKEN`, `NEXT_PUBLIC_IMAGE_REMOTE_HOSTS`, после стабильного HTTPS — `ENABLE_HSTS=1`.
 
-**Только облачные материалы на сайте (без демо из кода):** в `.env.production` добавьте `POSTS_FEED_MODE=remote_only`, затем перезапуск с `--update-env`. По умолчанию лента — статика из репозитория плюс Redis, облако перезаписывает совпадающие slug.
+**Режим только удалённых материалов (без демо из кода):** в `.env.production` добавьте `POSTS_FEED_MODE=remote_only`, затем перезапуск с `--update-env`.
+Это работает и в `upstash`, и в `local` режиме.
 
 **Автозаполнение видео из YouTube в админке** — на VPS обязательно продублируйте ключ (его нет в Git, только у вас локально в `.env.local`):
 

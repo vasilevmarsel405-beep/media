@@ -1,32 +1,57 @@
-import { Redis } from "@upstash/redis";
 import type { PostKind } from "./types";
+import { updateStore } from "./vps-json-store";
 
-const P = "mars:analytics";
-
-/** Лимит событий трекинга с одного IP в минуту (только при настроенном Redis). */
+/** Лимит событий трекинга с одного IP в минуту. */
 const TRACK_RL_MAX = 200;
 const TRACK_RL_WINDOW_SEC = 60;
+const PRESENCE_WINDOW_MS = 5 * 60 * 1000;
+const STORE = "analytics";
 
-function client(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
-}
+type AnalyticsStore = {
+  presence: Record<string, number>;
+  visitorsAll: string[];
+  visitorsByDay: Record<string, string[]>;
+  visitorsByMonth: Record<string, string[]>;
+  postviews: Record<string, number>;
+  paths: Record<string, number>;
+  trackRateLimit: Record<string, { count: number; resetAt: number }>;
+};
+
+const FALLBACK: AnalyticsStore = {
+  presence: {},
+  visitorsAll: [],
+  visitorsByDay: {},
+  visitorsByMonth: {},
+  postviews: {},
+  paths: {},
+  trackRateLimit: {},
+};
 
 export function isAnalyticsConfigured(): boolean {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return process.env.DISABLE_LOCAL_ANALYTICS !== "1";
 }
 
-/** Возвращает false, если лимит превышен. Без Redis — пропускает (как и запись визитов). */
+/** Возвращает false, если лимит превышен. */
 export async function checkTrackRateLimit(clientKey: string): Promise<boolean> {
-  const redis = client();
-  if (!redis) return true;
   const safe = clientKey.replace(/[^a-zA-Z0-9.:_-]/g, "").slice(0, 128) || "unknown";
-  const key = `${P}:ratelimit:track:${safe}`;
-  const n = await redis.incr(key);
-  if (n === 1) await redis.expire(key, TRACK_RL_WINDOW_SEC);
-  return n <= TRACK_RL_MAX;
+  let allowed = true;
+  await updateStore(STORE, FALLBACK, (prev) => {
+    const now = Date.now();
+    const rl = { ...prev.trackRateLimit };
+    for (const [k, v] of Object.entries(rl)) {
+      if (v.resetAt <= now) delete rl[k];
+    }
+    const cur = rl[safe];
+    if (!cur || cur.resetAt <= now) {
+      rl[safe] = { count: 1, resetAt: now + TRACK_RL_WINDOW_SEC * 1000 };
+      allowed = true;
+    } else {
+      cur.count += 1;
+      allowed = cur.count <= TRACK_RL_MAX;
+    }
+    return { ...prev, trackRateLimit: rl };
+  });
+  return allowed;
 }
 
 /** /novosti/slug → news + slug */
@@ -45,15 +70,6 @@ export function parsePublicationPath(pathname: string): { kind: PostKind; slug: 
   return { kind, slug: m[2] };
 }
 
-function zsetPairs(raw: unknown): { member: string; score: number }[] {
-  if (!Array.isArray(raw)) return [];
-  const out: { member: string; score: number }[] = [];
-  for (let i = 0; i + 1 < raw.length; i += 2) {
-    out.push({ member: String(raw[i]), score: Number(raw[i + 1]) });
-  }
-  return out;
-}
-
 function dayKey(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
@@ -62,12 +78,12 @@ function monthKey(d: Date): string {
   return d.toISOString().slice(0, 7);
 }
 
-function lastNDayKeys(n: number): string[] {
+function lastNDayIds(n: number): string[] {
   const keys: string[] = [];
   for (let i = 0; i < n; i++) {
     const d = new Date();
     d.setUTCDate(d.getUTCDate() - i);
-    keys.push(`${P}:visitors:day:${dayKey(d)}`);
+    keys.push(dayKey(d));
   }
   return keys;
 }
@@ -77,25 +93,40 @@ export async function recordVisit(params: {
   sessionId: string;
   path: string;
 }): Promise<void> {
-  const redis = client();
-  if (!redis) return;
-
   const now = Date.now();
   const d = new Date();
+  await updateStore(STORE, FALLBACK, (prev) => {
+    const presence = { ...prev.presence, [params.sessionId]: now };
+    for (const [sid, ts] of Object.entries(presence)) {
+      if (ts < now - PRESENCE_WINDOW_MS) delete presence[sid];
+    }
 
-  await redis.zadd(`${P}:presence`, { score: now, member: params.sessionId });
-  await redis.zremrangebyscore(`${P}:presence`, 0, now - 5 * 60 * 1000);
+    const all = new Set(prev.visitorsAll);
+    all.add(params.visitorId);
 
-  await redis.sadd(`${P}:visitors:all`, params.visitorId);
-  await redis.sadd(`${P}:visitors:day:${dayKey(d)}`, params.visitorId);
-  await redis.sadd(`${P}:visitors:month:${monthKey(d)}`, params.visitorId);
+    const day = dayKey(d);
+    const month = monthKey(d);
+    const daySet = new Set(prev.visitorsByDay[day] ?? []);
+    daySet.add(params.visitorId);
+    const monthSet = new Set(prev.visitorsByMonth[month] ?? []);
+    monthSet.add(params.visitorId);
 
-  const pub = parsePublicationPath(params.path);
-  if (pub) {
-    await redis.zincrby(`${P}:postviews`, 1, pub.slug);
-  }
+    const postviews = { ...prev.postviews };
+    const pub = parsePublicationPath(params.path);
+    if (pub) postviews[pub.slug] = (postviews[pub.slug] ?? 0) + 1;
 
-  await redis.zincrby(`${P}:paths`, 1, params.path);
+    const paths = { ...prev.paths, [params.path]: (prev.paths[params.path] ?? 0) + 1 };
+
+    return {
+      ...prev,
+      presence,
+      visitorsAll: [...all],
+      visitorsByDay: { ...prev.visitorsByDay, [day]: [...daySet] },
+      visitorsByMonth: { ...prev.visitorsByMonth, [month]: [...monthSet] },
+      postviews,
+      paths,
+    };
+  });
 }
 
 export type AnalyticsSnapshot = {
@@ -109,53 +140,48 @@ export type AnalyticsSnapshot = {
 
 /** Только «онлайн» за ~5 мин — для шапки сайта без тяжёлого снимка. */
 export async function getOnlineNowCount(): Promise<number | null> {
-  const redis = client();
-  if (!redis) return null;
+  if (!isAnalyticsConfigured()) return null;
   const now = Date.now();
-  await redis.zremrangebyscore(`${P}:presence`, 0, now - 5 * 60 * 1000);
-  const n = await redis.zcard(`${P}:presence`);
-  return n;
+  const state = await updateStore(STORE, FALLBACK, (prev) => {
+    const presence = { ...prev.presence };
+    for (const [sid, ts] of Object.entries(presence)) {
+      if (ts < now - PRESENCE_WINDOW_MS) delete presence[sid];
+    }
+    return { ...prev, presence };
+  });
+  return Object.keys(state.presence).length;
 }
 
 export async function getAnalyticsSnapshot(): Promise<AnalyticsSnapshot | null> {
-  const redis = client();
-  if (!redis) return null;
-
+  if (!isAnalyticsConfigured()) return null;
   const now = Date.now();
-  await redis.zremrangebyscore(`${P}:presence`, 0, now - 5 * 60 * 1000);
-  const onlineNow = await redis.zcard(`${P}:presence`);
-
-  const visitorsLifetime = await redis.scard(`${P}:visitors:all`);
-
-  const dayKeys = lastNDayKeys(7);
-  const weekSeen = new Set<string>();
-  for (const key of dayKeys) {
-    const members = await redis.smembers(key);
-    if (Array.isArray(members)) {
-      for (const m of members) weekSeen.add(String(m));
+  const state = await updateStore(STORE, FALLBACK, (prev) => {
+    const presence = { ...prev.presence };
+    for (const [sid, ts] of Object.entries(presence)) {
+      if (ts < now - PRESENCE_WINDOW_MS) delete presence[sid];
     }
+    return { ...prev, presence };
+  });
+
+  const onlineNow = Object.keys(state.presence).length;
+  const visitorsLifetime = state.visitorsAll.length;
+
+  const weekSeen = new Set<string>();
+  for (const day of lastNDayIds(7)) {
+    for (const id of state.visitorsByDay[day] ?? []) weekSeen.add(id);
   }
   const visitorsWeek = weekSeen.size;
+  const visitorsMonth = (state.visitorsByMonth[monthKey(new Date())] ?? []).length;
 
-  const visitorsMonth = await redis.scard(`${P}:visitors:month:${monthKey(new Date())}`);
+  const topPosts = Object.entries(state.postviews)
+    .map(([slug, views]) => ({ slug, views: Math.round(views) }))
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 25);
 
-  const rawPosts = await redis.zrange(`${P}:postviews`, 0, 24, {
-    rev: true,
-    withScores: true,
-  });
-  const topPosts = zsetPairs(rawPosts).map(({ member, score }) => ({
-    slug: member,
-    views: Math.round(score),
-  }));
-
-  const rawPaths = await redis.zrange(`${P}:paths`, 0, 14, {
-    rev: true,
-    withScores: true,
-  });
-  const topPaths = zsetPairs(rawPaths).map(({ member, score }) => ({
-    path: member,
-    views: Math.round(score),
-  }));
+  const topPaths = Object.entries(state.paths)
+    .map(([path, views]) => ({ path, views: Math.round(views) }))
+    .sort((a, b) => b.views - a.views)
+    .slice(0, 15);
 
   return {
     onlineNow,

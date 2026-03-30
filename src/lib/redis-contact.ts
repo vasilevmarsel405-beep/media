@@ -1,22 +1,46 @@
-import { Redis } from "@upstash/redis";
+import { updateStore } from "./vps-json-store";
 
-const KEY = "mars:contact:inbox";
+type ContactMessage = {
+  email: string;
+  message: string;
+  name?: string;
+  at: number;
+};
 
-function client(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+type ContactStore = {
+  inbox: ContactMessage[];
+  rateLimit: Record<string, { count: number; resetAt: number }>;
+};
+
+const STORE = "contact";
+const FALLBACK: ContactStore = { inbox: [], rateLimit: {} };
+const RL_WINDOW_MS = 60 * 60 * 1000;
+const RL_MAX = 5;
+
+function safeClientKey(clientKey: string): string {
+  return clientKey.replace(/[^a-zA-Z0-9.:_-]/g, "").slice(0, 128) || "unknown";
 }
 
 export async function checkContactRateLimit(clientKey: string): Promise<boolean> {
-  const redis = client();
-  if (!redis) return true;
-  const safe = clientKey.replace(/[^a-zA-Z0-9.:_-]/g, "").slice(0, 128) || "unknown";
-  const k = `${KEY}:ratelimit:${safe}`;
-  const n = await redis.incr(k);
-  if (n === 1) await redis.expire(k, 3600);
-  return n <= 5;
+  const safe = safeClientKey(clientKey);
+  let allowed = true;
+  await updateStore(STORE, FALLBACK, (prev) => {
+    const now = Date.now();
+    const rl = { ...prev.rateLimit };
+    for (const [k, v] of Object.entries(rl)) {
+      if (v.resetAt <= now) delete rl[k];
+    }
+    const cur = rl[safe];
+    if (!cur || cur.resetAt <= now) {
+      rl[safe] = { count: 1, resetAt: now + RL_WINDOW_MS };
+      allowed = true;
+    } else {
+      cur.count += 1;
+      allowed = cur.count <= RL_MAX;
+    }
+    return { ...prev, rateLimit: rl };
+  });
+  return allowed;
 }
 
 export async function appendContactMessage(entry: {
@@ -24,13 +48,13 @@ export async function appendContactMessage(entry: {
   message: string;
   name?: string;
 }): Promise<boolean> {
-  const redis = client();
-  if (!redis) return false;
-  const payload = JSON.stringify({
+  const payload: ContactMessage = {
     ...entry,
     at: Date.now(),
-  });
-  await redis.lpush(KEY, payload);
-  await redis.ltrim(KEY, 0, 499);
+  };
+  await updateStore(STORE, FALLBACK, (prev) => ({
+    ...prev,
+    inbox: [payload, ...prev.inbox].slice(0, 500),
+  }));
   return true;
 }

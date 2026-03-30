@@ -136,7 +136,11 @@ export async function POST(request: Request) {
 
   if (!isRemotePostsConfigured()) {
     return NextResponse.json(
-      { ok: false, error: "UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN must be set" },
+      {
+        ok: false,
+        error:
+          "Posts storage is disabled. Set POSTS_STORAGE_MODE=local or configure UPSTASH_REDIS_REST_URL/UPSTASH_REDIS_REST_TOKEN.",
+      },
       { status: 503 }
     );
   }

@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "posts:migrate:upstash-to-local": "node scripts/migrate-upstash-posts-to-local.mjs",
     "secrets:check": "node scripts/check-no-secrets.mjs",
     "env:check": "node scripts/check-env-production.mjs",
     "postinstall": "node scripts/postinstall-native-bindings.mjs"
