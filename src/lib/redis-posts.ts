@@ -12,9 +12,10 @@ const POST_SLUGS_SET = "marsmedia:posts:v2:slugs";
 
 /** Версия коллекции постов (для синхронизации in-memory кеша между воркерами PM2). */
 const POSTS_VERSION_KEY = "marsmedia:posts:v2:version";
+const POST_ITEM_KEY_PREFIX = "marsmedia:posts:v2:item:";
 
 function postItemKey(slug: string): string {
-  return `marsmedia:posts:v2:item:${slug}`;
+  return `${POST_ITEM_KEY_PREFIX}${slug}`;
 }
 
 const MGET_CHUNK = 120;
@@ -88,6 +89,30 @@ export async function getPostsCacheVersion(): Promise<number> {
   return Number.isFinite(n) ? n : 0;
 }
 
+function hasPipelineError(value: unknown): string | null {
+  if (value == null) return null;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const err = hasPipelineError(item);
+      if (err) return err;
+    }
+    return null;
+  }
+  if (typeof value === "object") {
+    const rec = value as Record<string, unknown>;
+    if (typeof rec.error === "string" && rec.error.trim()) return rec.error;
+    if (typeof rec.result === "string" && /^ERR\b/i.test(rec.result)) return rec.result;
+    return null;
+  }
+  if (typeof value === "string" && /^ERR\b/i.test(value)) return value;
+  return null;
+}
+
+function assertPipelineOk(result: unknown): void {
+  const err = hasPipelineError(result);
+  if (err) throw new Error(`Redis pipeline error: ${err}`);
+}
+
 function redisReadTimeoutMs(): number {
   const raw = process.env.REDIS_READ_TIMEOUT_MS?.trim();
   const n = raw ? Number(raw) : 12_000;
@@ -138,13 +163,37 @@ async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
         pipe.sadd(POST_SLUGS_SET, p.slug);
       }
       pipe.del(LEGACY_POSTS_KEY);
-      await pipe.exec();
+      const res = await pipe.exec();
+      assertPipelineOk(res);
     })().catch((e) => {
       migrationPromise = null;
       throw e;
     });
   }
   await migrationPromise;
+}
+
+async function ensureSlugsIndexType(redis: Redis): Promise<void> {
+  const t = await redis.type(POST_SLUGS_SET);
+  const type = String(t ?? "");
+  if (type === "" || type === "none" || type === "set") return;
+  // WRONGTYPE на индексе ломает публикации: SADD/SMEMBERS тихо деградируют в pipeline.
+  await redis.del(POST_SLUGS_SET);
+}
+
+async function rebuildSlugsIndexFromItems(redis: Redis): Promise<number> {
+  const keys = await redis.keys(`${POST_ITEM_KEY_PREFIX}*`);
+  const list = Array.isArray(keys) ? keys.map(String) : [];
+  if (list.length === 0) return 0;
+  const pipe = redis.pipeline();
+  for (const k of list) {
+    const slug = k.startsWith(POST_ITEM_KEY_PREFIX) ? k.slice(POST_ITEM_KEY_PREFIX.length) : "";
+    if (!slug) continue;
+    pipe.sadd(POST_SLUGS_SET, slug);
+  }
+  const res = await pipe.exec();
+  assertPipelineOk(res);
+  return list.length;
 }
 
 async function mgetValues(redis: Redis, keys: string[]): Promise<(string | object | null)[]> {
@@ -201,9 +250,20 @@ async function readRemotePostsFromUpstash(): Promise<Post[]> {
   const redis = getClient();
   if (!redis) return [];
   await migrateLegacyToV2IfPresent(redis);
+  await ensureSlugsIndexType(redis);
 
-  const slugs = await redis.smembers(POST_SLUGS_SET);
-  const list = Array.isArray(slugs) ? slugs.map(String) : [];
+  let slugs = await redis.smembers(POST_SLUGS_SET);
+  let list = Array.isArray(slugs) ? slugs.map(String) : [];
+  if (list.length === 0) {
+    const version = await getPostsCacheVersion();
+    if (version > 0) {
+      const repaired = await rebuildSlugsIndexFromItems(redis);
+      if (repaired > 0) {
+        slugs = await redis.smembers(POST_SLUGS_SET);
+        list = Array.isArray(slugs) ? slugs.map(String) : [];
+      }
+    }
+  }
   if (list.length === 0) return [];
 
   const keys = list.map(postItemKey);
@@ -241,6 +301,7 @@ export async function writeRemotePostsRaw(posts: Post[]): Promise<void> {
     const redis = getClient();
     if (!redis) throw new Error("Redis is not configured");
     await migrateLegacyToV2IfPresent(redis);
+    await ensureSlugsIndexType(redis);
 
     const existing = await redis.smembers(POST_SLUGS_SET);
     const oldSlugs = new Set((Array.isArray(existing) ? existing : []).map(String));
@@ -255,7 +316,8 @@ export async function writeRemotePostsRaw(posts: Post[]): Promise<void> {
     }
     // Одна инкремент-операция после полной перезаписи.
     pipe.incr(POSTS_VERSION_KEY);
-    await pipe.exec();
+    const res = await pipe.exec();
+    assertPipelineOk(res);
     return;
   }
   if (mode === "local") {
@@ -271,11 +333,13 @@ export async function upsertRemotePost(post: Post): Promise<void> {
     const redis = getClient();
     if (!redis) throw new Error("Redis is not configured");
     await migrateLegacyToV2IfPresent(redis);
+    await ensureSlugsIndexType(redis);
     const pipe = redis.pipeline();
     pipe.set(postItemKey(post.slug), JSON.stringify(post));
     pipe.sadd(POST_SLUGS_SET, post.slug);
     pipe.incr(POSTS_VERSION_KEY);
-    await pipe.exec();
+    const res = await pipe.exec();
+    assertPipelineOk(res);
     return;
   }
   if (mode === "local") {
