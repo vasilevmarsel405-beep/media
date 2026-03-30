@@ -7,8 +7,6 @@ import { getPostsStorageMode, isRemotePostsConfigured } from "@/lib/redis-posts"
 
 export default async function AdminPostsPage() {
   const rows = await getAdminPostsList();
-  const remoteRows = rows.filter((r) => r.source === "remote");
-  const hiddenStaticCount = rows.length - remoteRows.length;
   const store = getPostsStorageMode();
   const canMutate = isRemotePostsConfigured();
 
@@ -18,7 +16,7 @@ export default async function AdminPostsPage() {
         <div>
           <h1 className="font-display text-3xl font-bold text-white">Материалы</h1>
           <p className="mt-2 text-sm text-slate-400">
-            «Облако» — редактирование и удаление. «Код» — демо из репозитория, меняется только через git.
+            Здесь показаны все материалы сайта. Удаление и редактирование доступны только для «Облако», «Код» — только через git.
           </p>
         </div>
         {canMutate ? (
@@ -47,15 +45,8 @@ export default async function AdminPostsPage() {
         </div>
       ) : null}
 
-      {hiddenStaticCount > 0 ? (
-        <div className="rounded-xl border border-slate-600/30 bg-slate-800/35 px-4 py-3 text-sm text-slate-300">
-          Скрыто кодовых материалов: <strong className="text-white">{hiddenStaticCount}</strong>. Они не удалены и продолжают
-          работать на сайте, но не показываются в этой таблице.
-        </div>
-      ) : null}
-
       {canMutate ? (
-        <AdminPostsTable rows={remoteRows} />
+        <AdminPostsTable rows={rows} />
       ) : (
         <div className="rounded-xl border border-white/10 bg-slate-900/40 px-4 py-6 text-sm text-slate-400">
           Редактирование отключено: нет удалённого хранилища. Для массового удаления подключите Upstash Redis.
