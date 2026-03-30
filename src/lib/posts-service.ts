@@ -49,6 +49,8 @@ async function loadPostsForFeed(): Promise<Post[]> {
 let cachedPosts: Post[] | null = null;
 let cacheTs = 0;
 const CACHE_TTL_MS = 30_000;
+/** Один «стекер» загрузки: главная вызывает getAllPosts ~8 раз параллельно → без этого 8× Redis. */
+let loadInFlight: Promise<Post[]> | null = null;
 
 /**
  * Все посты для ленты сайта (in-memory кеш 30 с, сбрасывается через invalidatePostsCache).
@@ -58,14 +60,27 @@ const CACHE_TTL_MS = 30_000;
 export async function getAllPosts(): Promise<Post[]> {
   const now = Date.now();
   if (cachedPosts && now - cacheTs < CACHE_TTL_MS) return cachedPosts;
-  cachedPosts = await loadPostsForFeed();
-  cacheTs = now;
-  return cachedPosts;
+  if (loadInFlight) return loadInFlight;
+
+  loadInFlight = loadPostsForFeed()
+    .then((data) => {
+      cachedPosts = data;
+      cacheTs = Date.now();
+      loadInFlight = null;
+      return data;
+    })
+    .catch((e) => {
+      loadInFlight = null;
+      throw e;
+    });
+
+  return loadInFlight;
 }
 
 export function invalidatePostsCache() {
   cachedPosts = null;
   cacheTs = 0;
+  loadInFlight = null;
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | undefined> {
@@ -126,9 +141,10 @@ export async function searchPosts(q: string): Promise<Post[]> {
   });
 }
 
-/** Герой: явный homeHero, затем pinned, затем самый свежий материал. */
-export async function getFeaturedHero(): Promise<Post | null> {
-  const all = await getAllPosts();
+const URGENT_FEED_LIMIT = 8;
+
+/** Герой из уже загруженного списка (`getAllPosts` уже отсортирован по дате). */
+export function pickFeaturedHero(all: Post[]): Post | null {
   if (all.length === 0) return null;
   const manualHero = all.filter((p) => p.homeHero);
   if (manualHero.length) return manualHero[0];
@@ -137,22 +153,17 @@ export async function getFeaturedHero(): Promise<Post | null> {
   return all[0];
 }
 
-/** Свежие материалы всех типов в колонку справа от героя (кроме текущего героя). */
-export async function getSecondaryHero(): Promise<Post[]> {
-  const all = await getAllPosts();
-  const hero = await getFeaturedHero();
+/** Колонка справа от героя — без второго прохода по `getAllPosts`. */
+export function pickSecondaryHero(all: Post[], hero: Post | null): Post[] {
   if (!hero) return all.slice(0, 4);
   return all.filter((p) => p.slug !== hero.slug).slice(0, 4);
 }
-
-const URGENT_FEED_LIMIT = 8;
 
 /**
  * Срочная лента: сначала все материалы с urgent (любой kind), по дате;
  * если слотов не хватает — добиваем свежими новостями без дубликатов.
  */
-export async function getUrgentFeed(): Promise<Post[]> {
-  const all = await getAllPosts();
+export function pickUrgentFeed(all: Post[]): Post[] {
   const picked = new Set<string>();
   const out: Post[] = [];
 
@@ -173,8 +184,7 @@ export async function getUrgentFeed(): Promise<Post[]> {
   return out;
 }
 
-export async function getPopularPosts(): Promise<Post[]> {
-  const all = await getAllPosts();
+export function pickPopularPosts(all: Post[]): Post[] {
   return [...all]
     .sort(
       (a, b) =>
@@ -182,4 +192,21 @@ export async function getPopularPosts(): Promise<Post[]> {
         +new Date(b.publishedAt) - +new Date(a.publishedAt)
     )
     .slice(0, 6);
+}
+
+export async function getFeaturedHero(): Promise<Post | null> {
+  return pickFeaturedHero(await getAllPosts());
+}
+
+export async function getSecondaryHero(): Promise<Post[]> {
+  const all = await getAllPosts();
+  return pickSecondaryHero(all, pickFeaturedHero(all));
+}
+
+export async function getUrgentFeed(): Promise<Post[]> {
+  return pickUrgentFeed(await getAllPosts());
+}
+
+export async function getPopularPosts(): Promise<Post[]> {
+  return pickPopularPosts(await getAllPosts());
 }

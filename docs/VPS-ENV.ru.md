@@ -62,6 +62,10 @@ URL webhook: **`https://ВАШ-ДОМЕН/api/webhooks/make`**
 
 Подробнее: [`MAKE-KAK-ZAPUSTIT.md`](MAKE-KAK-ZAPUSTIT.md).
 
+## 504 Gateway Time-out от Nginx
+
+Если страница «висит» и потом 504, чаще всего прокси обрывает ожидание ответа от Node **раньше**, чем успевают завершиться запросы к Upstash. В блоке `location /` задайте таймауты не короче 60–75 секунд, например как в [`nginx-cryptomarsmedia.conf.example`](nginx-cryptomarsmedia.conf.example) (`proxy_read_timeout`, `proxy_connect_timeout`). После правки: `sudo nginx -t && sudo systemctl reload nginx`.
+
 ## Если секреты засветились в чате или скрине
 
 1. **Upstash** — rotate token в консоли, обновить `UPSTASH_REDIS_REST_TOKEN` везде.

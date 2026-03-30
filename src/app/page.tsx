@@ -15,12 +15,12 @@ import { homeCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
 import {
   getAllPosts,
-  getFeaturedHero,
-  getPopularPosts,
-  getPostsByKind,
-  getSecondaryHero,
-  getUrgentFeed,
+  pickFeaturedHero,
+  pickPopularPosts,
+  pickSecondaryHero,
+  pickUrgentFeed,
 } from "@/lib/posts-service";
+import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
@@ -30,15 +30,16 @@ function isExternalUrl(url: string): boolean {
 
 export default async function HomePage() {
   const allPosts = await getAllPosts();
-  const hero = await getFeaturedHero();
-  const sec = await getSecondaryHero();
+  const hero = pickFeaturedHero(allPosts);
+  const sec = pickSecondaryHero(allPosts, hero);
   const heroHref = hero ? postHref(hero) : "/novosti";
-  const urgentList = await getUrgentFeed();
-  const popular = await getPopularPosts();
-  const articles = await getPostsByKind("article");
-  const analyticsList = await getPostsByKind("analytics");
-  const interviews = await getPostsByKind("interview");
-  const videos = await getPostsByKind("video");
+  const urgentList = pickUrgentFeed(allPosts);
+  const popular = pickPopularPosts(allPosts);
+  const byKind = (k: Post["kind"]) => allPosts.filter((p) => p.kind === k);
+  const articles = byKind("article");
+  const analyticsList = byKind("analytics");
+  const interviews = byKind("interview");
+  const videos = byKind("video");
   const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
   const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
 

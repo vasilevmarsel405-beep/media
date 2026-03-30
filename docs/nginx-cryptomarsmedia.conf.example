@@ -49,6 +49,9 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
+        # Первый холодный запрос к Next + Redis; по умолчанию у nginx 60s — часто даёт 504
+        proxy_connect_timeout 75s;
+        proxy_send_timeout 300s;
         proxy_read_timeout 300s;
-    }
+      }
 }

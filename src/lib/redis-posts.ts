@@ -51,12 +51,17 @@ export function isRemotePostsConfigured(): boolean {
   return getPostsStorageMode() !== "off";
 }
 
+/** Один клиент на процесс — меньше накладных расходов и риска вложенных коннектов. */
+let cachedRedis: Redis | null = null;
+
 function getClient(): Redis | null {
   if (!hasUpstash()) return null;
-  return new Redis({
+  if (cachedRedis) return cachedRedis;
+  cachedRedis = new Redis({
     url: process.env.UPSTASH_REDIS_REST_URL!,
     token: process.env.UPSTASH_REDIS_REST_TOKEN!,
   });
+  return cachedRedis;
 }
 
 function parsePostsArray(raw: unknown): Post[] {
@@ -70,25 +75,33 @@ function parsePostsArray(raw: unknown): Post[] {
   }
 }
 
-let migrationDone = false;
+/**
+ * Все параллельные запросы ждут одну и ту же миграцию.
+ * Раньше `migrationDone = true` ставился до `await get` — второй запрос выходил сразу и не ждал первого → гонки и 504.
+ */
+let migrationPromise: Promise<void> | null = null;
 
-/** Однократный перенос монолита v1 → ключи v2 (запускается максимум один раз за жизнь процесса). */
 async function migrateLegacyToV2IfPresent(redis: Redis): Promise<void> {
-  if (migrationDone) return;
-  migrationDone = true;
+  if (!migrationPromise) {
+    migrationPromise = (async () => {
+      const legacyRaw = await redis.get(LEGACY_POSTS_KEY);
+      if (legacyRaw == null) return;
 
-  const legacyRaw = await redis.get(LEGACY_POSTS_KEY);
-  if (legacyRaw == null) return;
-
-  const posts = parsePostsArray(legacyRaw);
-  const pipe = redis.pipeline();
-  for (const p of posts) {
-    if (!p?.slug) continue;
-    pipe.set(postItemKey(p.slug), JSON.stringify(p));
-    pipe.sadd(POST_SLUGS_SET, p.slug);
+      const posts = parsePostsArray(legacyRaw);
+      const pipe = redis.pipeline();
+      for (const p of posts) {
+        if (!p?.slug) continue;
+        pipe.set(postItemKey(p.slug), JSON.stringify(p));
+        pipe.sadd(POST_SLUGS_SET, p.slug);
+      }
+      pipe.del(LEGACY_POSTS_KEY);
+      await pipe.exec();
+    })().catch((e) => {
+      migrationPromise = null;
+      throw e;
+    });
   }
-  pipe.del(LEGACY_POSTS_KEY);
-  await pipe.exec();
+  await migrationPromise;
 }
 
 async function mgetValues(redis: Redis, keys: string[]): Promise<(string | object | null)[]> {
