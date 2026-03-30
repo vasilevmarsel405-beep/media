@@ -82,6 +82,34 @@ function checkSecret(request: Request): boolean {
   return timingSafeStringEqual(token, secret);
 }
 
+function normalizeMakeAliases(input: unknown): unknown {
+  if (!input || typeof input !== "object") return input;
+  const root = input as Record<string, unknown>;
+  if (root.action !== "upsert") return input;
+  if (!root.post || typeof root.post !== "object") return input;
+  const post = root.post as Record<string, unknown>;
+  return {
+    ...root,
+    post: {
+      ...post,
+      authorId: post.authorId ?? post.author_id,
+      rubricSlugs: post.rubricSlugs ?? post.rubric_slugs,
+      tagSlugs: post.tagSlugs ?? post.tag_slugs,
+      publishedAt: post.publishedAt ?? post.published_at ?? post.date,
+      readMin: post.readMin ?? post.read_min,
+      homeBadge: post.homeBadge ?? post.home_badge,
+      homeCta: post.homeCta ?? post.home_cta,
+      homeHero: post.homeHero ?? post.home_hero,
+      homeVideoUrl: post.homeVideoUrl ?? post.home_video_url,
+      homeVideoLabel: post.homeVideoLabel ?? post.home_video_label,
+      seoTitle: post.seoTitle ?? post.seo_title,
+      seoDescription: post.seoDescription ?? post.seo_description,
+      seoKeywords: post.seoKeywords ?? post.seo_keywords,
+      seoNoindex: post.seoNoindex ?? post.seo_noindex,
+    },
+  };
+}
+
 function urlPathForPost(post: Post): string {
   const base =
     post.kind === "news"
@@ -119,6 +147,8 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid JSON body" }, { status: 400 });
   }
+
+  json = normalizeMakeAliases(json);
 
   const parsed = makeIngestBodySchema.safeParse(json);
   if (!parsed.success) {

@@ -127,6 +127,18 @@ const homeVideoUrlIngestZ = z
     message: "homeVideoUrl: укажите абсолютный URL или путь, начинающийся с /",
   });
 
+function normalizeOptionalInt(v: unknown): number | undefined {
+  if (v == null) return undefined;
+  if (typeof v === "number" && Number.isFinite(v)) return Math.trunc(v);
+  if (typeof v === "string") {
+    const t = v.trim();
+    if (!t) return undefined;
+    const n = Number(t);
+    if (Number.isFinite(n)) return Math.trunc(n);
+  }
+  return undefined;
+}
+
 export const makeIngestPostSchema = z
   .object({
     slug: slugZ,
@@ -138,11 +150,22 @@ export const makeIngestPostSchema = z
     authorId: z.string().min(1),
     rubricSlugs: z.preprocess(normalizeSlugListInput, z.array(z.string().min(1)).default([])),
     tagSlugs: z.preprocess(normalizeSlugListInput, z.array(z.string().min(1)).default([])),
-    publishedAt: z.string().min(1),
+    publishedAt: z.preprocess(
+      (v) => {
+        if (typeof v === "string") return v;
+        if (typeof v === "number" && Number.isFinite(v)) {
+          // Допускаем unix/epoch таймстемпы из Make (сек/мс).
+          const ms = v < 10_000_000_000 ? v * 1000 : v;
+          return new Date(ms).toISOString();
+        }
+        return v;
+      },
+      z.string().min(1)
+    ),
     subtitle: z.string().max(500).optional(),
     urgent: z.boolean().optional(),
     pinned: z.boolean().optional(),
-    readMin: z.number().int().positive().max(999).optional(),
+    readMin: z.preprocess(normalizeOptionalInt, z.number().int().positive().max(999).optional()),
     youtubeId: youtubeIdIngestZ,
     durationLabel: z.string().max(32).optional(),
     guestName: z.string().max(200).optional(),
@@ -163,7 +186,8 @@ export const makeIngestPostSchema = z
     seoKeywords: z.string().max(500).optional(),
     seoNoindex: z.boolean().optional(),
   })
-  .strict();
+  // Make иногда присылает лишние служебные поля — игнорируем их.
+  .passthrough();
 
 export type MakeIngestPostInput = z.infer<typeof makeIngestPostSchema>;
 
@@ -236,13 +260,13 @@ export const makeIngestBodySchema = z.discriminatedUnion("action", [
       action: z.literal("upsert"),
       post: makeIngestPostSchema,
     })
-    .strict(),
+    .passthrough(),
   z
     .object({
       action: z.literal("delete"),
       slug: slugZ,
     })
-    .strict(),
+    .passthrough(),
 ]);
 
 export type MakeIngestBody = z.infer<typeof makeIngestBodySchema>;
