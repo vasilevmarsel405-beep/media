@@ -4,7 +4,8 @@ import { timingSafeStringEqual } from "@/lib/security/timingSafe";
 import { makeIngestBodySchema, normalizeIngestToPost } from "@/lib/post-ingest-schema";
 import type { Post } from "@/lib/types";
 import { deleteRemotePost, isRemotePostsConfigured, upsertRemotePost } from "@/lib/redis-posts";
-import { revalidateAfterPostChange, revalidatePostFeedTagsOnly } from "@/lib/revalidate-post";
+import { invalidatePostsCache } from "@/lib/posts-service";
+import { revalidateAfterPostChange, revalidatePostPathsLight } from "@/lib/revalidate-post";
 
 export const runtime = "nodejs";
 
@@ -14,12 +15,22 @@ function useLightRevalidate(): boolean {
   return v == null || v === "" ? true : v === "1";
 }
 
-function revalidateForWebhook(post: Post | null, opts?: { slugDeleted?: string }) {
-  if (useLightRevalidate()) {
-    revalidatePostFeedTagsOnly();
-    return;
-  }
-  revalidateAfterPostChange(post, opts);
+/**
+ * Синхронный `revalidatePath` в том же запросе, что и Redis, на VPS часто грузит worker Next.js —
+ * остальные визиты получают 504. Сброс памяти сразу, пути — в следующий тик event loop (после ответа клиенту).
+ */
+function scheduleRevalidate(post: Post | null, opts?: { slugDeleted?: string }) {
+  setImmediate(() => {
+    try {
+      if (useLightRevalidate()) {
+        revalidatePostPathsLight(post, opts);
+      } else {
+        revalidateAfterPostChange(post, opts);
+      }
+    } catch (e) {
+      console.error("[webhooks/make] revalidate failed", e);
+    }
+  });
 }
 
 function validatePostRefs(post: Post): string | null {
@@ -65,7 +76,7 @@ function urlPathForPost(post: Post): string {
 /**
  * Сохранение в Upstash и сброс кеша — **синхронно до ответа 200**.
  * На VPS `after()` для фоновых задач ненадёжен: Make видел ok, а Redis пустой.
- * При 504 на nginx — увеличьте `proxy_read_timeout` или задайте `MAKE_WEBHOOK_LIGHT_REVALIDATE=1`.
+ * При 504 на nginx — увеличьте `proxy_read_timeout` (см. docs/nginx-cryptomarsmedia.conf.example).
  */
 export async function POST(request: Request) {
   if (!checkSecret(request)) {
@@ -101,7 +112,8 @@ export async function POST(request: Request) {
     const slug = body.slug;
     try {
       const removed = await deleteRemotePost(slug);
-      revalidateForWebhook(null, { slugDeleted: slug });
+      invalidatePostsCache();
+      scheduleRevalidate(null, { slugDeleted: slug });
       return NextResponse.json({ ok: true, deleted: removed, slug });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Storage error";
@@ -118,7 +130,8 @@ export async function POST(request: Request) {
 
   try {
     await upsertRemotePost(post);
-    revalidateForWebhook(post);
+    invalidatePostsCache();
+    scheduleRevalidate(post);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Storage error";
     console.error("[webhooks/make] upsert failed", post.slug, e);
@@ -131,6 +144,6 @@ export async function POST(request: Request) {
     slug: post.slug,
     kind: post.kind,
     urlPath: urlPathForPost(post),
-    cache: useLightRevalidate() ? "tags-only" : "full",
+    cache: useLightRevalidate() ? "deferred-light" : "deferred-full",
   });
 }

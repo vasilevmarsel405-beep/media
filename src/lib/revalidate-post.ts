@@ -12,12 +12,21 @@ const KIND_PREFIX: Record<Post["kind"], string> = {
 };
 
 /**
- * Быстрый сброс: только in-memory кеш + корневые пути.
- * На VPS при 504 после webhook — задайте `MAKE_WEBHOOK_LIGHT_REVALIDATE=1`.
+ * Только `revalidatePath` (без сброса памяти) — вызывать после `invalidatePostsCache()` отдельно;
+ * так webhook не блокирует worker на тяжёлом сбросе до ответа Make.
  */
-export function revalidatePostFeedTagsOnly() {
-  invalidatePostsCache();
+export function revalidatePostPathsLight(post: Post | null, opts?: { slugDeleted?: string }) {
   revalidatePath("/");
+  if (post) {
+    const base = KIND_PREFIX[post.kind];
+    revalidatePath(base);
+    revalidatePath(`${base}/${post.slug}`);
+  }
+  if (opts?.slugDeleted) {
+    for (const base of Object.values(KIND_PREFIX)) {
+      revalidatePath(`${base}/${opts.slugDeleted}`);
+    }
+  }
 }
 
 /** Полный сброс кеша списков и страниц материала после ingest из Make. */
