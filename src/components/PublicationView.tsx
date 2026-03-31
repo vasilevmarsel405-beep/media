@@ -282,51 +282,6 @@ export function PublicationView({
               )}
             </div>
 
-            {tone === "analytics" ? (
-              <div className="mt-12 overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <table className="w-full min-w-[32rem] text-left text-sm">
-                  <caption className="border-b border-slate-100 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    Индикаторы для мониторинга
-                  </caption>
-                  <thead className="bg-slate-50 text-xs uppercase text-slate-500">
-                    <tr>
-                      <th className="px-4 py-3 font-semibold">Индикатор</th>
-                      <th className="px-4 py-3 font-semibold">Статус</th>
-                      <th className="px-4 py-3 font-semibold">Комментарий</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
-                    <tr>
-                      <td className="px-4 py-3 font-medium">Потребительский индекс</td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-amber-100">
-                          Наблюдение
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">Сравнение с базой прошлого квартала</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-3 font-medium">Кредитный импульс МСП</td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-100">
-                          Стабильно
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">Короткие ставки без резких скачков</td>
-                    </tr>
-                    <tr>
-                      <td className="px-4 py-3 font-medium">Импортные цепочки</td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-mars-accent-soft px-2 py-0.5 text-xs font-semibold text-mars-accent ring-1 ring-mars-accent/15">
-                          Риск
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">Точечные задержки в отдельных категориях</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            ) : null}
           </div>
 
           {post.toc?.length ? (
