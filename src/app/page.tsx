@@ -24,9 +24,7 @@ import { postHref } from "@/lib/routes";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-export const fetchCache = "force-no-store";
+export const revalidate = 5;
 
 function isExternalUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);
