@@ -34,6 +34,11 @@ export function WebSiteJsonLd() {
         url: logoUrl,
         contentUrl: logoUrl,
       },
+      publishingPrinciples: `${siteUrl}/redaktsionnaya-politika`,
+      ethicsPolicy: `${siteUrl}/redaktsionnaya-politika`,
+      correctionsPolicy: `${siteUrl}/redaktsionnaya-politika`,
+      privacyPolicy: `${siteUrl}/politika-konfidencialnosti`,
+      termsOfService: `${siteUrl}/polzovatelskoe-soglashenie`,
       knowsAbout,
       areaServed: {
         "@type": "Country",

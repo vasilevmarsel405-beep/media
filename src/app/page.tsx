@@ -363,7 +363,8 @@ export default async function HomePage() {
           <h2 className="font-display text-2xl font-bold text-slate-900">Прозрачность редакции и документы</h2>
           <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
             Сайт публикует редакционные материалы и не является витриной услуг. Правила публикаций, обработка данных,
-            файлы cookie и пользовательские условия доступны в открытом доступе. Регион работы редакции: Россия.
+            файлы cookie и пользовательские условия доступны в открытом доступе. Оплата и доставка для этого сайта не
+            применяются. Регион работы редакции: Россия.
           </p>
           <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-700">
             <li>Маркировка типов материалов</li>
