@@ -167,6 +167,12 @@ export default async function AdminHomePage() {
         >
           Новый материал
         </Link>
+        <Link
+          href="/admin/rubrics"
+          className="inline-flex rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
+        >
+          Редактировать рубрики
+        </Link>
       </div>
 
       <section className="rounded-2xl border border-white/10 bg-slate-900/40 p-6">

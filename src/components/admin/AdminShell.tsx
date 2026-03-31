@@ -33,6 +33,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Link href="/admin/posts" className="transition hover:text-white">
                 Материалы
               </Link>
+              <Link href="/admin/rubrics" className="transition hover:text-white">
+                Рубрики
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-3">

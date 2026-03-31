@@ -8,7 +8,7 @@ import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 import { IconPlay } from "@/components/icons";
-import { rubrics, specialProjects } from "@/lib/content";
+import { specialProjects } from "@/lib/content";
 import { homeCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
 import {
@@ -26,6 +26,7 @@ import { postHref } from "@/lib/routes";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 import { getAnalyticsSnapshot } from "@/lib/redis-analytics";
+import { getRubrics } from "@/lib/remote-rubrics";
 
 export const revalidate = 5;
 
@@ -34,6 +35,7 @@ function isExternalUrl(url: string): boolean {
 }
 
 export default async function HomePage() {
+  const rubrics = await getRubrics();
   const allPosts = await getAllPosts();
   const hero = pickFeaturedHero(allPosts);
   const sec = pickSecondaryHero(allPosts, hero);
@@ -235,8 +237,8 @@ export default async function HomePage() {
                 key={p.slug}
                 className="card-hover group overflow-hidden rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
               >
-                <Link href={`/analitika/${p.slug}`} className="grid gap-0 sm:grid-cols-[11rem_1fr]">
-                  <div className="relative h-44 sm:h-full">
+                <Link href={`/analitika/${p.slug}`} className="grid gap-0 md:grid-cols-[15rem_1fr]">
+                  <div className="relative aspect-[16/9] md:aspect-[4/3] md:h-full">
                     <Image
                       src={resolvePostImage(p)}
                       alt={postCoverImageAlt(p.title, p.imageAlt)}
@@ -266,6 +268,10 @@ export default async function HomePage() {
 
       <div className="relative overflow-hidden bg-[#050508] text-white">
         <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[min(50vh,420px)] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgb(196_0_28/0.35),transparent_55%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgb(43_62_247/0.22),transparent)]"
+          aria-hidden
+        />
+        <div
           className="pointer-events-none absolute inset-0 opacity-[0.2]"
           style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.24) 1px, transparent 0)`,
@@ -273,7 +279,7 @@ export default async function HomePage() {
           }}
           aria-hidden
         />
-        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+        <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading
             title={homeCopy.sections.video.title}
             subtitle={homeCopy.sections.video.subtitle}
@@ -281,12 +287,22 @@ export default async function HomePage() {
             actionLabel={homeCopy.sections.video.action}
             variant="dark"
           />
+          <div className="mb-6 mt-2 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {["Сводки дня", "Разборы на доске", "Позиция", "Спецэфиры"].map((chip) => (
+              <span
+                key={chip}
+                className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 text-xs font-semibold text-white/85 backdrop-blur-sm"
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {videos.slice(0, 3).map((p) => (
               <Link
                 key={p.slug}
                 href={`/video/${p.slug}`}
-                className="group relative overflow-hidden rounded-2xl bg-slate-900 shadow-[0_24px_60px_-20px_rgb(0_0_0/0.65)] ring-1 ring-white/10 transition hover:ring-[#ff3100]/45"
+                className="group overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/[0.08] transition hover:ring-[#ff3100]/40"
               >
                 <div className="relative aspect-video">
                   <Image
@@ -296,10 +312,10 @@ export default async function HomePage() {
                     className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
                     sizes="400px"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-slate-900 shadow-2xl transition group-hover:scale-110">
-                      <IconPlay className="ml-1 h-7 w-7" />
+                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl transition group-hover:scale-110">
+                      <IconPlay className="ml-0.5 h-6 w-6" />
                     </span>
                   </div>
                   {p.durationLabel ? (
@@ -309,9 +325,9 @@ export default async function HomePage() {
                   ) : null}
                 </div>
                 <div className="p-5">
-                  <h3 className="font-display text-lg font-bold leading-snug text-white">{p.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-white/75">{p.lead}</p>
-                  <time className="mt-3 block text-xs text-white/50" dateTime={p.publishedAt}>
+                  <h3 className="font-display text-lg font-semibold leading-snug text-white group-hover:text-orange-200">{p.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm text-white/60">{p.lead}</p>
+                  <time className="mt-3 block text-xs tabular-nums text-white/45" dateTime={p.publishedAt}>
                     {formatDateTime(p.publishedAt)}
                   </time>
                 </div>
