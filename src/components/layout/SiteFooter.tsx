@@ -33,7 +33,6 @@ const sections = [
       { href: "/politika-konfidencialnosti", label: "Конфиденциальность" },
       { href: "/polzovatelskoe-soglashenie", label: "Соглашение" },
       { href: "/redaktsionnaya-politika", label: "Редакционная политика" },
-      { href: "/reklamodatelyam", label: "Рекламодателям" },
       { href: "/pravovaya-informatsiya", label: "Правовая информация" },
       { href: "/politika-faylov-cookie", label: "Файлы cookie" },
     ],
