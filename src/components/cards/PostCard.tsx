@@ -36,7 +36,7 @@ export function PostCard({
       >
         <Link
           href={href}
-          className="relative aspect-square w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:aspect-[4/3] sm:w-36 md:w-44"
+          className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-auto sm:aspect-[4/3] sm:w-36 md:w-44"
         >
           <Image
             src={cover}

@@ -1,3 +1,6 @@
+import { randomUUID } from "crypto";
+import { mkdir, writeFile } from "fs/promises";
+import path from "path";
 import { NextResponse } from "next/server";
 import { authorById, rubricBySlug, tagBySlug } from "@/lib/content";
 import { timingSafeStringEqual } from "@/lib/security/timingSafe";
@@ -8,6 +11,56 @@ import { invalidatePostsCache } from "@/lib/posts-service";
 import { revalidateAfterPostChange, revalidatePostPathsExact, revalidatePostPathsLight } from "@/lib/revalidate-post";
 
 export const runtime = "nodejs";
+const MCP_KV_DOWNLOAD_RE = /^https:\/\/mcp-kv\.ru\/ai-delete\/api\/download\/[a-z0-9]+(?:\?.*)?$/i;
+const MAX_AUTO_COVER_BYTES = 8 * 1024 * 1024;
+
+function isMcpKvDownloadUrl(value: string): boolean {
+  const v = value.trim();
+  return MCP_KV_DOWNLOAD_RE.test(v);
+}
+
+function extByMime(contentType: string): string | null {
+  const base = contentType.split(";")[0]?.trim().toLowerCase();
+  if (base === "image/jpeg") return ".jpg";
+  if (base === "image/png") return ".png";
+  if (base === "image/webp") return ".webp";
+  if (base === "image/gif") return ".gif";
+  return null;
+}
+
+async function autoPersistExternalCover(imageUrl: string): Promise<string | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 12_000);
+
+  try {
+    const res = await fetch(imageUrl, { signal: controller.signal, cache: "no-store" });
+    if (!res.ok) return null;
+
+    const mime = (res.headers.get("content-type") ?? "").trim();
+    const ext = extByMime(mime);
+    if (!ext) return null;
+
+    const lenHeader = res.headers.get("content-length");
+    if (lenHeader) {
+      const len = Number(lenHeader);
+      if (Number.isFinite(len) && len > MAX_AUTO_COVER_BYTES) return null;
+    }
+
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length === 0 || buf.length > MAX_AUTO_COVER_BYTES) return null;
+
+    const dir = path.join(process.cwd(), ".local", "uploads", "covers");
+    await mkdir(dir, { recursive: true });
+    const filename = `${randomUUID()}${ext}`;
+    const filePath = path.join(dir, filename);
+    await writeFile(filePath, buf);
+    return `/api/media/covers/${filename}`;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function useLightRevalidate(): boolean {
   const v = process.env.MAKE_WEBHOOK_LIGHT_REVALIDATE?.trim();
@@ -181,7 +234,23 @@ export async function POST(request: Request) {
     }
   }
 
-  const post = normalizeIngestToPost(body.post);
+  const normalized = normalizeIngestToPost(body.post);
+  let post = normalized;
+
+  const rawImage = normalized.image?.trim() ?? "";
+  if (rawImage && isMcpKvDownloadUrl(rawImage)) {
+    const localCover = await autoPersistExternalCover(rawImage);
+    if (localCover) {
+      post = { ...normalized, image: localCover };
+    } else {
+      // Мягкий режим: если автоскачивание не удалось, публикацию не блокируем.
+      console.warn("[webhooks/make] auto cover download failed, keep source URL", {
+        slug: normalized.slug,
+        imageUrl: rawImage,
+      });
+    }
+  }
+
   const refErr = validatePostRefs(post);
   if (refErr) {
     return NextResponse.json({ ok: false, error: refErr }, { status: 400 });
