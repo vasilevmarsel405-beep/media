@@ -193,7 +193,7 @@ export default async function HomePage() {
             actionLabel={homeCopy.sections.urgent.action}
           />
           <div className="grid gap-4 lg:grid-cols-2">
-            {urgentList.map((p) => (
+            {urgentList.slice(0, 4).map((p) => (
               <PostCard key={p.slug} post={p} variant="urgent" />
             ))}
           </div>
