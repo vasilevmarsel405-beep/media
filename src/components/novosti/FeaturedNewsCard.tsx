@@ -20,10 +20,10 @@ export function FeaturedNewsCard({ post }: { post: Post }) {
   return (
     <article className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_20px_50px_-28px_rgb(15_23_42/0.18)] ring-1 ring-black/[0.03]">
       <div className="grid lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
-        <Link href={href} className="group relative block aspect-[16/10] min-h-[220px] lg:aspect-auto lg:min-h-[300px]">
+        <Link href={href} aria-label={`Открыть материал: ${post.title}`} className="group relative block aspect-[16/10] min-h-[220px] lg:aspect-auto lg:min-h-[300px]">
           <Image
             src={cover}
-            alt={postCoverImageAlt(post.title)}
+            alt={postCoverImageAlt(post.title, post.imageAlt)}
             fill
             className="object-cover transition duration-700 ease-out group-hover:scale-[1.02]"
             sizes="(max-width:1024px) 100vw, 55vw"

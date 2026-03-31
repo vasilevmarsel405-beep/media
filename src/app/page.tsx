@@ -64,6 +64,7 @@ export default async function HomePage() {
               <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col overflow-hidden bg-slate-950 shadow-2xl">
                 <Link
                   href={heroHref}
+                  aria-label={`Открыть материал: ${hero.title}`}
                   className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
                 >
                   <Image

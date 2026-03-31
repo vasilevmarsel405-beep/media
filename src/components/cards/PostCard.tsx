@@ -36,6 +36,7 @@ export function PostCard({
       >
         <Link
           href={href}
+          aria-label={`Открыть материал: ${post.title}`}
           className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-auto sm:aspect-[4/3] sm:w-36 md:w-44"
         >
           <Image
@@ -151,7 +152,7 @@ export function PostCard({
   if (variant === "related") {
     return (
       <article className="group card-hover flex flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <Link href={href} className="relative aspect-[3/2] w-full shrink-0 overflow-hidden">
+        <Link href={href} aria-label={`Открыть материал: ${post.title}`} className="relative aspect-[3/2] w-full shrink-0 overflow-hidden">
           <Image
             src={cover}
             alt={postCoverImageAlt(post.title)}
@@ -214,7 +215,7 @@ export function PostCard({
   if (variant === "dark") {
     return (
       <article className="group card-hover flex h-full flex-col overflow-hidden rounded-2xl border border-white/12 bg-white/[0.06] shadow-[0_20px_50px_-34px_rgb(0_0_0_/_0.9)] backdrop-blur-sm">
-        <Link href={href} className="relative aspect-[16/10] w-full overflow-hidden">
+        <Link href={href} aria-label={`Открыть материал: ${post.title}`} className="relative aspect-[16/10] w-full overflow-hidden">
           <Image
             src={cover}
             alt={postCoverImageAlt(post.title)}
@@ -277,7 +278,7 @@ export function PostCard({
 
   return (
     <article className="group card-hover flex h-full flex-col overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-      <Link href={href} className="relative aspect-[16/10] w-full overflow-hidden">
+      <Link href={href} aria-label={`Открыть материал: ${post.title}`} className="relative aspect-[16/10] w-full overflow-hidden">
         <Image
           src={cover}
           alt={postCoverImageAlt(post.title)}
