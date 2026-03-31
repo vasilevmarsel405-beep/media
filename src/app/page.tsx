@@ -53,11 +53,17 @@ export default async function HomePage() {
   const editorialPicks = pickEditorialPicks(allPosts);
   const homeProjects = pickHomeProjects(allPosts);
   const analyticsSnapshot = await getAnalyticsSnapshot();
-  const popularByViews =
-    analyticsSnapshot?.topPosts
-      ?.map((it) => allPosts.find((p) => p.slug === it.slug))
-      .filter((p): p is Post => Boolean(p))
-      .slice(0, 6) ?? [];
+  const viewsBySlug = new Map<string, number>(
+    (analyticsSnapshot?.topPosts ?? []).map((it) => [it.slug, Math.max(0, Number(it.views) || 0)])
+  );
+  const popularByViews = [...allPosts]
+    .filter((p) => (viewsBySlug.get(p.slug) ?? 0) > 0)
+    .sort(
+      (a, b) =>
+        (viewsBySlug.get(b.slug) ?? 0) - (viewsBySlug.get(a.slug) ?? 0) ||
+        +new Date(b.publishedAt) - +new Date(a.publishedAt)
+    )
+    .slice(0, 6);
   const popular = popularByViews.length ? popularByViews : fallbackPopular;
   const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
   const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
