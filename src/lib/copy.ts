@@ -132,8 +132,8 @@ export const homeStatsCopy = {
 } as const;
 
 export const publicationCopy = {
-  relatedTitle: "Дальше по сюжету",
-  relatedSub: "Материалы, которые закрывают пробелы и ведут в соседние форматы — новости, колонки, видео.",
+  relatedTitle: "Продолжить по теме",
+  relatedSub: "Материалы, которые дополняют картину: новости, колонки и видео по этому сюжету.",
   authorBlockTitle: "Другие тексты этого автора",
   authorProfileCta: (name: string) => `Все материалы: ${name}`,
   feedbackTitle: "Не согласны или есть дополнение?",
@@ -270,7 +270,7 @@ export const podpiskaMetaDescription =
   "Бесплатная рассылка КриптоМарс Медиа: дайджест новостей и разборов. Без спама, отписка в один клик.";
 
 export const shareCopy = {
-  label: "Поделиться с коллегой",
+  label: "Поделиться",
   telegram: "Telegram",
   vk: "VK",
 } as const;
