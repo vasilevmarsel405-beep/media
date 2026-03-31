@@ -1,7 +1,7 @@
 import type { Author, Post, Rubric, SpecialProject, TagEntity } from "./types";
 
 const IMG = (id: string, w = 1600, h = 900) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&h=${h}&q=80`;
+  `https://images.unsplash.com/${id}${id.includes("?") ? "&" : "?"}auto=format&fit=crop&w=${w}&h=${h}&q=80`;
 
 export const authors: Author[] = [
   {

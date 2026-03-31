@@ -209,6 +209,8 @@ export async function searchPosts(q: string): Promise<Post[]> {
 
 const URGENT_FEED_LIMIT = 8;
 const EDITORIAL_PICKS_LIMIT = 4;
+const MAIN_NOW_LIMIT = 6;
+const HOME_PROJECTS_LIMIT = 2;
 
 /** Герой из уже загруженного списка (`getAllPosts` уже отсортирован по дате). */
 export function pickFeaturedHero(all: Post[]): Post | null {
@@ -255,6 +257,13 @@ export function pickPopularPosts(all: Post[]): Post[] {
 }
 
 /**
+ * «Главное сейчас»: просто самые свежие материалы по дате.
+ */
+export function pickMainNowPosts(all: Post[]): Post[] {
+  return all.slice(0, MAIN_NOW_LIMIT);
+}
+
+/**
  * «Выбор редакции» на главной: только материалы с флагом `homePick` (по дате).
  */
 export function pickEditorialPicks(all: Post[]): Post[] {
@@ -262,10 +271,27 @@ export function pickEditorialPicks(all: Post[]): Post[] {
   const out: Post[] = [];
 
   for (const p of all) {
-    if (p.kind !== "article") continue;
     if (!p.homePick) continue;
     if (seen.has(p.slug)) continue;
     if (out.length >= EDITORIAL_PICKS_LIMIT) break;
+    out.push(p);
+    seen.add(p.slug);
+  }
+
+  return out;
+}
+
+/**
+ * Карточки для блока «Спецпроекты» на главной: вручную отмеченные материалы.
+ */
+export function pickHomeProjects(all: Post[]): Post[] {
+  const seen = new Set<string>();
+  const out: Post[] = [];
+
+  for (const p of all) {
+    if (!p.homeProject) continue;
+    if (seen.has(p.slug)) continue;
+    if (out.length >= HOME_PROJECTS_LIMIT) break;
     out.push(p);
     seen.add(p.slug);
   }

@@ -71,6 +71,8 @@ export function AdminPostForm({
       homeCta: initial?.homeCta ?? "",
       homeHero: initial?.homeHero ?? false,
       homePick: initial?.homePick ?? false,
+      homeMain: initial?.homeMain ?? false,
+      homeProject: initial?.homeProject ?? false,
       homeVideoUrl: initial?.homeVideoUrl ?? "",
       homeVideoLabel: initial?.homeVideoLabel ?? "",
     }),
@@ -140,6 +142,8 @@ export function AdminPostForm({
         if (form.homeVideoLabel.trim()) body.homeVideoLabel = form.homeVideoLabel.trim();
         body.homeHero = form.homeHero;
         body.homePick = form.homePick;
+        body.homeMain = form.homeMain;
+        body.homeProject = form.homeProject;
         body.urgent = form.urgent;
         body.pinned = form.pinned;
 
@@ -600,6 +604,24 @@ export function AdminPostForm({
             onChange={(e) => setForm((f) => ({ ...f, homePick: e.target.checked }))}
           />
           Показывать в блоке «Выбор редакции» на главной
+        </label>
+        <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2">
+          <input
+            type="checkbox"
+            disabled={!canSave}
+            checked={form.homeMain}
+            onChange={(e) => setForm((f) => ({ ...f, homeMain: e.target.checked }))}
+          />
+          Показывать в блоке «Главное сейчас» на главной
+        </label>
+        <label className="flex items-center gap-2 text-sm text-slate-300 sm:col-span-2">
+          <input
+            type="checkbox"
+            disabled={!canSave}
+            checked={form.homeProject}
+            onChange={(e) => setForm((f) => ({ ...f, homeProject: e.target.checked }))}
+          />
+          Показывать в блоке «Спецпроекты» на главной
         </label>
       </section>
 

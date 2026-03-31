@@ -155,6 +155,8 @@ function normalizeMakeAliases(input: unknown): unknown {
       homeCta: post.homeCta ?? post.home_cta,
       homeHero: post.homeHero ?? post.home_hero,
       homePick: post.homePick ?? post.home_pick,
+      homeMain: post.homeMain ?? post.home_main,
+      homeProject: post.homeProject ?? post.home_project,
       homeVideoUrl: post.homeVideoUrl ?? post.home_video_url,
       homeVideoLabel: post.homeVideoLabel ?? post.home_video_label,
       seoTitle: post.seoTitle ?? post.seo_title,

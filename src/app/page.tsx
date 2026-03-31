@@ -15,6 +15,8 @@ import {
   getAllPosts,
   pickFeaturedHero,
   pickEditorialPicks,
+  pickHomeProjects,
+  pickMainNowPosts,
   pickPopularPosts,
   pickSecondaryHero,
   pickUrgentFeed,
@@ -23,6 +25,7 @@ import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
+import { getAnalyticsSnapshot } from "@/lib/redis-analytics";
 
 export const revalidate = 5;
 
@@ -36,7 +39,8 @@ export default async function HomePage() {
   const sec = pickSecondaryHero(allPosts, hero);
   const heroHref = hero ? postHref(hero) : "/novosti";
   const urgentList = pickUrgentFeed(allPosts);
-  const popular = pickPopularPosts(allPosts);
+  const fallbackPopular = pickPopularPosts(allPosts);
+  const mainNowList = pickMainNowPosts(allPosts);
   const analyticsList: Post[] = [];
   const videos: Post[] = [];
   for (const p of allPosts) {
@@ -45,6 +49,14 @@ export default async function HomePage() {
   }
 
   const editorialPicks = pickEditorialPicks(allPosts);
+  const homeProjects = pickHomeProjects(allPosts);
+  const analyticsSnapshot = await getAnalyticsSnapshot();
+  const popularByViews =
+    analyticsSnapshot?.topPosts
+      ?.map((it) => allPosts.find((p) => p.slug === it.slug))
+      .filter((p): p is Post => Boolean(p))
+      .slice(0, 6) ?? [];
+  const popular = popularByViews.length ? popularByViews : fallbackPopular;
   const heroVideoHref = hero?.homeVideoUrl?.trim() ?? "";
   const heroVideoLabel = hero?.homeVideoLabel?.trim() || "Видео-дайджест";
 
@@ -184,7 +196,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading title={homeCopy.sections.now.title} subtitle={homeCopy.sections.now.subtitle} />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {allPosts.slice(0, 4).map((p) => (
+            {mainNowList.map((p) => (
               <PostCard key={p.slug} post={p} />
             ))}
           </div>
@@ -221,19 +233,30 @@ export default async function HomePage() {
             {analyticsList.slice(0, 4).map((p) => (
               <article
                 key={p.slug}
-                className="card-hover group rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white p-8 shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
+                className="card-hover group overflow-hidden rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
               >
-                <Link href={`/analitika/${p.slug}`} className="block">
-                  <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-blue">
-                    Аналитика: разбор
-                  </p>
-                  <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-mars-blue">
-                    {p.title}
-                  </h3>
-                  <p className="mt-3 text-slate-600 leading-relaxed">{p.lead}</p>
-                  <span className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-mars-blue">
-                    {homeCopy.sections.analytics.cardCta}
-                  </span>
+                <Link href={`/analitika/${p.slug}`} className="grid gap-0 sm:grid-cols-[11rem_1fr]">
+                  <div className="relative h-44 sm:h-full">
+                    <Image
+                      src={resolvePostImage(p)}
+                      alt={postCoverImageAlt(p.title, p.imageAlt)}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                      sizes="220px"
+                    />
+                  </div>
+                  <div className="p-6 sm:p-7">
+                    <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-blue">
+                      Аналитика: разбор
+                    </p>
+                    <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-mars-blue">
+                      {p.title}
+                    </h3>
+                    <p className="mt-3 text-slate-600 leading-relaxed">{p.lead}</p>
+                    <span className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-mars-blue">
+                      {homeCopy.sections.analytics.cardCta}
+                    </span>
+                  </div>
                 </Link>
               </article>
             ))}
@@ -241,7 +264,15 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="bg-slate-950 text-white">
+      <div className="relative overflow-hidden bg-[#050508] text-white">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.2]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.24) 1px, transparent 0)`,
+            backgroundSize: "22px 22px",
+          }}
+          aria-hidden
+        />
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading
             title={homeCopy.sections.video.title}
@@ -339,28 +370,51 @@ export default async function HomePage() {
           actionLabel={homeCopy.sections.projects.action}
         />
         <div className="grid gap-6 lg:grid-cols-2">
-          {specialProjects.map((s) => (
-            <Link
-              key={s.slug}
-              href={`/specproekty/${s.slug}`}
-              className="card-hover overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-md"
-            >
-              <div className="relative aspect-[21/9]">
-                <Image
-                  src={s.cover}
-                  alt={`Обложка спецпроекта: ${s.title}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width:1024px) 100vw, 50vw"
-                />
-              </div>
-              <div className="p-8">
-                <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-accent">{s.dek}</p>
-                <h3 className="font-display mt-2 text-2xl font-bold text-slate-900">{s.title}</h3>
-                <p className="mt-3 text-slate-600">{s.lead}</p>
-              </div>
-            </Link>
-          ))}
+          {homeProjects.length
+            ? homeProjects.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={postHref(p)}
+                  className="card-hover overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-md"
+                >
+                  <div className="relative aspect-[21/9]">
+                    <Image
+                      src={resolvePostImage(p)}
+                      alt={postCoverImageAlt(p.title, p.imageAlt)}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width:1024px) 100vw, 50vw"
+                    />
+                  </div>
+                  <div className="p-8">
+                    <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-accent">спецпроект</p>
+                    <h3 className="font-display mt-2 text-2xl font-bold text-slate-900">{p.title}</h3>
+                    <p className="mt-3 text-slate-600">{p.lead}</p>
+                  </div>
+                </Link>
+              ))
+            : specialProjects.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={`/specproekty/${s.slug}`}
+                  className="card-hover overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-md"
+                >
+                  <div className="relative aspect-[21/9]">
+                    <Image
+                      src={s.cover}
+                      alt={`Обложка спецпроекта: ${s.title}`}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width:1024px) 100vw, 50vw"
+                    />
+                  </div>
+                  <div className="p-8">
+                    <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-accent">{s.dek}</p>
+                    <h3 className="font-display mt-2 text-2xl font-bold text-slate-900">{s.title}</h3>
+                    <p className="mt-3 text-slate-600">{s.lead}</p>
+                  </div>
+                </Link>
+              ))}
         </div>
       </div>
 
