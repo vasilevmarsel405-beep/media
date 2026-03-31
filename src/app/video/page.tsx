@@ -3,6 +3,7 @@ import Image from "next/image";
 import { IconPlay } from "@/components/icons";
 import { videoHubCopy } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
+import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { formatDateTime } from "@/lib/format";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
@@ -57,7 +58,7 @@ export default async function VideoHubPage() {
             <div className="relative aspect-[21/9] min-h-[220px]">
               <Image
                 src={resolvePostImage(featured)}
-                alt=""
+                alt={postCoverImageAlt(featured.title, featured.imageAlt)}
                 fill
                 className="object-cover opacity-95 transition duration-700 group-hover:scale-[1.03] group-hover:opacity-100"
                 sizes="(max-width:1400px) 100vw, 1400px"
@@ -95,7 +96,7 @@ export default async function VideoHubPage() {
               <div className="relative aspect-video">
                 <Image
                   src={resolvePostImage(v)}
-                  alt=""
+                  alt={postCoverImageAlt(v.title, v.imageAlt)}
                   fill
                   className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
                   sizes="400px"

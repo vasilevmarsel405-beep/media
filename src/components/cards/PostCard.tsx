@@ -40,7 +40,7 @@ export function PostCard({
         >
           <Image
             src={cover}
-            alt=""
+            alt={postCoverImageAlt(post.title, post.imageAlt)}
             fill
             className="object-cover transition duration-300 group-hover:scale-[1.03]"
             sizes="200px"

@@ -21,6 +21,7 @@ import {
 } from "@/lib/posts-service";
 import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
+import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 export const dynamic = "force-dynamic";
@@ -67,7 +68,7 @@ export default async function HomePage() {
                 >
                   <Image
                     src={resolvePostImage(hero)}
-                    alt=""
+                    alt={postCoverImageAlt(hero.title, hero.imageAlt)}
                     fill
                     priority
                     className="object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
@@ -260,7 +261,7 @@ export default async function HomePage() {
                 <div className="relative aspect-video">
                   <Image
                     src={resolvePostImage(p)}
-                    alt=""
+                    alt={postCoverImageAlt(p.title, p.imageAlt)}
                     fill
                     className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
                     sizes="400px"
@@ -317,7 +318,7 @@ export default async function HomePage() {
                 <div className="relative aspect-[4/3]">
                   <Image
                     src={r.cover}
-                    alt=""
+                    alt={`Иллюстрация рубрики: ${r.name}`}
                     fill
                     className="object-cover transition duration-500 group-hover:scale-[1.06]"
                     sizes="300px"
@@ -346,7 +347,13 @@ export default async function HomePage() {
               className="card-hover overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-md"
             >
               <div className="relative aspect-[21/9]">
-                <Image src={s.cover} alt="" fill className="object-cover" sizes="(max-width:1024px) 100vw, 50vw" />
+                <Image
+                  src={s.cover}
+                  alt={`Обложка спецпроекта: ${s.title}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width:1024px) 100vw, 50vw"
+                />
               </div>
               <div className="p-8">
                 <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-accent">{s.dek}</p>

@@ -33,7 +33,7 @@ export default async function AuthorPage({ params }: Props) {
     <div className="mx-auto max-w-[1100px] px-4 py-12 sm:px-6 lg:px-10">
       <div className="flex flex-col gap-8 border-b border-slate-200 pb-10 sm:flex-row sm:items-start">
         <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-3xl bg-slate-100 shadow-lg ring-4 ring-white">
-          <Image src={author.photo} alt="" fill className="object-cover" sizes="128px" />
+          <Image src={author.photo} alt={`Фото автора: ${author.name}`} fill className="object-cover" sizes="128px" />
         </div>
         <div>
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Автор</p>

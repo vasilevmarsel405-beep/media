@@ -53,7 +53,7 @@ export default function RubrikiPage() {
                 >
                   <Image
                     src={r.cover}
-                    alt=""
+                    alt={`Иллюстрация рубрики: ${r.name}`}
                     fill
                     className="object-cover transition duration-700 ease-out group-hover:scale-[1.05]"
                     sizes={hero ? "(max-width:1024px) 100vw, 58vw" : "(max-width:1024px) 100vw, 33vw"}

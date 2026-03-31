@@ -41,6 +41,8 @@ export interface Post {
   lead: string;
   paragraphs: string[];
   image: string;
+  /** Alt-текст обложки (опционально; если пусто, формируется из заголовка) */
+  imageAlt?: string;
   authorId: string;
   rubricSlugs: string[];
   tagSlugs: string[];

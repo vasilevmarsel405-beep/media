@@ -30,7 +30,7 @@ export default function SpecproektyPage() {
                 <div className="relative aspect-[16/10] min-h-[240px] lg:aspect-auto lg:min-h-[320px]">
                   <Image
                     src={s.cover}
-                    alt=""
+                    alt={`Обложка спецпроекта: ${s.title}`}
                     fill
                     className="object-cover transition duration-700 group-hover:scale-[1.02]"
                     sizes="(max-width:1024px) 100vw, 50vw"

@@ -7,6 +7,7 @@ import { TagPill } from "@/components/TagPill";
 import { rubricBySlug, rubrics, tags } from "@/lib/content";
 import { getPostsByKind, getPostsForRubric } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
+import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { siteUrl } from "@/lib/site";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
@@ -48,7 +49,7 @@ export default async function RubricPage({ params }: Props) {
     <div>
       <div className="relative border-b border-slate-200">
         <div className="relative h-[min(52vh,520px)] w-full">
-          <Image src={rubric.cover} alt="" fill priority className="object-cover" sizes="100vw" />
+          <Image src={rubric.cover} alt={`Иллюстрация рубрики: ${rubric.name}`} fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 mx-auto max-w-[1100px] px-4 pb-12 pt-24 text-white sm:px-6 lg:px-10">
             <p className="text-xs font-bold uppercase tracking-wider text-white/70">Рубрика</p>
@@ -67,7 +68,7 @@ export default async function RubricPage({ params }: Props) {
               className="mt-4 grid gap-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm lg:grid-cols-2"
             >
               <div className="relative min-h-[240px]">
-                <Image src={resolvePostImage(top)} alt="" fill className="object-cover" sizes="600px" />
+                <Image src={resolvePostImage(top)} alt={postCoverImageAlt(top.title, top.imageAlt)} fill className="object-cover" sizes="600px" />
               </div>
               <div className="flex flex-col justify-center p-8 lg:p-10">
                 <h3 className="font-display text-3xl font-semibold text-slate-900">{top.title}</h3>

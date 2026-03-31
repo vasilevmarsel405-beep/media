@@ -37,7 +37,7 @@ export default async function SpecialProjectPage({ params }: Props) {
     <article>
       <div className="relative border-b border-slate-200">
         <div className="relative h-[min(60vh,640px)] w-full">
-          <Image src={project.cover} alt="" fill priority className="object-cover" sizes="100vw" />
+          <Image src={project.cover} alt={`Обложка спецпроекта: ${project.title}`} fill priority className="object-cover" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 mx-auto max-w-[900px] px-4 pb-14 pt-20 text-center text-white sm:px-6">
             <Breadcrumbs
