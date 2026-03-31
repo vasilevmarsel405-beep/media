@@ -360,11 +360,17 @@ export default async function HomePage() {
 
       <div className="mx-auto max-w-[1400px] px-4 pb-10 sm:px-6 lg:px-10">
         <section className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-sm sm:p-8">
-          <h2 className="font-display text-2xl font-bold text-slate-900">Правовая информация и условия</h2>
+          <h2 className="font-display text-2xl font-bold text-slate-900">Прозрачность редакции и документы</h2>
           <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
-            Коммерческие материалы публикуются с явной маркировкой. Условия сотрудничества, обработка данных, файлы
-            cookie и правила использования сайта доступны в открытом доступе. Регион работы редакции: Россия.
+            Сайт публикует редакционные материалы и не является витриной услуг. Правила публикаций, обработка данных,
+            файлы cookie и пользовательские условия доступны в открытом доступе. Регион работы редакции: Россия.
           </p>
+          <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-700">
+            <li>Маркировка типов материалов</li>
+            <li>Публичные исправления ошибок</li>
+            <li>Открытые контакты редакции</li>
+            <li>Редакционная политика</li>
+          </ul>
           <div className="mt-5 flex flex-wrap gap-2.5 text-sm">
             <Link href="/pravovaya-informatsiya" className="rounded-lg bg-white px-3 py-2 font-semibold text-slate-800 ring-1 ring-slate-200 transition hover:bg-slate-100">
               Правовая информация
