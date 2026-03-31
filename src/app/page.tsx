@@ -53,6 +53,7 @@ export default async function HomePage() {
     <div>
       <HomeTrendingTicker posts={urgentList} />
       <HomeEditorialStats materials={allPosts.length} rubrics={rubrics.length} />
+      <h1 className="sr-only">КриптоМарс Медиа — новости, аналитика и видео о криптоэкономике</h1>
 
       <section className="relative overflow-hidden mars-hero-mesh">
         <HeroGradualBlur />
@@ -87,9 +88,9 @@ export default async function HomePage() {
                     <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref}>
-                    <h1 className="font-display mt-5 max-w-[22ch] text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+                    <h2 className="font-display mt-5 max-w-[22ch] text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
                       {hero.title}
-                    </h1>
+                    </h2>
                   </Link>
                   <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 sm:text-lg">{hero.lead}</p>
                   <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -117,9 +118,9 @@ export default async function HomePage() {
             ) : (
               <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col justify-center overflow-hidden bg-slate-950 px-6 py-14 shadow-2xl sm:px-10 sm:py-16">
                 <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Материалы</p>
-                <h1 className="font-display mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
+                <h2 className="font-display mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
                   Пока нет опубликованных материалов в ленте
-                </h1>
+                </h2>
                 <p className="mt-4 max-w-lg text-base leading-relaxed text-white/70">
                   Если включён режим только облака (<code className="rounded bg-white/10 px-1.5 py-0.5 text-[13px]">POSTS_FEED_MODE=remote_only</code>
                   ), добавьте материалы через админку или Make — тогда они появятся здесь.
@@ -183,7 +184,7 @@ export default async function HomePage() {
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
           <SectionHeading title={homeCopy.sections.now.title} subtitle={homeCopy.sections.now.subtitle} />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {allPosts.slice(0, 6).map((p) => (
+            {allPosts.slice(0, 4).map((p) => (
               <PostCard key={p.slug} post={p} />
             ))}
           </div>
@@ -217,7 +218,7 @@ export default async function HomePage() {
             actionLabel={homeCopy.sections.analytics.action}
           />
           <div className="grid gap-6 md:grid-cols-2">
-            {analyticsList.map((p) => (
+            {analyticsList.slice(0, 4).map((p) => (
               <article
                 key={p.slug}
                 className="card-hover group rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white p-8 shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
@@ -250,7 +251,7 @@ export default async function HomePage() {
             variant="dark"
           />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {videos.map((p) => (
+            {videos.slice(0, 3).map((p) => (
               <Link
                 key={p.slug}
                 href={`/video/${p.slug}`}
@@ -292,7 +293,7 @@ export default async function HomePage() {
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
         <SectionHeading title={homeCopy.sections.popular.title} subtitle={homeCopy.sections.popular.subtitle} />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {popular.map((p) => (
+          {popular.slice(0, 4).map((p) => (
             <PostCard key={`pop-${p.slug}`} post={p} />
           ))}
         </div>

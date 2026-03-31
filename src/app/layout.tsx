@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   metadataBase: getMetadataBaseUrl(),
   applicationName: siteName,
   title: {
-    default: `${siteName} — экономика, крипто, финансы, технологии и политика`,
+    default: `${siteName} — новости, аналитика и видео о криптоэкономике`,
     template: `%s — ${siteName}`,
   },
   description: metaCopy.description,
@@ -52,12 +52,12 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: siteUrl,
     siteName,
-    title: `${siteName} — экономика, крипто, финансы, технологии и политика`,
+    title: `${siteName} — новости, аналитика и видео о криптоэкономике`,
     description: metaCopy.description,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteName} — экономика, крипто, финансы, технологии`,
+    title: `${siteName} — новости, аналитика и видео`,
     description: metaCopy.description,
   },
 };

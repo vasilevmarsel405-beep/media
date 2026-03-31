@@ -19,6 +19,15 @@ export default function AdsPage() {
         <li>— Брендированные спецпроекты с мультимедиа.</li>
         <li>— Видеоинтеграции в плеере и на главной.</li>
       </ul>
+      <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-relaxed text-slate-700">
+        <p>
+          Юридические условия сотрудничества, порядок оплаты, маркировка, корректировки и документы собраны на странице{" "}
+          <Link href="/pravovaya-informatsiya" className="font-semibold text-mars-blue hover:underline">
+            «Правовая информация»
+          </Link>
+          .
+        </p>
+      </div>
       <p className="mt-8">
         <a href="mailto:ads@cryptomarsmedia.ru" className="font-semibold text-mars-blue hover:underline">
           ads@cryptomarsmedia.ru

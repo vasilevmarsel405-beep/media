@@ -34,6 +34,7 @@ const sections = [
       { href: "/polzovatelskoe-soglashenie", label: "Соглашение" },
       { href: "/redaktsionnaya-politika", label: "Редакционная политика" },
       { href: "/reklamodatelyam", label: "Рекламодателям" },
+      { href: "/pravovaya-informatsiya", label: "Правовая информация" },
       { href: "/politika-faylov-cookie", label: "Файлы cookie" },
     ],
   },
@@ -90,11 +91,11 @@ export function SiteFooter() {
             <Link
               href={adminEntryPathname}
               className="-m-1 inline-block size-2 rounded-sm opacity-[0.07] hover:opacity-25"
-              aria-hidden
-              tabIndex={-1}
-              title=""
+              aria-label="Вход в админку"
+              title="Вход в админку"
             >
               <span className="block size-full" aria-hidden />
+              <span className="sr-only">Вход в админку</span>
             </Link>
           </p>
           <Link href="/kontakty" className="text-slate-600 hover:text-slate-900">

@@ -1,7 +1,7 @@
 export const revalidate = 300;
 
 import type { MetadataRoute } from "next";
-import { authors, rubrics, specialProjects, tags } from "@/lib/content";
+import { authors, posts as staticPosts, rubrics, specialProjects, tags } from "@/lib/content";
 import { getAllPosts } from "@/lib/posts-service";
 import { postHref } from "@/lib/routes";
 import { siteUrl } from "@/lib/site";
@@ -21,6 +21,7 @@ const STATIC_PATHS = [
   "/kontakty",
   "/kabinet",
   "/reklamodatelyam",
+  "/pravovaya-informatsiya",
   "/politika-konfidencialnosti",
   "/polzovatelskoe-soglashenie",
   "/redaktsionnaya-politika",
@@ -30,7 +31,15 @@ const STATIC_PATHS = [
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const posts = await getAllPosts();
+  let posts = [] as Awaited<ReturnType<typeof getAllPosts>>;
+  try {
+    posts = await getAllPosts();
+  } catch (e) {
+    // Не роняем sitemap при временных сбоях удалённого хранилища:
+    // заполняем карту статическим контентом, чтобы поисковики не теряли URL материалов.
+    console.error("[sitemap] getAllPosts failed, fallback to static posts", e);
+    posts = staticPosts;
+  }
 
   const staticEntries: MetadataRoute.Sitemap = STATIC_PATHS.map((path) => ({
     url: `${siteUrl}${path || "/"}`,
@@ -74,7 +83,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.65,
   }));
 
-  return [
+  const allEntries: MetadataRoute.Sitemap = [
     ...staticEntries,
     ...postEntries,
     ...rubricEntries,
@@ -82,4 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...authorEntries,
     ...specEntries,
   ];
+
+  // На всякий случай убираем дубли URL в финальной карте.
+  return Array.from(new Map(allEntries.map((e) => [e.url, e])).values());
 }
