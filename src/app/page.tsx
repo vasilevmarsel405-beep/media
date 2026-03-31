@@ -237,17 +237,17 @@ export default async function HomePage() {
                 key={p.slug}
                 className="card-hover group overflow-hidden rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
               >
-                <Link href={`/analitika/${p.slug}`} className="grid gap-0 md:grid-cols-[15rem_1fr]">
-                  <div className="relative aspect-[16/9] md:aspect-[4/3] md:h-full">
+                <Link href={`/analitika/${p.slug}`} className="flex flex-col md:flex-row">
+                  <div className="relative h-44 overflow-hidden md:h-auto md:w-56 md:shrink-0">
                     <Image
                       src={resolvePostImage(p)}
                       alt={postCoverImageAlt(p.title, p.imageAlt)}
                       fill
                       className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                      sizes="220px"
+                      sizes="(max-width:768px) 100vw, 224px"
                     />
                   </div>
-                  <div className="p-6 sm:p-7">
+                  <div className="min-w-0 flex-1 p-6 sm:p-7">
                     <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-blue">
                       Аналитика: разбор
                     </p>
