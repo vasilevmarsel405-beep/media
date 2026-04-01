@@ -80,89 +80,75 @@ export default async function HomePage() {
         <HeroGradualBlur />
         <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-9 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
           {hero ? (
-            <article className="mars-hero-frame mars-reveal group grid min-h-[280px] w-full grid-cols-[minmax(100px,32%)_minmax(0,1fr)] items-stretch overflow-hidden rounded-[30px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] lg:min-h-[540px] lg:grid-cols-1 lg:grid-rows-1">
-              <Link
-                href={heroHref}
-                aria-label={`Открыть материал: ${hero.title}`}
-                className="relative z-0 col-start-1 row-start-1 block min-h-[220px] overflow-hidden lg:absolute lg:inset-0 lg:min-h-0"
-              >
+            <article className="mars-hero-frame mars-reveal group relative overflow-hidden rounded-[30px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)]">
+              <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
                   alt={postCoverImageAlt(hero.title, hero.imageAlt)}
                   fill
                   priority
                   className="object-cover transition duration-700 group-hover:scale-[1.02]"
-                  sizes="(max-width:1023px) 36vw, 100vw"
+                  sizes="(max-width:1400px) 100vw, 1400px"
                 />
               </Link>
-              <div className="relative z-10 col-start-2 row-start-1 flex min-h-0 min-w-0 flex-col justify-end border-l border-white/10 bg-[#070b16] p-3 pb-5 pt-6 sm:p-4 sm:pb-6 sm:pt-8 lg:col-start-1 lg:row-start-1 lg:min-h-[540px] lg:border-l-0 lg:bg-transparent lg:p-10 lg:px-12 lg:pb-12 lg:pt-12">
-                <div className="pointer-events-none absolute inset-0 hidden lg:block">
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.22)_0%,rgba(7,11,22,0.5)_38%,rgba(7,11,22,0.88)_100%)]" />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "linear-gradient(105deg, rgba(4,7,16,0.94) 0%, rgba(4,7,16,0.72) 22%, rgba(4,7,16,0.4) 40%, rgba(4,7,16,0.14) 56%, rgba(4,7,16,0) 68%)",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        "radial-gradient(120% 80% at 12% 88%, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.28) 38%, rgba(0,0,0,0) 62%)",
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0 opacity-[0.14]"
-                    style={{
-                      backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)",
-                      backgroundSize: "26px 26px",
-                    }}
-                  />
-                </div>
-                <div className="relative z-10 min-w-0 max-w-4xl">
-                  <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto text-[10px] font-bold uppercase tracking-widest text-white/80 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-2 sm:text-[11px] lg:flex-wrap lg:gap-2 lg:overflow-visible [&::-webkit-scrollbar]:hidden">
-                    <span className="max-lg:shrink-0 rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur sm:px-2.5 sm:py-1">
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.22)_0%,rgba(7,11,22,0.5)_38%,rgba(7,11,22,0.88)_100%)]" />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(105deg, rgba(4,7,16,0.94) 0%, rgba(4,7,16,0.72) 22%, rgba(4,7,16,0.4) 40%, rgba(4,7,16,0.14) 56%, rgba(4,7,16,0) 68%)",
+                }}
+              />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(120% 80% at 12% 88%, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.28) 38%, rgba(0,0,0,0) 62%)",
+                }}
+              />
+              <div
+                className="pointer-events-none absolute inset-0 opacity-[0.14]"
+                style={{
+                  backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)",
+                  backgroundSize: "26px 26px",
+                }}
+              />
+              <div className="relative z-10 flex min-h-[min(52dvh,440px)] flex-col justify-end px-5 pb-8 pt-16 sm:min-h-[480px] sm:px-10 sm:pb-10 sm:pt-12 lg:min-h-[540px] lg:px-12 lg:pb-12">
+                <div className="max-w-4xl">
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/80">
+                    <span className="rounded-md bg-white/12 px-2.5 py-1 text-white ring-1 ring-white/20 backdrop-blur">
                       {hero.homeBadge ?? "Материал дня"}
                     </span>
                     {hero.readMin ? (
-                      <span className="max-lg:shrink-0 rounded-lg bg-[#FF3100] px-2 py-0.5 text-white shadow-lg shadow-orange-950/30 sm:rounded-xl sm:px-2.5 sm:py-1">
+                      <span className="rounded-xl bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/30">
                         {hero.readMin} мин · без воды
                       </span>
                     ) : null}
-                    <span className="max-lg:shrink-0 text-white/65">{formatTime(hero.publishedAt)}</span>
+                    <span className="text-white/65">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref} className="block min-w-0">
-                    <h2 className="font-display mt-2 max-w-none text-[1.2rem] font-bold leading-[1.12] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_14px_42px_rgba(0,0,0,0.6)] sm:mt-3 sm:text-[1.35rem] md:text-[1.5rem] lg:mt-4 lg:max-w-[22ch] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
+                    <h2 className="font-display mt-4 max-w-[min(100%,22ch)] text-[1.9rem] font-bold leading-[1.05] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_14px_42px_rgba(0,0,0,0.6)] sm:max-w-[22ch] sm:text-[2.45rem] md:text-[2.65rem] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-2 max-w-none text-sm leading-relaxed text-white/93 sm:mt-3 sm:text-base lg:mt-4 lg:max-w-3xl lg:text-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)]">
+                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/93 sm:text-base lg:text-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)]">
                     {hero.lead}
                   </p>
-                  <div
-                    className={
-                      heroVideoHref
-                        ? "mt-4 grid w-full grid-cols-2 gap-2 sm:gap-3 lg:mt-7 lg:flex lg:max-w-none lg:flex-nowrap lg:gap-3"
-                        : "mt-4 lg:mt-7"
-                    }
-                  >
+                  <div className="mt-7 flex flex-nowrap items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 [&::-webkit-scrollbar]:hidden">
                     <Link
                       href={heroHref}
-                      className="focus-ring inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2.5 text-center text-[11px] font-bold leading-snug text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06] sm:gap-2 sm:px-4 sm:py-3 sm:text-xs lg:w-auto lg:px-6 lg:text-sm"
+                      className="focus-ring inline-flex min-h-[44px] shrink-0 items-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-3 text-xs font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06] sm:px-6 sm:text-sm"
                     >
                       {hero.homeCta ?? "Читать сейчас"}
-                      <span aria-hidden className="shrink-0">
-                        →
-                      </span>
+                      <span aria-hidden>→</span>
                     </Link>
                     {heroVideoHref ? (
                       <HeroGlassVideoLink
                         href={heroVideoHref}
-                        className="min-h-[44px] w-full min-w-0 px-3 py-2.5 text-[11px] leading-snug sm:px-4 sm:py-3 sm:text-xs lg:w-auto lg:px-6 lg:text-sm"
+                        className="shrink-0 px-4 py-3 text-xs sm:px-6 sm:text-sm"
                         {...(isExternalUrl(heroVideoHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       >
-                        <IconPlay className="h-3.5 w-3.5 shrink-0 opacity-90 sm:h-4 sm:w-4" aria-hidden />
+                        <IconPlay className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
                         {heroVideoLabel}
                       </HeroGlassVideoLink>
                     ) : null}
