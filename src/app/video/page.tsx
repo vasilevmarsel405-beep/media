@@ -1,11 +1,17 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { IconPlay } from "@/components/icons";
-import { videoHubCopy } from "@/lib/copy";
+import { hubPageMeta, videoHubCopy } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { formatDateTime } from "@/lib/format";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
+
+export const metadata: Metadata = {
+  title: hubPageMeta.video.title,
+  description: hubPageMeta.video.description,
+};
 
 export const revalidate = 30;
 

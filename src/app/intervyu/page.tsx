@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
+import { hubPageMeta } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
+
+export const metadata: Metadata = {
+  title: hubPageMeta.intervyu.title,
+  description: hubPageMeta.intervyu.description,
+};
 
 export const revalidate = 30;
 

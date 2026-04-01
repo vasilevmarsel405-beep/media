@@ -1,7 +1,14 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { rubrics } from "@/lib/content";
+import { hubPageMeta } from "@/lib/copy";
 import { cn } from "@/lib/cn";
+
+export const metadata: Metadata = {
+  title: hubPageMeta.rubriki.title,
+  description: hubPageMeta.rubriki.description,
+};
 
 export const revalidate = 30;
 

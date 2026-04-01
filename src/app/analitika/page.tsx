@@ -1,11 +1,18 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/cn";
+import { hubPageMeta } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 /** Не блокируем build сетевыми запросами к Redis/внешним API. */
+export const metadata: Metadata = {
+  title: hubPageMeta.analitika.title,
+  description: hubPageMeta.analitika.description,
+};
+
 export const revalidate = 30;
 
 export default async function AnalitikaPage() {

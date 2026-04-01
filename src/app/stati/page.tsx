@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import { PostCard } from "@/components/cards/PostCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ItemListJsonLd } from "@/components/seo/ItemListJsonLd";
+import { hubPageMeta } from "@/lib/copy";
 import { postHref } from "@/lib/routes";
 import { getPostsByKind } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: hubPageMeta.stati.title,
+  description: hubPageMeta.stati.description,
+};
 
 export const revalidate = 30;
 
@@ -21,7 +28,7 @@ export default async function StatiPage() {
     <>
       <ItemListJsonLd
         name="Статьи"
-        description="Колонки, обзоры и объясняющие материалы КриптоМарс Медиа."
+        description={hubPageMeta.stati.description}
         path="/stati"
         items={itemListLd}
       />

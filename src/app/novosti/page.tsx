@@ -1,13 +1,19 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { FeaturedNewsCard } from "@/components/novosti/FeaturedNewsCard";
 import { ItemListJsonLd } from "@/components/seo/ItemListJsonLd";
-import { novostiCopy } from "@/lib/copy";
+import { hubPageMeta, novostiCopy } from "@/lib/copy";
 import { rubrics, tags } from "@/lib/content";
 import { cn } from "@/lib/cn";
 import { postHref } from "@/lib/routes";
 import { getPostsByKind } from "@/lib/posts-service";
 import { siteUrl } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: hubPageMeta.novosti.title,
+  description: hubPageMeta.novosti.description,
+};
 
 export const revalidate = 30;
 
