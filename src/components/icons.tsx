@@ -43,3 +43,26 @@ export function IconShare(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+/** Материалы в каталоге — блок статистики на главной */
+export function IconLibrary(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden {...props}>
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" strokeLinecap="round" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" strokeLinejoin="round" />
+      <path d="M8 7h8M8 11h8M8 15h4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/** Рубрики — блок статистики на главной */
+export function IconRubrics(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden {...props}>
+      <rect x="3" y="3" width="7" height="7" rx="1.25" strokeLinejoin="round" />
+      <rect x="14" y="3" width="7" height="7" rx="1.25" strokeLinejoin="round" />
+      <rect x="3" y="14" width="7" height="7" rx="1.25" strokeLinejoin="round" />
+      <rect x="14" y="14" width="7" height="7" rx="1.25" strokeLinejoin="round" />
+    </svg>
+  );
+}
