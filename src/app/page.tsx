@@ -89,10 +89,17 @@ export default async function HomePage() {
                   sizes="(max-width:1400px) 100vw, 1400px"
                 />
               </Link>
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.15)_0%,rgba(7,11,22,0.55)_48%,rgba(7,11,22,0.9)_100%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.28)_0%,rgba(7,11,22,0.62)_42%,rgba(7,11,22,0.94)_100%)]" />
+              <div
+                className="pointer-events-none absolute inset-0 opacity-80 mix-blend-multiply"
+                style={{
+                  background:
+                    "radial-gradient(92% 120% at 16% 58%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0) 74%)",
+                }}
+              />
               <div className="pointer-events-none absolute inset-0 opacity-[0.18]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)", backgroundSize: "26px 26px" }} />
               <div className="relative z-10 flex min-h-[420px] flex-col justify-end px-6 pb-8 pt-12 sm:min-h-[480px] sm:px-10 sm:pb-10 lg:min-h-[540px] lg:px-12">
-                <div className="max-w-4xl">
+                <div className="max-w-4xl rounded-2xl border border-white/14 bg-gradient-to-br from-black/60 via-black/38 to-black/22 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_26px_70px_-28px_rgba(0,0,0,0.9)] backdrop-blur-md sm:p-7">
                   <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/80">
                     <span className="rounded-md bg-white/12 px-2.5 py-1 text-white ring-1 ring-white/20 backdrop-blur">
                       {hero.homeBadge ?? "Материал дня"}
@@ -105,11 +112,13 @@ export default async function HomePage() {
                     <span className="text-white/65">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref}>
-                    <h2 className="font-display mt-4 max-w-[22ch] text-[2.2rem] font-bold leading-[1.04] tracking-tight text-white drop-shadow-[0_8px_28px_rgba(0,0,0,0.55)] sm:text-[2.75rem] lg:text-[3.15rem]">
+                    <h2 className="font-display mt-4 max-w-[22ch] text-[2.2rem] font-bold leading-[1.04] tracking-tight text-white [text-shadow:0_2px_1px_rgba(0,0,0,0.55),0_12px_36px_rgba(0,0,0,0.55)] sm:text-[2.75rem] lg:text-[3.15rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/90 sm:text-base lg:text-lg">{hero.lead}</p>
+                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/92 sm:text-base lg:text-lg [text-shadow:0_1px_0_rgba(0,0,0,0.45),0_10px_28px_rgba(0,0,0,0.5)]">
+                    {hero.lead}
+                  </p>
                   <div className="mt-7 flex flex-wrap items-center gap-3">
                     <Link
                       href={heroHref}
