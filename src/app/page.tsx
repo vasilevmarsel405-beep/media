@@ -79,11 +79,11 @@ export default async function HomePage() {
         <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
           <div className="grid min-w-0 gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
             {hero ? (
-              <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col overflow-hidden bg-slate-950 shadow-2xl">
+              <article className="mars-hero-frame mars-reveal grid min-w-0 overflow-hidden bg-slate-950 shadow-2xl lg:grid-cols-[1.18fr_0.82fr]">
                 <Link
                   href={heroHref}
                   aria-label={`Открыть материал: ${hero.title}`}
-                  className="group relative block aspect-[16/10] w-full shrink-0 sm:aspect-[2.05/1] mars-clip-hero-media"
+                  className="group relative block min-h-[260px] sm:min-h-[340px] lg:min-h-[560px]"
                 >
                   <Image
                     src={resolvePostImage(hero)}
@@ -91,9 +91,9 @@ export default async function HomePage() {
                     fill
                     priority
                     className="object-cover transition duration-700 ease-out group-hover:scale-[1.03]"
-                    sizes="(max-width:1024px) 100vw, 68vw"
+                    sizes="(max-width:1024px) 100vw, 58vw"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/10 lg:bg-gradient-to-r lg:from-black/20 lg:via-black/10 lg:to-transparent" />
                 </Link>
                 <div className="relative flex flex-1 flex-col justify-end bg-gradient-to-b from-slate-950 via-slate-950 to-black px-6 pb-9 pt-8 sm:px-10 sm:pb-11 sm:pt-10">
                   <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/70">
@@ -108,11 +108,11 @@ export default async function HomePage() {
                     <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref}>
-                    <h2 className="font-display mt-5 max-w-[22ch] text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+                    <h2 className="font-display mt-5 text-3xl font-bold leading-[1.08] tracking-tight text-white drop-shadow-[0_4px_28px_rgba(0,0,0,0.55)] sm:text-4xl xl:text-[3.05rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/88 sm:text-lg">{hero.lead}</p>
+                  <p className="mt-4 text-base leading-relaxed text-white/88 sm:text-lg">{hero.lead}</p>
                   <div className="mt-8 flex flex-wrap items-center gap-3">
                     <Link
                       href={heroHref}
