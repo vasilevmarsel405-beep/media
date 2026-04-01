@@ -77,35 +77,23 @@ export default async function HomePage() {
       <section className="relative overflow-hidden mars-hero-mesh">
         <HeroGradualBlur />
         <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-8 sm:px-6 lg:px-10 lg:py-12">
-          <div className="grid min-w-0 gap-8 lg:grid-cols-[1.28fr_0.92fr] lg:items-stretch">
-            {hero ? (
-              <article className="mars-hero-frame mars-reveal grid min-w-0 overflow-hidden rounded-[30px] border border-white/10 bg-slate-950 shadow-[0_30px_80px_-38px_rgb(0_0_0/0.9)] lg:grid-cols-[1.35fr_0.95fr]">
-                <Link
-                  href={heroHref}
-                  aria-label={`Открыть материал: ${hero.title}`}
-                  className="group relative block min-h-[280px] overflow-hidden border-b border-white/10 bg-black/30 sm:min-h-[360px] lg:min-h-[590px] lg:border-b-0 lg:border-r lg:border-white/10"
-                >
-                  <Image
-                    src={resolvePostImage(hero)}
-                    alt=""
-                    fill
-                    priority
-                    className="scale-[1.1] object-cover opacity-35 blur-xl"
-                    sizes="(max-width:1024px) 100vw, 64vw"
-                  />
-                  <Image
-                    src={resolvePostImage(hero)}
-                    alt={postCoverImageAlt(hero.title, hero.imageAlt)}
-                    fill
-                    priority
-                    className="object-contain p-4 transition duration-700 ease-out group-hover:scale-[1.02] sm:p-6"
-                    sizes="(max-width:1024px) 100vw, 64vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-950/60 to-transparent" />
-                </Link>
-                <div className="relative flex flex-1 flex-col justify-end bg-[linear-gradient(180deg,#0b1227_0%,#070b16_60%,#05070d_100%)] px-6 pb-8 pt-7 sm:px-9 sm:pb-10 sm:pt-9">
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/70">
+          {hero ? (
+            <article className="mars-hero-frame mars-reveal group relative overflow-hidden rounded-[30px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)]">
+              <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
+                <Image
+                  src={resolvePostImage(hero)}
+                  alt={postCoverImageAlt(hero.title, hero.imageAlt)}
+                  fill
+                  priority
+                  className="object-cover transition duration-700 group-hover:scale-[1.02]"
+                  sizes="(max-width:1400px) 100vw, 1400px"
+                />
+              </Link>
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.15)_0%,rgba(7,11,22,0.55)_48%,rgba(7,11,22,0.9)_100%)]" />
+              <div className="pointer-events-none absolute inset-0 opacity-[0.18]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)", backgroundSize: "26px 26px" }} />
+              <div className="relative z-10 flex min-h-[420px] flex-col justify-end px-6 pb-8 pt-12 sm:min-h-[480px] sm:px-10 sm:pb-10 lg:min-h-[540px] lg:px-12">
+                <div className="max-w-4xl">
+                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/80">
                     <span className="rounded-md bg-white/12 px-2.5 py-1 text-white ring-1 ring-white/20 backdrop-blur">
                       {hero.homeBadge ?? "Материал дня"}
                     </span>
@@ -114,14 +102,14 @@ export default async function HomePage() {
                         {hero.readMin} мин · без воды
                       </span>
                     ) : null}
-                    <span className="text-white/50">{formatTime(hero.publishedAt)}</span>
+                    <span className="text-white/65">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref}>
-                    <h2 className="font-display mt-4 text-[2.05rem] font-bold leading-[1.05] tracking-tight text-white drop-shadow-[0_8px_26px_rgba(0,0,0,0.55)] sm:text-[2.35rem] lg:text-[2.6rem]">
+                    <h2 className="font-display mt-4 max-w-[22ch] text-[2.2rem] font-bold leading-[1.04] tracking-tight text-white drop-shadow-[0_8px_28px_rgba(0,0,0,0.55)] sm:text-[2.75rem] lg:text-[3.15rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-4 text-[15px] leading-relaxed text-white/84 sm:text-base">{hero.lead}</p>
+                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/90 sm:text-base lg:text-lg">{hero.lead}</p>
                   <div className="mt-7 flex flex-wrap items-center gap-3">
                     <Link
                       href={heroHref}
@@ -143,80 +131,75 @@ export default async function HomePage() {
                     ) : null}
                   </div>
                 </div>
-              </article>
-            ) : (
-              <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col justify-center overflow-hidden bg-slate-950 px-6 py-14 shadow-2xl sm:px-10 sm:py-16">
-                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Материалы</p>
-                <h2 className="font-display mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
-                  Пока нет опубликованных материалов в ленте
-                </h2>
-                <p className="mt-4 max-w-lg text-base leading-relaxed text-white/70">
-                  Если включён режим только облака (<code className="rounded bg-white/10 px-1.5 py-0.5 text-[13px]">POSTS_FEED_MODE=remote_only</code>
-                  ), добавьте материалы через админку или Make — тогда они появятся здесь.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Link
-                    href="/novosti"
-                    className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
-                  >
-                    Перейти к новостям
-                    <span aria-hidden>→</span>
-                  </Link>
-                  <Link
-                    href="/admin/posts"
-                    className="inline-flex min-h-[44px] items-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-                  >
-                    Админка
-                  </Link>
-                </div>
-              </article>
-            )}
+              </div>
+            </article>
+          ) : (
+            <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col justify-center overflow-hidden bg-slate-950 px-6 py-14 shadow-2xl sm:px-10 sm:py-16">
+              <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Материалы</p>
+              <h2 className="font-display mt-4 max-w-xl text-3xl font-bold leading-tight text-white sm:text-4xl">
+                Пока нет опубликованных материалов в ленте
+              </h2>
+              <p className="mt-4 max-w-lg text-base leading-relaxed text-white/70">
+                Если включён режим только облака (<code className="rounded bg-white/10 px-1.5 py-0.5 text-[13px]">POSTS_FEED_MODE=remote_only</code>
+                ), добавьте материалы через админку или Make — тогда они появятся здесь.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  href="/novosti"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
+                >
+                  Перейти к новостям
+                  <span aria-hidden>→</span>
+                </Link>
+                <Link
+                  href="/admin/posts"
+                  className="inline-flex min-h-[44px] items-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  Админка
+                </Link>
+              </div>
+            </article>
+          )}
 
-            <div className="flex min-w-0 flex-col gap-4 lg:justify-between">
+          <div className="mt-6">
+            <div className="mb-3 flex items-end justify-between gap-3">
               <div>
                 <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-mars-accent">
                   {homeCopy.heroAsideEyebrow}
                 </p>
-                <h2 className="font-display mt-2 text-[2.05rem] font-bold leading-[1.08] text-slate-900 sm:text-[2.3rem]">
+                <h2 className="font-display mt-1.5 text-2xl font-bold leading-tight text-slate-900 sm:text-[2rem]">
                   {homeCopy.heroAsideTitle}
                 </h2>
-                <p className="mt-2 text-sm text-slate-600">{homeCopy.heroAsideSub}</p>
               </div>
-              <div className="flex flex-col gap-3">
-                {sec.map((p) => (
-                  <Link
-                    key={p.slug}
-                    href={postHref(p)}
-                    className="group grid grid-cols-[8.2rem_1fr] gap-3 rounded-2xl border border-slate-200/80 bg-white p-2.5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
-                  >
-                    <div className="relative h-24 overflow-hidden rounded-xl bg-slate-100">
-                      <Image
-                        src={resolvePostImage(p)}
-                        alt={postCoverImageAlt(p.title, p.imageAlt)}
-                        fill
-                        className="object-cover transition duration-500 group-hover:scale-[1.04]"
-                        sizes="130px"
-                      />
-                      {p.kind === "video" ? (
-                        <span className="absolute inset-0 flex items-center justify-center bg-black/15">
-                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-slate-900 shadow">
-                            <IconPlay className="ml-0.5 h-4 w-4" />
-                          </span>
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        {formatDateTime(p.publishedAt)}
-                      </p>
-                      <h3 className="mt-1 line-clamp-2 font-display text-base font-semibold leading-snug text-slate-900 group-hover:text-mars-accent">
-                        {p.title}
-                      </h3>
-                      <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-600">{p.lead}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              {sec.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={postHref(p)}
+                  className="group overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg"
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <Image
+                      src={resolvePostImage(p)}
+                      alt={postCoverImageAlt(p.title, p.imageAlt)}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-[1.04]"
+                      sizes="(max-width:1280px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                    <span className="absolute left-2.5 top-2.5 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                      {formatDateTime(p.publishedAt)}
+                    </span>
+                  </div>
+                  <div className="p-3.5">
+                    <h3 className="line-clamp-2 font-display text-base font-semibold leading-snug text-slate-900 group-hover:text-mars-accent">
+                      {p.title}
+                    </h3>
+                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-600">{p.lead}</p>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
