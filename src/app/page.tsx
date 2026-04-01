@@ -50,6 +50,10 @@ export default async function HomePage() {
     else if (p.kind === "video") videos.push(p);
   }
 
+  const analyticsHome = analyticsList.slice(0, 4);
+  const analyticsFeatured = analyticsHome[0];
+  const analyticsCompact = analyticsHome.slice(1);
+
   const editorialPicks = pickEditorialPicks(allPosts);
   const homeProjects = pickHomeProjects(allPosts);
   const analyticsSnapshot = await getAnalyticsSnapshot();
@@ -252,7 +256,7 @@ export default async function HomePage() {
             <SectionHeading
               className="mb-6 sm:mb-8"
               title={homeCopy.sections.now.title}
-              subtitle={homeCopy.sections.now.subtitle}
+              titlePrefix={<span className="mars-live-dot" />}
             />
             <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {mainNowList.map((p) => (
@@ -271,11 +275,10 @@ export default async function HomePage() {
             aria-hidden
           />
           <div className="p-5 pt-7 sm:p-8 sm:pt-9">
-            <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Длинный формат</p>
+            <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Самое важное</p>
             <SectionHeading
               className="mb-6 sm:mb-8"
               title={homeCopy.sections.picks.title}
-              subtitle={homeCopy.sections.picks.subtitle}
               href="/stati"
               actionLabel={homeCopy.sections.picks.action}
             />
@@ -292,48 +295,120 @@ export default async function HomePage() {
         </section>
       </div>
 
-      <div className="bg-white">
-        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+      <section
+        className="relative overflow-hidden border-y border-slate-200/55 bg-[linear-gradient(165deg,#eef1f8_0%,#ffffff_28%,#f8fafc_100%)]"
+        aria-label={homeCopy.sections.analytics.title}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.4]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, rgb(43 62 247 / 0.07) 1px, transparent 0)",
+            backgroundSize: "24px 24px",
+          }}
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-mars-blue-soft/50 blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-sky-100/35 blur-3xl"
+          aria-hidden
+        />
+
+        <div className="relative mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-16 lg:px-10">
+          <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
+            Цифры и сценарии
+          </p>
           <SectionHeading
+            className="mb-8 sm:mb-10"
             title={homeCopy.sections.analytics.title}
-            subtitle={homeCopy.sections.analytics.subtitle}
+            titlePrefix={<span className="mars-analytics-dot" />}
             href="/analitika"
             actionLabel={homeCopy.sections.analytics.action}
           />
-          <div className="grid gap-6 md:grid-cols-2">
-            {analyticsList.slice(0, 4).map((p) => (
-              <article
-                key={p.slug}
-                className="card-hover group overflow-hidden rounded-3xl border border-mars-blue/15 bg-gradient-to-br from-mars-blue-soft/50 via-white to-white shadow-[0_20px_50px_-28px_rgb(43_62_247/0.12)]"
-              >
-                <Link href={`/analitika/${p.slug}`} className="flex flex-col md:flex-row">
-                  <div className="relative h-44 overflow-hidden md:h-auto md:w-56 md:shrink-0">
+
+          {!analyticsFeatured ? (
+            <p className="text-sm font-medium text-slate-500">Пока нет материалов в рубрике аналитики.</p>
+          ) : (
+            <>
+              <article className="card-hover group relative overflow-hidden rounded-[1.75rem] border border-mars-blue/22 bg-white shadow-[0_28px_70px_-40px_rgb(43_62_247/0.35)] ring-1 ring-slate-900/[0.03] transition duration-300 hover:border-mars-blue/40">
+                <Link
+                  href={`/analitika/${analyticsFeatured.slug}`}
+                  className="grid min-h-0 lg:min-h-[min(22rem,42vh)] lg:grid-cols-[1.08fr_1fr]"
+                >
+                  <div className="relative min-h-[14rem] overflow-hidden lg:min-h-full">
                     <Image
-                      src={resolvePostImage(p)}
-                      alt={postCoverImageAlt(p.title, p.imageAlt)}
+                      src={resolvePostImage(analyticsFeatured)}
+                      alt={postCoverImageAlt(analyticsFeatured.title, analyticsFeatured.imageAlt)}
                       fill
-                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                      sizes="(max-width:768px) 100vw, 224px"
+                      className="object-cover transition duration-700 ease-out group-hover:scale-[1.045]"
+                      sizes="(max-width:1024px) 100vw, 52vw"
                     />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/55 via-slate-950/5 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-slate-900/20" />
+                    <span className="absolute left-4 top-4 rounded-full border border-white/25 bg-white/92 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-mars-blue shadow-sm backdrop-blur-sm">
+                      Главный разбор
+                    </span>
                   </div>
-                  <div className="min-w-0 flex-1 p-6 sm:p-7">
+                  <div className="flex flex-col justify-center border-t border-slate-100/90 bg-gradient-to-br from-white to-mars-blue-soft/15 p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
                     <p className="font-eyebrow text-[11px] font-black uppercase tracking-widest text-mars-blue">
-                      Аналитика: разбор
+                      Аналитика
                     </p>
-                    <h3 className="font-display mt-3 text-2xl font-bold text-slate-900 group-hover:text-mars-blue">
-                      {p.title}
+                    <h3 className="font-display mt-3 text-2xl font-bold leading-[1.15] tracking-tight text-slate-900 sm:text-[1.7rem] lg:text-[1.85rem] group-hover:text-mars-blue">
+                      {analyticsFeatured.title}
                     </h3>
-                    <p className="mt-3 text-slate-600 leading-relaxed">{p.lead}</p>
-                    <span className="mt-6 inline-flex items-center gap-1 text-sm font-bold text-mars-blue">
+                    <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-slate-600 sm:text-base">
+                      {analyticsFeatured.lead}
+                    </p>
+                    <span className="mt-7 inline-flex items-center gap-1 text-sm font-bold text-mars-blue">
                       {homeCopy.sections.analytics.cardCta}
                     </span>
                   </div>
                 </Link>
               </article>
-            ))}
-          </div>
+
+              {analyticsCompact.length ? (
+                <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:mt-8 lg:grid-cols-3">
+                  {analyticsCompact.map((p) => (
+                    <article
+                      key={p.slug}
+                      className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 shadow-[0_16px_44px_-32px_rgb(15_23_42/0.35)] ring-1 ring-slate-900/[0.02] transition duration-300 hover:-translate-y-0.5 hover:border-mars-blue/30 hover:shadow-[0_22px_50px_-28px_rgb(43_62_247/0.2)]"
+                    >
+                      <Link href={`/analitika/${p.slug}`} className="flex h-full flex-col">
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <Image
+                            src={resolvePostImage(p)}
+                            alt={postCoverImageAlt(p.title, p.imageAlt)}
+                            fill
+                            className="object-cover transition duration-500 group-hover:scale-[1.05]"
+                            sizes="(max-width:640px) 100vw, 400px"
+                          />
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-transparent to-transparent opacity-90" />
+                          <span className="absolute bottom-3 left-3 rounded-md bg-black/55 px-2 py-1 text-[9px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                            Разбор
+                          </span>
+                        </div>
+                        <div className="flex min-h-0 flex-1 flex-col p-5 sm:p-6">
+                          <h3 className="font-display line-clamp-2 text-lg font-bold leading-snug text-slate-900 group-hover:text-mars-blue">
+                            {p.title}
+                          </h3>
+                          <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-600">
+                            {p.lead}
+                          </p>
+                          <span className="mt-4 text-sm font-bold text-mars-blue">
+                            {homeCopy.sections.analytics.cardCta}
+                          </span>
+                        </div>
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              ) : null}
+            </>
+          )}
         </div>
-      </div>
+      </section>
 
       <div className="relative overflow-hidden bg-[#050508] text-white">
         <div

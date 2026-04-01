@@ -1,9 +1,11 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export function SectionHeading({
   title,
   subtitle,
+  titlePrefix,
   href,
   actionLabel = "Все материалы",
   className,
@@ -11,6 +13,8 @@ export function SectionHeading({
 }: {
   title: string;
   subtitle?: string;
+  /** Элемент слева от заголовка (например индикатор «в эфире») */
+  titlePrefix?: ReactNode;
   href?: string;
   actionLabel?: string;
   className?: string;
@@ -35,7 +39,14 @@ export function SectionHeading({
       )}
     >
       <div className="min-w-0 w-full sm:flex-1">
-        <h2 className={h2}>{title}</h2>
+        <div className="flex flex-wrap items-start gap-x-2.5 gap-y-1 sm:gap-x-3">
+          {titlePrefix ? (
+            <span className="mt-[0.58rem] shrink-0 sm:mt-[0.68rem]" aria-hidden>
+              {titlePrefix}
+            </span>
+          ) : null}
+          <h2 className={cn(h2, titlePrefix && "min-w-0 flex-1")}>{title}</h2>
+        </div>
         {subtitle ? (
           <p className={cn(sub, "mt-1 w-full max-w-none text-pretty sm:max-w-2xl")}>{subtitle}</p>
         ) : null}
