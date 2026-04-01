@@ -238,66 +238,86 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-[1400px] px-4 pb-12 pt-2 sm:px-6 sm:pb-14 lg:px-10">
-        <section
-          className="overflow-hidden rounded-2xl border border-mars-line/70 bg-white shadow-[0_18px_50px_-34px_rgb(15_23_42/0.14)] ring-1 ring-slate-900/[0.03]"
-          aria-label="Главное сейчас и выбор редакции"
-        >
-          <div className="relative">
-            <div
-              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent"
+      <section
+        className="relative mx-auto max-w-[1400px] overflow-x-clip px-4 pb-6 pt-2 sm:px-6 sm:pb-8 lg:px-10"
+        aria-label="Главное сейчас"
+      >
+        <div className="pointer-events-none absolute -left-2 top-0 z-0 select-none sm:left-0" aria-hidden>
+          <span className="font-display block bg-gradient-to-br from-slate-200/90 via-slate-100/80 to-transparent bg-clip-text text-[clamp(5.5rem,17vw,10.5rem)] font-bold leading-[0.85] tracking-tighter text-transparent tabular-nums">
+            6
+          </span>
+        </div>
+        <div className="pointer-events-none absolute right-[8%] top-16 z-0 h-40 w-40 rounded-full bg-mars-accent-soft/25 blur-3xl sm:top-24" aria-hidden />
+        <div className="relative z-[1]">
+          <div className="mb-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span className="inline-flex items-center gap-2.5">
+              <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-mars-accent shadow-[0_0_0_3px_rgba(196,0,28,0.1)]" aria-hidden />
+              <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Лента дня</p>
+            </span>
+            <span
+              className="hidden h-px flex-1 bg-gradient-to-r from-mars-accent/35 via-slate-200/60 to-transparent min-[420px]:block sm:max-w-[min(28rem,42vw)]"
               aria-hidden
             />
-            <div className="p-5 sm:p-7 lg:p-9">
-              <div className="mb-2 flex items-center gap-2.5">
-                <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-mars-accent shadow-[0_0_0_3px_rgba(196,0,28,0.12)]" aria-hidden />
-                <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
-                  Лента дня
-                </p>
-              </div>
+          </div>
+          <SectionHeading
+            className="mb-7 sm:mb-9"
+            title={homeCopy.sections.now.title}
+            subtitle={homeCopy.sections.now.subtitle}
+          />
+          <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            {mainNowList.map((p) => (
+              <PostCard key={p.slug} post={p} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="mx-auto flex max-w-[1400px] justify-center px-4 py-6 sm:px-6 sm:py-8 lg:px-10" aria-hidden>
+        <div className="flex w-full max-w-md items-center gap-4 sm:max-w-lg">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300/80 to-slate-200/50" />
+          <span className="flex h-7 w-7 shrink-0 rotate-45 border border-slate-200/90 bg-white shadow-[0_2px_8px_-2px_rgba(15,23,42,0.12)]" />
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent via-slate-300/80 to-slate-200/50" />
+        </div>
+      </div>
+
+      <section
+        className="relative mx-auto max-w-[1400px] px-4 pb-14 pt-2 sm:px-6 sm:pb-16 lg:px-10"
+        aria-label="Выбор редакции"
+      >
+        <div className="relative lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-8 xl:gap-x-12">
+          <div className="relative lg:col-span-4 xl:col-span-3">
+            <div
+              className="pointer-events-none absolute -left-6 top-24 hidden h-px w-[4.5rem] rotate-90 origin-left bg-gradient-to-r from-mars-accent/60 to-transparent lg:block xl:top-28"
+              aria-hidden
+            />
+            <div className="pointer-events-none absolute -right-4 top-0 hidden h-24 w-24 rounded-full bg-sky-100/35 blur-2xl lg:block" aria-hidden />
+            <div className="lg:sticky lg:top-28 lg:pb-4">
+              <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
+                Длинный формат
+              </p>
+              <div className="mt-3 hidden w-9 border-t-2 border-mars-accent/85 sm:block" aria-hidden />
               <SectionHeading
-                className="mb-6 sm:mb-8"
-                title={homeCopy.sections.now.title}
-                subtitle={homeCopy.sections.now.subtitle}
+                className="mb-0 mt-5 sm:mt-6"
+                title={homeCopy.sections.picks.title}
+                subtitle={homeCopy.sections.picks.subtitle}
+                href="/stati"
+                actionLabel={homeCopy.sections.picks.action}
               />
-              <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-                {mainNowList.map((p) => (
-                  <PostCard key={p.slug} post={p} />
-                ))}
-              </div>
-
-              <div className="mt-10 sm:mt-12">
-                <div className="h-px w-full bg-gradient-to-r from-slate-200/0 via-slate-200/90 to-slate-200/0" aria-hidden />
-              </div>
-
-              <div className="pt-10 sm:pt-12">
-                <div className="mb-2 flex items-center gap-2.5">
-                  <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400 shadow-[0_0_0_3px_rgba(148,163,184,0.2)]" aria-hidden />
-                  <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
-                    Длинный формат
-                  </p>
-                </div>
-                <SectionHeading
-                  className="mb-6 sm:mb-8"
-                  title={homeCopy.sections.picks.title}
-                  subtitle={homeCopy.sections.picks.subtitle}
-                  href="/stati"
-                  actionLabel={homeCopy.sections.picks.action}
-                />
-                <div className="grid gap-5 sm:gap-6 lg:grid-cols-2">
-                  {editorialPicks.length ? (
-                    editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
-                  ) : (
-                    <p className="col-span-full text-sm font-medium text-slate-500">
-                      Пока редакция не отметила материалы для этого блока.
-                    </p>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
-        </section>
-      </div>
+          <div className="mt-10 min-w-0 lg:col-span-8 lg:mt-4 xl:col-span-9 xl:mt-6">
+            <div className="grid gap-5 sm:gap-6 lg:grid-cols-2">
+              {editorialPicks.length ? (
+                editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
+              ) : (
+                <p className="col-span-full text-sm font-medium text-slate-500">
+                  Пока редакция не отметила материалы для этого блока.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
