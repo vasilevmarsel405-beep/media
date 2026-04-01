@@ -89,17 +89,24 @@ export default async function HomePage() {
                   sizes="(max-width:1400px) 100vw, 1400px"
                 />
               </Link>
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.28)_0%,rgba(7,11,22,0.62)_42%,rgba(7,11,22,0.94)_100%)]" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.22)_0%,rgba(7,11,22,0.5)_38%,rgba(7,11,22,0.88)_100%)]" />
               <div
-                className="pointer-events-none absolute inset-0 opacity-80 mix-blend-multiply"
+                className="pointer-events-none absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(92% 120% at 16% 58%, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0) 74%)",
+                    "linear-gradient(105deg, rgba(4,7,16,0.94) 0%, rgba(4,7,16,0.72) 22%, rgba(4,7,16,0.4) 40%, rgba(4,7,16,0.14) 56%, rgba(4,7,16,0) 68%)",
                 }}
               />
-              <div className="pointer-events-none absolute inset-0 opacity-[0.18]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)", backgroundSize: "26px 26px" }} />
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "radial-gradient(120% 80% at 12% 88%, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.28) 38%, rgba(0,0,0,0) 62%)",
+                }}
+              />
+              <div className="pointer-events-none absolute inset-0 opacity-[0.14]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)", backgroundSize: "26px 26px" }} />
               <div className="relative z-10 flex min-h-[420px] flex-col justify-end px-6 pb-8 pt-12 sm:min-h-[480px] sm:px-10 sm:pb-10 lg:min-h-[540px] lg:px-12">
-                <div className="max-w-4xl rounded-2xl border border-white/14 bg-gradient-to-br from-black/60 via-black/38 to-black/22 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_26px_70px_-28px_rgba(0,0,0,0.9)] backdrop-blur-md sm:p-7">
+                <div className="max-w-4xl">
                   <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/80">
                     <span className="rounded-md bg-white/12 px-2.5 py-1 text-white ring-1 ring-white/20 backdrop-blur">
                       {hero.homeBadge ?? "Материал дня"}
@@ -112,11 +119,11 @@ export default async function HomePage() {
                     <span className="text-white/65">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref}>
-                    <h2 className="font-display mt-4 max-w-[22ch] text-[2.2rem] font-bold leading-[1.04] tracking-tight text-white [text-shadow:0_2px_1px_rgba(0,0,0,0.55),0_12px_36px_rgba(0,0,0,0.55)] sm:text-[2.75rem] lg:text-[3.15rem]">
+                    <h2 className="font-display mt-4 max-w-[22ch] text-[2.2rem] font-bold leading-[1.04] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_14px_42px_rgba(0,0,0,0.6)] sm:text-[2.75rem] lg:text-[3.15rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/92 sm:text-base lg:text-lg [text-shadow:0_1px_0_rgba(0,0,0,0.45),0_10px_28px_rgba(0,0,0,0.5)]">
+                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/93 sm:text-base lg:text-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)]">
                     {hero.lead}
                   </p>
                   <div className="mt-7 flex flex-wrap items-center gap-3">
@@ -231,34 +238,87 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="bg-white">
-        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-          <SectionHeading title={homeCopy.sections.now.title} subtitle={homeCopy.sections.now.subtitle} />
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {mainNowList.map((p) => (
-              <PostCard key={p.slug} post={p} />
-            ))}
+      <section className="relative isolate overflow-hidden" aria-label="Главное сейчас и выбор редакции">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(165deg,#eef2f7_0%,#f8fafc_38%,#fdfcfa_72%,#f6f1ea_100%)]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.38]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, rgba(148,163,184,0.22) 1px, transparent 0)",
+            backgroundSize: "30px 30px",
+          }}
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -top-24 left-[12%] h-72 w-[min(42rem,55vw)] rounded-[3rem] bg-sky-200/25 blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute bottom-0 right-[8%] h-80 w-[min(36rem,50vw)] rounded-full bg-amber-200/30 blur-3xl"
+          aria-hidden
+        />
+
+        <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
+          <div className="relative border-b border-slate-200/60 pt-14 pb-12 sm:pt-16 sm:pb-14">
+            <div
+              className="absolute left-0 top-10 bottom-10 w-[3px] rounded-full bg-gradient-to-b from-mars-accent via-[#ff4d2a] to-mars-accent/25 shadow-[0_0_24px_rgba(196,0,28,0.2)] max-md:hidden"
+              aria-hidden
+            />
+            <div className="max-md:pl-0 md:pl-9">
+              <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Лента дня</p>
+              <SectionHeading
+                className="mb-8 sm:mb-9"
+                title={homeCopy.sections.now.title}
+                subtitle={homeCopy.sections.now.subtitle}
+              />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {mainNowList.map((p) => (
+                  <PostCard key={p.slug} post={p} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 py-8 sm:py-9" aria-hidden>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300/70 to-transparent" />
+            <span className="font-eyebrow shrink-0 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">
+              Редакция
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300/70 to-transparent" />
+          </div>
+
+          <div className="relative pb-16 pt-2 sm:pb-20">
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-full max-h-[640px] bg-[linear-gradient(180deg,rgba(255,253,249,0.5)_0%,rgba(250,245,237,0.45)_38%,transparent_85%)]"
+              aria-hidden
+            />
+            <div className="relative px-1 sm:px-2">
+              <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.24em] text-amber-900/50">
+                Длинный формат
+              </p>
+              <SectionHeading
+                className="mb-8 sm:mb-9"
+                title={homeCopy.sections.picks.title}
+                subtitle={homeCopy.sections.picks.subtitle}
+                href="/stati"
+                actionLabel={homeCopy.sections.picks.action}
+              />
+              <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                {editorialPicks.length ? (
+                  editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
+                ) : (
+                  <p className="col-span-full text-sm font-medium text-slate-500">
+                    Пока редакция не отметила материалы для этого блока.
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-        <SectionHeading
-          title={homeCopy.sections.picks.title}
-          subtitle={homeCopy.sections.picks.subtitle}
-          href="/stati"
-          actionLabel={homeCopy.sections.picks.action}
-        />
-        <div className="grid gap-6 lg:grid-cols-2">
-          {editorialPicks.length ? (
-            editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
-          ) : (
-            <p className="col-span-full text-sm font-medium text-slate-500">
-              Пока редакция не отметила материалы для этого блока.
-            </p>
-          )}
-        </div>
-      </div>
+      </section>
 
       <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
