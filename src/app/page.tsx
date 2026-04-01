@@ -279,6 +279,7 @@ export default async function HomePage() {
             <SectionHeading
               className="mb-6 sm:mb-8"
               title={homeCopy.sections.picks.title}
+              titlePrefix={<span className="mars-analytics-dot" />}
               href="/stati"
               actionLabel={homeCopy.sections.picks.action}
             />
@@ -295,36 +296,14 @@ export default async function HomePage() {
         </section>
       </div>
 
-      <section
-        className="relative overflow-hidden border-y border-slate-200/55 bg-[linear-gradient(165deg,#eef1f8_0%,#ffffff_28%,#f8fafc_100%)]"
-        aria-label={homeCopy.sections.analytics.title}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.4]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgb(43 62 247 / 0.07) 1px, transparent 0)",
-            backgroundSize: "24px 24px",
-          }}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -right-20 top-20 h-72 w-72 rounded-full bg-mars-blue-soft/50 blur-3xl"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -left-16 bottom-0 h-56 w-56 rounded-full bg-sky-100/35 blur-3xl"
-          aria-hidden
-        />
-
-        <div className="relative mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-16 lg:px-10">
+      <section className="bg-white" aria-label={homeCopy.sections.analytics.title}>
+        <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-16 lg:px-10">
           <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
             Цифры и сценарии
           </p>
           <SectionHeading
             className="mb-8 sm:mb-10"
             title={homeCopy.sections.analytics.title}
-            titlePrefix={<span className="mars-analytics-dot" />}
             href="/analitika"
             actionLabel={homeCopy.sections.analytics.action}
           />
