@@ -238,87 +238,66 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="relative isolate overflow-hidden" aria-label="Главное сейчас и выбор редакции">
-        <div
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(165deg,#eef2f7_0%,#f8fafc_38%,#fdfcfa_72%,#f6f1ea_100%)]"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.38]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, rgba(148,163,184,0.22) 1px, transparent 0)",
-            backgroundSize: "30px 30px",
-          }}
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -top-24 left-[12%] h-72 w-[min(42rem,55vw)] rounded-[3rem] bg-sky-200/25 blur-3xl"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute bottom-0 right-[8%] h-80 w-[min(36rem,50vw)] rounded-full bg-amber-200/30 blur-3xl"
-          aria-hidden
-        />
-
-        <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-10">
-          <div className="relative border-b border-slate-200/60 pt-14 pb-12 sm:pt-16 sm:pb-14">
+      <div className="mx-auto max-w-[1400px] px-4 pb-12 pt-2 sm:px-6 sm:pb-14 lg:px-10">
+        <section
+          className="overflow-hidden rounded-2xl border border-mars-line/70 bg-white shadow-[0_18px_50px_-34px_rgb(15_23_42/0.14)] ring-1 ring-slate-900/[0.03]"
+          aria-label="Главное сейчас и выбор редакции"
+        >
+          <div className="relative">
             <div
-              className="absolute left-0 top-10 bottom-10 w-[3px] rounded-full bg-gradient-to-b from-mars-accent via-[#ff4d2a] to-mars-accent/25 shadow-[0_0_24px_rgba(196,0,28,0.2)] max-md:hidden"
+              className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200/80 to-transparent"
               aria-hidden
             />
-            <div className="max-md:pl-0 md:pl-9">
-              <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">Лента дня</p>
+            <div className="p-5 sm:p-7 lg:p-9">
+              <div className="mb-2 flex items-center gap-2.5">
+                <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-mars-accent shadow-[0_0_0_3px_rgba(196,0,28,0.12)]" aria-hidden />
+                <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
+                  Лента дня
+                </p>
+              </div>
               <SectionHeading
-                className="mb-8 sm:mb-9"
+                className="mb-6 sm:mb-8"
                 title={homeCopy.sections.now.title}
                 subtitle={homeCopy.sections.now.subtitle}
               />
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
                 {mainNowList.map((p) => (
                   <PostCard key={p.slug} post={p} />
                 ))}
               </div>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-4 py-8 sm:py-9" aria-hidden>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300/70 to-transparent" />
-            <span className="font-eyebrow shrink-0 text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">
-              Редакция
-            </span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-slate-300/70 to-transparent" />
-          </div>
+              <div className="mt-10 sm:mt-12">
+                <div className="h-px w-full bg-gradient-to-r from-slate-200/0 via-slate-200/90 to-slate-200/0" aria-hidden />
+              </div>
 
-          <div className="relative pb-16 pt-2 sm:pb-20">
-            <div
-              className="pointer-events-none absolute inset-x-0 top-0 h-full max-h-[640px] bg-[linear-gradient(180deg,rgba(255,253,249,0.5)_0%,rgba(250,245,237,0.45)_38%,transparent_85%)]"
-              aria-hidden
-            />
-            <div className="relative px-1 sm:px-2">
-              <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.24em] text-amber-900/50">
-                Длинный формат
-              </p>
-              <SectionHeading
-                className="mb-8 sm:mb-9"
-                title={homeCopy.sections.picks.title}
-                subtitle={homeCopy.sections.picks.subtitle}
-                href="/stati"
-                actionLabel={homeCopy.sections.picks.action}
-              />
-              <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                {editorialPicks.length ? (
-                  editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
-                ) : (
-                  <p className="col-span-full text-sm font-medium text-slate-500">
-                    Пока редакция не отметила материалы для этого блока.
+              <div className="pt-10 sm:pt-12">
+                <div className="mb-2 flex items-center gap-2.5">
+                  <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400 shadow-[0_0_0_3px_rgba(148,163,184,0.2)]" aria-hidden />
+                  <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
+                    Длинный формат
                   </p>
-                )}
+                </div>
+                <SectionHeading
+                  className="mb-6 sm:mb-8"
+                  title={homeCopy.sections.picks.title}
+                  subtitle={homeCopy.sections.picks.subtitle}
+                  href="/stati"
+                  actionLabel={homeCopy.sections.picks.action}
+                />
+                <div className="grid gap-5 sm:gap-6 lg:grid-cols-2">
+                  {editorialPicks.length ? (
+                    editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
+                  ) : (
+                    <p className="col-span-full text-sm font-medium text-slate-500">
+                      Пока редакция не отметила материалы для этого блока.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
