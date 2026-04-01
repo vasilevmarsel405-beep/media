@@ -3,7 +3,6 @@ import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { HeroGlassVideoLink } from "@/components/home/HeroGlassVideoLink";
 import { HeroGradualBlur } from "@/components/home/HeroGradualBlur";
-import { HomeEditorialStats } from "@/components/home/HomeEditorialStats";
 import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -75,7 +74,6 @@ export default async function HomePage() {
   return (
     <div>
       <HomeTrendingTicker posts={urgentList} />
-      <HomeEditorialStats materials={allPosts.length} rubrics={rubrics.length} />
       <h1 className="sr-only">КриптоМарс Медиа — новости, аналитика и видео о криптоэкономике</h1>
 
       <section className="relative overflow-hidden mars-hero-mesh">

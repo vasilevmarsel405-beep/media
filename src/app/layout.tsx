@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { metaCopy } from "@/lib/copy";
 import "./globals.css";
 import { SiteChrome } from "@/components/layout/SiteChrome";
+import { TopBarSection } from "@/components/layout/TopBarSection";
 import { WebSiteJsonLd } from "@/components/seo/WebSiteJsonLd";
 import { cn } from "@/lib/utils";
 import { getMetadataBaseUrl, siteName, siteUrl } from "@/lib/site";
@@ -90,6 +91,7 @@ export default function RootLayout({
           К основному содержимому
         </a>
         <WebSiteJsonLd />
+        <TopBarSection />
         <SiteChrome>{children}</SiteChrome>
       </body>
     </html>

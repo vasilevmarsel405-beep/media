@@ -75,6 +75,12 @@ export const topBarCopy = {
   subscription: "Рассылка",
 } as const;
 
+/** Короткие подписи к цифрам в верхней полосе (рядом с датой и слоганом). */
+export const topBarStatsCopy = {
+  materialsLabel: "мат.",
+  rubricsLabel: "рубр.",
+} as const;
+
 export const headerCopy = {
   subscribe: "Получить дайджест бесплатно",
 } as const;
