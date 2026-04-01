@@ -39,9 +39,9 @@ export function SectionHeading({
       )}
     >
       <div className="min-w-0 w-full sm:flex-1">
-        <div className="flex flex-wrap items-start gap-x-2.5 gap-y-1 sm:gap-x-3">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 sm:gap-x-3">
           {titlePrefix ? (
-            <span className="mt-[0.58rem] shrink-0 sm:mt-[0.68rem]" aria-hidden>
+            <span className="inline-flex shrink-0 items-center" aria-hidden>
               {titlePrefix}
             </span>
           ) : null}
