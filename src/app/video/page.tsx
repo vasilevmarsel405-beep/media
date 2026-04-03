@@ -117,7 +117,7 @@ export default async function VideoHubPage() {
               }}
             />
             {/* Точечная сетка только на фоне страницы — на обложке только градиенты */}
-            <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center px-5 py-8 sm:justify-end sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 lg:pointer-events-auto lg:relative lg:min-h-[min(72vh,620px)] lg:justify-end lg:px-12 lg:pb-12 lg:pt-12">
+            <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:relative lg:min-h-[min(72vh,620px)] lg:px-12 lg:pb-12 lg:pt-12">
               <div className="max-w-4xl pointer-events-auto max-sm:w-full max-sm:pl-0.5">
                 <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/85 max-sm:text-[10px] sm:max-lg:text-[10px] lg:text-[11px]">
                   <span className="rounded-md bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/35 ring-1 ring-white/15 max-sm:ml-0">

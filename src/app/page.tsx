@@ -150,7 +150,7 @@ export default async function HomePage() {
                   backgroundSize: "26px 26px",
                 }}
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center px-5 py-7 max-sm:py-8 sm:justify-end sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-3 max-lg:pt-8 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:justify-end lg:px-12 lg:pb-12 lg:pt-12">
+              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
                 <div className="max-w-4xl pointer-events-auto max-sm:w-full max-sm:pl-0.5">
                   <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px] lg:tracking-widest">
                     <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-sm:ml-0 max-sm:px-2.5 max-sm:py-1 sm:max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
