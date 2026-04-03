@@ -60,9 +60,9 @@ export default async function VideoHubPage() {
       />
 
       <div className="relative z-[1] mx-auto max-w-[1400px] px-3 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
-        {/* Вводная полоса: позиционирование раздела + темы */}
-        <header className="mb-8 lg:mb-10 xl:flex xl:items-end xl:justify-between xl:gap-10">
-          <div className="min-w-0 max-w-3xl max-sm:max-w-none xl:max-w-[min(100%,52rem)]">
+        {/* Вводная полоса: темы не сжимаются (без обрезки); на xl — перенос строки при нехватке места */}
+        <header className="mb-8 lg:mb-10 xl:flex xl:items-start xl:justify-between xl:gap-8 xl:overflow-visible">
+          <div className="min-w-0 max-w-3xl max-sm:max-w-none xl:max-w-[min(100%,46rem)] xl:shrink">
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 sm:text-[11px] sm:tracking-[0.24em]">
               {videoHubCopy.eyebrow}
             </p>
@@ -74,20 +74,23 @@ export default async function VideoHubPage() {
               <span className="mt-1 block">{videoHubCopy.subtitleLine2}</span>
             </p>
           </div>
-          <div className="mt-5 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:mt-0 xl:min-w-0 xl:flex-1 xl:justify-end">
+          <nav
+            className="mt-5 flex max-w-full flex-wrap items-center gap-2 sm:gap-2.5 xl:mt-1 xl:max-w-[min(100%,36rem)] xl:justify-end 2xl:max-w-none 2xl:flex-nowrap"
+            aria-label="Темы видео"
+          >
             {categories.map((c) => (
               <span
                 key={c.slug}
-                className="shrink-0 whitespace-nowrap rounded-full border border-white/20 bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_8px_22px_-10px_rgb(196_0_28/0.55)] sm:px-4 sm:py-2.5 sm:text-xs"
+                className="inline-flex shrink-0 whitespace-nowrap rounded-full border border-white/[0.14] bg-[#0a0a0f]/85 px-3 py-2 text-[11px] font-semibold text-white/[0.92] shadow-[inset_0_1px_0_rgb(255_255_255/0.06)] backdrop-blur-md transition hover:border-white/25 hover:bg-[#12121a]/95 hover:text-white sm:px-3.5 sm:py-2 sm:text-xs"
               >
                 {c.label}
               </span>
             ))}
-          </div>
+          </nav>
         </header>
 
         {featured ? (
-          <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.18/1] sm:max-lg:aspect-[1.85/1] lg:aspect-auto lg:min-h-[min(72vh,620px)] lg:rounded-[30px]">
+          <article className="mars-hero-frame mars-reveal isolate group relative z-0 w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.18/1] sm:max-lg:aspect-[1.85/1] lg:aspect-auto lg:min-h-[min(72vh,620px)] lg:rounded-[30px]">
             <Link href={featuredHref} aria-label={`Смотреть: ${featured.title}`} className="absolute inset-0 z-0">
               <Image
                 src={resolvePostImage(featured)}
@@ -113,14 +116,7 @@ export default async function VideoHubPage() {
                   "radial-gradient(120% 80% at 12% 88%, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.3) 38%, rgba(0,0,0,0) 62%)",
               }}
             />
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.12]"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.75) 1px, transparent 0)",
-                backgroundSize: "26px 26px",
-              }}
-            />
+            {/* Точечная сетка только на фоне страницы — на обложке только градиенты */}
             <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-5 pt-14 max-sm:pb-5 max-sm:pt-12 max-lg:pb-4 max-lg:pt-8 sm:max-lg:px-5 lg:pointer-events-auto lg:relative lg:min-h-[min(72vh,620px)] lg:px-12 lg:pb-12 lg:pt-12">
               <div className="max-w-4xl pointer-events-auto max-sm:w-full">
                 <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/85 max-sm:text-[10px] sm:max-lg:text-[10px] lg:text-[11px]">
