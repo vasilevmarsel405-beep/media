@@ -247,56 +247,56 @@ export default async function PodcastHubPage() {
           </div>
         </div>
 
-        <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:gap-10">
+        <ul className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-5 md:gap-6 lg:grid-cols-3 lg:gap-6">
           {episodes.map((ep, index) => {
             const listenHref = hasRss ? podcastYandexMusicUrl : ep.listenUrl;
             return (
               <li key={ep.key} id={`podcast-ep-${index}`}>
-                <article className="group flex h-full flex-col overflow-hidden rounded-[1.35rem] border border-slate-200/80 bg-white shadow-[0_4px_32px_-16px_rgb(15_23_42/0.12)] transition duration-300 hover:-translate-y-1 hover:border-mars-accent/30 hover:shadow-[0_20px_48px_-24px_rgb(196_0_28/0.22)]">
+                <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_20px_-8px_rgb(15_23_42/0.1)] transition duration-300 hover:-translate-y-0.5 hover:border-mars-accent/28 hover:shadow-[0_12px_36px_-18px_rgb(196_0_28/0.18)]">
                   <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
                     {ep.imageUrl ? (
                       <Image
                         src={ep.imageUrl}
                         alt={`Обложка: ${ep.title}`}
                         fill
-                        className="object-cover transition duration-700 group-hover:scale-[1.06]"
+                        className="object-cover transition duration-500 group-hover:scale-[1.04]"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
-                      <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-mars-accent via-[#b80020] to-[#5c0010] p-6 text-center">
-                        <span className="font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">{ep.episodeLabel}</span>
-                        <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.35em] text-white/75">выпуск</span>
+                      <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-mars-accent via-[#b80020] to-[#5c0010] p-5 text-center">
+                        <span className="font-display text-3xl font-bold tabular-nums text-white sm:text-4xl">{ep.episodeLabel}</span>
+                        <span className="mt-1.5 text-[9px] font-bold uppercase tracking-[0.3em] text-white/75">выпуск</span>
                       </div>
                     )}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0f172a]/55 via-transparent to-transparent opacity-80 transition group-hover:opacity-100" aria-hidden />
-                    <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/92 px-3 py-1 text-[11px] font-black tabular-nums uppercase tracking-wider text-mars-ink shadow-sm backdrop-blur-sm">
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0f172a]/45 via-transparent to-transparent opacity-70 transition group-hover:opacity-100" aria-hidden />
+                    <span className="absolute left-2.5 top-2.5 inline-flex items-center rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-black tabular-nums uppercase tracking-wider text-mars-ink shadow-sm backdrop-blur-sm">
                       №{ep.episodeLabel}
                     </span>
                   </div>
-                  <div className="flex flex-1 flex-col p-5 sm:p-6">
-                    <h3 className="font-display text-lg font-semibold leading-snug text-mars-ink transition group-hover:text-mars-accent sm:text-xl">
+                  <div className="flex flex-1 flex-col border-l-[3px] border-transparent p-4 transition group-hover:border-l-mars-accent sm:p-4">
+                    <h3 className="font-display text-[0.9375rem] font-semibold leading-snug text-mars-ink transition group-hover:text-mars-accent sm:text-base">
                       {ep.title}
                     </h3>
-                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-mars-muted">{ep.description}</p>
-                    <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-5 text-xs text-slate-600">
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 font-semibold tabular-nums text-slate-700">
-                        <Clock className="h-3.5 w-3.5 text-slate-500" aria-hidden />
+                    <p className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-mars-muted">{ep.description}</p>
+                    <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-slate-100 pt-3 text-[11px] text-slate-600">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 font-semibold tabular-nums text-slate-700">
+                        <Clock className="h-3 w-3 text-slate-500" aria-hidden />
                         {ep.durationLabel}
                       </span>
                       {ep.dateLabel ? (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 font-medium text-slate-600">
-                          <Calendar className="h-3.5 w-3.5 text-slate-400" aria-hidden />
-                          {ep.dateLabel}
+                        <span className="inline-flex min-w-0 max-w-[min(100%,11rem)] items-center gap-1 rounded-full bg-slate-50 px-2 py-0.5 font-medium text-slate-600">
+                          <Calendar className="h-3 w-3 shrink-0 text-slate-400" aria-hidden />
+                          <span className="truncate">{ep.dateLabel}</span>
                         </span>
                       ) : null}
                       <a
                         href={listenHref}
                         target="_blank"
                         rel="noreferrer"
-                        className="focus-ring ml-auto inline-flex items-center gap-2 rounded-full bg-mars-accent px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_-8px_rgb(196_0_28/0.55)] transition hover:bg-mars-accent-hover"
+                        className="focus-ring ml-auto inline-flex max-w-full items-center gap-1.5 rounded-full bg-mars-accent px-2.5 py-1.5 text-[11px] font-bold text-white shadow-[0_6px_16px_-6px_rgb(196_0_28/0.5)] transition hover:bg-mars-accent-hover"
                       >
-                        {hasRss ? c.listenYandexLabel : "Слушать"}
-                        <ExternalLink className="h-3.5 w-3.5 opacity-90" aria-hidden />
+                        <span className="truncate">{hasRss ? c.listenYandexLabel : "Слушать"}</span>
+                        <ExternalLink className="h-3 w-3 shrink-0 opacity-90" aria-hidden />
                       </a>
                     </div>
                   </div>
