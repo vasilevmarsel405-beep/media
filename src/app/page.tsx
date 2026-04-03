@@ -7,7 +7,7 @@ import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 import { IconPlay } from "@/components/icons";
-import { Music2 } from "lucide-react";
+import { Clock, ExternalLink, Music2 } from "lucide-react";
 import { specialProjects } from "@/lib/content";
 import { homeCopy, podcastHubCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
@@ -500,93 +500,93 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="relative overflow-hidden border-t border-white/10 bg-[#0b0d12] text-white">
+      <section className="relative overflow-hidden border-t border-slate-200/90 bg-gradient-to-b from-[#f8f7f5] via-white to-[#f5f6f8] text-mars-ink">
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.55] bg-[radial-gradient(ellipse_85%_55%_at_12%_-5%,rgb(196_0_28/0.32),transparent_52%),radial-gradient(ellipse_50%_45%_at_100%_105%,rgb(43_62_247/0.18),transparent)]"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_50%_at_12%_-8%,rgb(196_0_28/0.08),transparent_55%),radial-gradient(ellipse_45%_42%_at_96%_102%,rgb(43_62_247/0.07),transparent)]"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.12]"
+          className="pointer-events-none absolute inset-0 opacity-[0.35]"
           style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.2) 1px, transparent 0)`,
-            backgroundSize: "20px 20px",
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(15 23 42 / 0.06) 1px, transparent 0)`,
+            backgroundSize: "24px 24px",
           }}
           aria-hidden
         />
-        <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10 lg:py-14">
+        <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10 lg:py-16">
           <SectionHeading
-            variant="dark"
             titlePrefix={
               <span
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-mars-accent/35 to-white/5 ring-1 ring-white/15"
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mars-accent-soft text-mars-accent ring-1 ring-mars-accent/15 shadow-sm"
                 aria-hidden
               >
-                <Music2 className="h-[1.15rem] w-[1.15rem] text-[#ffb3bc]" strokeWidth={2} />
+                <Music2 className="h-[1.15rem] w-[1.15rem]" strokeWidth={2} />
               </span>
             }
             title={homeCopy.sections.podcast.title}
             subtitle={homeCopy.sections.podcast.subtitle}
+            subtitleClassName="mt-2 text-base leading-relaxed text-slate-600 sm:max-w-4xl"
             href="/podkasty"
             actionLabel={homeCopy.sections.podcast.action}
           />
-          <div className="mx-auto mt-2 max-w-3xl space-y-3 sm:mt-4 sm:space-y-4">
+          <ul className="mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
             {podcastPreview.map((card, i) => (
-              <a
-                key={card.key}
-                href={podcastYandexMusicUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex gap-3.5 rounded-2xl border border-white/[0.09] bg-white/[0.04] p-3 shadow-[0_20px_50px_-38px_rgb(0_0_0/0.9)] backdrop-blur-[2px] transition duration-300 hover:border-mars-accent/45 hover:bg-white/[0.07] sm:gap-5 sm:p-4"
-              >
-                <div className="relative aspect-square w-[4.75rem] shrink-0 overflow-hidden rounded-xl bg-slate-800 ring-2 ring-white/10 shadow-[0_12px_28px_-12px_rgb(0_0_0/0.75)] transition group-hover:ring-mars-accent/50 sm:w-[6.75rem]">
-                  {card.imageUrl ? (
-                    <Image
-                      src={card.imageUrl}
-                      alt={`Обложка: ${card.title}`}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-[1.05]"
-                      sizes="108px"
+              <li key={card.key}>
+                <a
+                  href={podcastYandexMusicUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-slate-200/90 bg-white/90 shadow-[0_4px_28px_-12px_rgb(15_23_42/0.12)] ring-1 ring-slate-100/80 backdrop-blur-[2px] transition duration-300 hover:-translate-y-1 hover:border-mars-accent/25 hover:shadow-[0_20px_44px_-24px_rgb(196_0_28/0.2)] hover:ring-mars-accent/10"
+                >
+                  <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
+                    {card.imageUrl ? (
+                      <Image
+                        src={card.imageUrl}
+                        alt={`Обложка: ${card.title}`}
+                        fill
+                        className="object-cover transition duration-700 group-hover:scale-[1.05]"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-mars-accent via-[#b80020] to-[#3d060d]">
+                        <span className="font-display text-3xl font-bold tabular-nums text-white sm:text-4xl">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.3em] text-white/75">эпизод</span>
+                      </div>
+                    )}
+                    <div
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent opacity-0 transition group-hover:opacity-100"
+                      aria-hidden
                     />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-mars-accent/90 via-[#9e0016] to-[#1a0508]">
-                      <span className="font-display text-lg font-bold tabular-nums text-white/95">FM</span>
-                    </div>
-                  )}
-                  <span className="absolute bottom-1.5 left-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white/90 backdrop-blur-sm">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col justify-center py-0.5">
-                  <span className="inline-flex w-max items-center gap-1.5 rounded-full border border-[#fc3f1e]/35 bg-[#fc3f1e]/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-[#ff9a8a]">
-                    Яндекс Музыка
-                  </span>
-                  <h3 className="font-display mt-2 line-clamp-2 text-[0.95rem] font-semibold leading-snug text-white transition group-hover:text-[#ffc2c9] sm:text-lg">
-                    {card.title}
-                  </h3>
-                  <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-white/55 sm:line-clamp-3 sm:text-sm">
-                    {card.lead}
-                  </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-x-2 text-[11px] font-semibold tabular-nums text-white/38">
-                    <span>{card.durationLabel}</span>
-                    <span aria-hidden>·</span>
-                    <span>{card.dateLabel}</span>
+                    <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-mars-ink shadow-sm backdrop-blur-sm">
+                      №{String(i + 1).padStart(2, "0")}
+                    </span>
                   </div>
-                </div>
-                <div className="hidden shrink-0 items-center pr-1 sm:flex">
-                  <span className="rounded-full border border-white/10 bg-white/[0.06] p-2.5 text-white/35 transition group-hover:border-mars-accent/40 group-hover:text-[#ffb3bc]">
-                    <Music2 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
-                  </span>
-                </div>
-              </a>
+                  <div className="flex flex-1 flex-col border-l-4 border-transparent border-t border-slate-100/90 p-5 transition group-hover:border-l-mars-accent">
+                    <span className="inline-flex w-max rounded-full bg-[#fc3f1e]/10 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#c41e0b]">
+                      Яндекс Музыка
+                    </span>
+                    <h3 className="font-display mt-3 line-clamp-3 text-lg font-semibold leading-snug text-slate-900 transition group-hover:text-mars-accent">
+                      {card.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-slate-600">{card.lead}</p>
+                    <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold tabular-nums text-slate-700">
+                        <Clock className="h-3.5 w-3.5 text-slate-500" aria-hidden />
+                        {card.durationLabel}
+                      </span>
+                      <span className="text-xs font-medium text-slate-500">{card.dateLabel}</span>
+                      <span className="ml-auto inline-flex items-center gap-1 text-xs font-bold text-mars-accent">
+                        Слушать
+                        <ExternalLink className="h-3.5 w-3.5 opacity-80" aria-hidden />
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </li>
             ))}
-          </div>
-          <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-white/40">
-            Карточки открывают альбом «КриптоМарс» в Яндекс.Музыке. Полный каталог и обложки — на{" "}
-            <Link href="/podkasty" className="font-semibold text-[#ffb3bc] underline-offset-2 hover:underline">
-              странице подкастов
-            </Link>
-            .
-          </p>
+          </ul>
         </div>
       </section>
 

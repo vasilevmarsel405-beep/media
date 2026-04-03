@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 export function SectionHeading({
   title,
   subtitle,
+  subtitleClassName,
   titlePrefix,
   href,
   actionLabel = "Все материалы",
@@ -13,6 +14,8 @@ export function SectionHeading({
 }: {
   title: string;
   subtitle?: string;
+  /** Доп. классы к абзацу подзаголовка (например ширина для длинного текста). */
+  subtitleClassName?: string;
   /** Элемент слева от заголовка (например индикатор «в эфире») */
   titlePrefix?: ReactNode;
   href?: string;
@@ -48,7 +51,7 @@ export function SectionHeading({
           <h2 className={cn(h2, titlePrefix && "min-w-0 flex-1")}>{title}</h2>
         </div>
         {subtitle ? (
-          <p className={cn(sub, "mt-1 w-full max-w-none text-pretty sm:max-w-2xl")}>{subtitle}</p>
+          <p className={cn(sub, "mt-1 w-full max-w-none text-pretty sm:max-w-2xl", subtitleClassName)}>{subtitle}</p>
         ) : null}
       </div>
       {href ? (
