@@ -7,6 +7,16 @@ export const siteUrl =
 
 export const siteName = "КриптоМарс Медиа";
 
+/**
+ * Другие написания бренда для Organization JSON-LD (`alternateName`).
+ * Помогает поисковикам связать запросы вроде «Крипто Марс медиа» с той же сущностью.
+ */
+export const siteBrandAlternateNames = [
+  "Крипто Марс Медиа",
+  "CryptoMars Media",
+  "Криптомарс Медиа",
+] as const;
+
 /** Совпадает с `@id` Organization в JSON-LD — ссылки из Article / Video. */
 export const jsonLdOrganizationId = `${siteUrl}/#organization`;
 

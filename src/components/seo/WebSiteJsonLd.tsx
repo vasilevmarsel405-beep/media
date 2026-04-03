@@ -3,6 +3,7 @@ import {
   commercialEmail,
   editorialEmail,
   jsonLdOrganizationId,
+  siteBrandAlternateNames,
   siteName,
   siteUrl,
   socialTelegram,
@@ -27,6 +28,7 @@ export function WebSiteJsonLd() {
       "@type": ["Organization", "NewsMediaOrganization"],
       "@id": orgId,
       name: siteName,
+      alternateName: [...siteBrandAlternateNames],
       description: metaCopy.description,
       url: siteUrl,
       logo: {
