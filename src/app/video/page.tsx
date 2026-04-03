@@ -138,20 +138,13 @@ export default async function VideoHubPage() {
                 <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-white/[0.9] [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_28px_rgba(0,0,0,0.4)] max-sm:line-clamp-3 max-sm:text-sm sm:max-lg:line-clamp-3 sm:max-lg:text-xs lg:mt-4 lg:line-clamp-none lg:text-base lg:leading-relaxed xl:text-lg">
                   {featured.lead}
                 </p>
-                <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5 lg:mt-8 lg:gap-3">
+                <div className="mt-4 sm:mt-5 lg:mt-8">
                   <Link
                     href={featuredHref}
                     className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-2.5 text-xs font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.5)] transition hover:brightness-[1.07] lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
                   >
                     <span className="leading-none">Смотреть выпуск</span>
                     <ArrowRight className="size-[1.1em] shrink-0 opacity-95" strokeWidth={2.75} aria-hidden />
-                  </Link>
-                  <Link
-                    href="/podkasty"
-                    className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-[#ff5c33]/40 bg-gradient-to-r from-white/[0.08] via-[#ff3100]/[0.12] to-[#c4001c]/[0.15] px-4 py-2.5 text-xs font-bold text-white shadow-[0_10px_28px_-12px_rgb(196_0_28/0.35)] backdrop-blur-[2px] transition hover:border-[#ff704d]/55 hover:brightness-[1.05] lg:rounded-xl lg:px-5 lg:py-3 lg:text-sm"
-                  >
-                    Подкасты
-                    <ArrowRight className="size-[1em] shrink-0 opacity-90" strokeWidth={2.5} aria-hidden />
                   </Link>
                 </div>
               </div>
@@ -170,7 +163,10 @@ export default async function VideoHubPage() {
         )}
 
         {rest.length > 0 ? (
-          <section className="mt-14 lg:mt-20" aria-labelledby="video-more-heading">
+          <section
+            className="mt-14 rounded-2xl border border-white/[0.07] bg-[#0a0b10]/75 p-5 shadow-[0_24px_60px_-40px_rgb(0_0_0/0.85)] backdrop-blur-md sm:p-7 lg:mt-20 lg:rounded-3xl lg:p-8"
+            aria-labelledby="video-more-heading"
+          >
             <div className="mb-8 flex flex-wrap items-end justify-between gap-4 lg:mb-10">
               <div>
                 <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-[#ff6b6b]">Каталог</p>
@@ -191,7 +187,7 @@ export default async function VideoHubPage() {
                 <li key={v.slug}>
                   <Link
                     href={`/video/${v.slug}`}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_8px_40px_-24px_rgb(0_0_0/0.85)] ring-1 ring-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-[#ff3100]/35 hover:shadow-[0_20px_48px_-28px_rgb(196_0_28/0.25)]"
+                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.1] bg-[#12131a] shadow-[0_8px_32px_-16px_rgb(0_0_0/0.75),inset_0_1px_0_rgb(255_255_255/0.04)] ring-1 ring-black/50 transition duration-300 hover:-translate-y-1 hover:border-[#ff3100]/40 hover:shadow-[0_20px_48px_-28px_rgb(196_0_28/0.22)]"
                   >
                     <div className="relative aspect-video w-full overflow-hidden">
                       <Image
@@ -213,13 +209,13 @@ export default async function VideoHubPage() {
                         </span>
                       ) : null}
                     </div>
-                    <div className="flex flex-1 flex-col p-5">
+                    <div className="flex flex-1 flex-col bg-[#0e0f15]/95 p-5">
                       <h3 className="font-display text-lg font-semibold leading-snug text-white transition group-hover:text-orange-200">
                         {v.title}
                       </h3>
-                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-white/55">{v.lead}</p>
+                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-white/60">{v.lead}</p>
                       <time
-                        className="mt-4 border-t border-white/[0.08] pt-3 text-xs font-medium tabular-nums text-white/40"
+                        className="mt-4 border-t border-white/[0.1] pt-3 text-xs font-medium tabular-nums text-white/45"
                         dateTime={v.publishedAt}
                       >
                         {formatDateTime(v.publishedAt)}
