@@ -8,7 +8,7 @@ import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 import { IconPlay } from "@/components/icons";
 import { specialProjects } from "@/lib/content";
-import { homeCopy } from "@/lib/copy";
+import { homeCopy, podcastHubCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
 import {
   getAllPosts,
@@ -26,11 +26,47 @@ import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 import { getAnalyticsSnapshot } from "@/lib/redis-analytics";
 import { getRubrics } from "@/lib/remote-rubrics";
+import { fetchPodcastFeedFromRss } from "@/lib/podcast-rss";
 
 export const revalidate = 5;
 
 function isExternalUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);
+}
+
+type HomePodcastCard = {
+  key: string;
+  title: string;
+  lead: string;
+  durationLabel: string;
+  dateLabel: string;
+  imageUrl: string | null;
+  href: string;
+};
+
+function buildHomePodcastPreview(
+  feed: Awaited<ReturnType<typeof fetchPodcastFeedFromRss>>
+): HomePodcastCard[] {
+  if (feed?.episodes.length) {
+    return feed.episodes.slice(0, 3).map((ep) => ({
+      key: ep.key,
+      title: ep.title,
+      lead: ep.description.length > 168 ? `${ep.description.slice(0, 165)}…` : ep.description,
+      durationLabel: ep.durationLabel,
+      dateLabel: ep.dateLabel,
+      imageUrl: ep.imageUrl,
+      href: ep.listenUrl,
+    }));
+  }
+  return podcastHubCopy.episodes.slice(0, 3).map((ep) => ({
+    key: ep.id,
+    title: ep.title,
+    lead: ep.description,
+    durationLabel: ep.duration,
+    dateLabel: ep.dateLabel,
+    imageUrl: null,
+    href: "/podkasty",
+  }));
 }
 
 export default async function HomePage() {
@@ -56,6 +92,8 @@ export default async function HomePage() {
   const editorialPicks = pickEditorialPicks(allPosts);
   const homeProjects = pickHomeProjects(allPosts);
   const analyticsSnapshot = await getAnalyticsSnapshot();
+  const podcastFeed = await fetchPodcastFeedFromRss();
+  const podcastPreview = buildHomePodcastPreview(podcastFeed);
   const viewsBySlug = new Map<string, number>(
     (analyticsSnapshot?.topPosts ?? []).map((it) => [it.slug, Math.max(0, Number(it.views) || 0)])
   );
@@ -78,9 +116,9 @@ export default async function HomePage() {
 
       <section className="relative overflow-hidden mars-hero-mesh">
         <HeroGradualBlur />
-        <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
+        <div className="relative z-[2] mx-auto max-w-[1400px] px-3 py-5 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
           {hero ? (
-            <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-lg:aspect-[2.05/1] sm:max-lg:aspect-[2.15/1] lg:aspect-auto lg:min-h-[540px] lg:rounded-[30px]">
+            <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.72/1] sm:max-lg:aspect-[1.88/1] lg:aspect-auto lg:min-h-[540px] lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
@@ -462,6 +500,61 @@ export default async function HomePage() {
           </div>
         </div>
       </div>
+
+      <section className="border-t border-slate-200/90 bg-gradient-to-b from-[#f8f7f5] via-white to-white">
+        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+          <SectionHeading
+            title={homeCopy.sections.podcast.title}
+            subtitle={homeCopy.sections.podcast.subtitle}
+            href="/podkasty"
+            actionLabel={homeCopy.sections.podcast.action}
+          />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {podcastPreview.map((card) => {
+              const external = isExternalUrl(card.href);
+              return (
+                <Link
+                  key={card.key}
+                  href={card.href}
+                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  className="group flex flex-row gap-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-[0_8px_30px_-18px_rgb(15_23_42/0.12)] ring-1 ring-slate-900/[0.02] transition duration-300 hover:-translate-y-0.5 hover:border-mars-accent/30 hover:shadow-[0_16px_40px_-24px_rgb(196_0_28/0.18)] sm:flex-col sm:gap-0 sm:p-0"
+                >
+                  <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-auto sm:w-full sm:rounded-none sm:aspect-[4/3] sm:min-h-[140px]">
+                    {card.imageUrl ? (
+                      <Image
+                        src={card.imageUrl}
+                        alt={`Обложка подкаста: ${card.title}`}
+                        fill
+                        className="object-cover transition duration-500 group-hover:scale-[1.04]"
+                        sizes="(max-width:640px) 88px, (max-width:1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="flex h-full min-h-[88px] w-full items-center justify-center bg-gradient-to-br from-mars-accent-soft via-white to-mars-accent/10 sm:min-h-0">
+                        <span className="rounded-lg bg-mars-accent px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-sm">
+                          FM
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col justify-center sm:justify-start sm:p-5">
+                    <h3 className="font-display line-clamp-2 text-base font-semibold leading-snug text-slate-900 group-hover:text-mars-accent sm:text-lg">
+                      {card.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">{card.lead}</p>
+                    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-slate-500">
+                      <span className="tabular-nums">{card.durationLabel}</span>
+                      <span className="text-slate-300" aria-hidden>
+                        ·
+                      </span>
+                      <span>{card.dateLabel}</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
         <SectionHeading title={homeCopy.sections.popular.title} subtitle={homeCopy.sections.popular.subtitle} />
