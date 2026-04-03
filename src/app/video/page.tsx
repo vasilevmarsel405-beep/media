@@ -16,12 +16,11 @@ export const metadata: Metadata = {
 export const revalidate = 30;
 
 const categories = [
-  { slug: "news", label: "Сводки дня" },
-  { slug: "interview", label: "Разговоры" },
-  { slug: "analysis", label: "Разборы на доске" },
-  { slug: "opinion", label: "Позиция" },
-  { slug: "report", label: "С улицы" },
-  { slug: "special", label: "Спецэфиры" },
+  { slug: "crypto", label: "Криптовалюта" },
+  { slug: "economy", label: "Экономика" },
+  { slug: "politics", label: "Политика" },
+  { slug: "podcasts", label: "Подкасты" },
+  { slug: "live", label: "Эфиры" },
 ];
 
 export default async function VideoHubPage() {
@@ -36,16 +35,20 @@ export default async function VideoHubPage() {
         className="pointer-events-none absolute inset-x-0 top-0 h-[min(55vh,520px)] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgb(196_0_28/0.35),transparent_55%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgb(43_62_247/0.2),transparent)]"
         aria-hidden
       />
-      <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-12 sm:px-6 lg:px-10">
-        <div className="max-w-3xl">
-          <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/45">Эфир и записи</p>
-          <h1 className="font-display mt-3 text-4xl font-bold tracking-tight sm:text-5xl lg:text-[3.25rem]">
+      <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-14 sm:px-6 sm:pt-16 lg:px-10">
+        <div className="max-w-3xl max-sm:max-w-none">
+          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/50 sm:tracking-[0.28em]">
+            {videoHubCopy.eyebrow}
+          </p>
+          <h1 className="font-display mt-3 text-[1.65rem] font-bold leading-snug tracking-tight text-pretty sm:text-5xl sm:leading-tight lg:text-[3.25rem]">
             {videoHubCopy.title}
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/65 sm:text-lg">{videoHubCopy.subtitle}</p>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 text-pretty sm:mt-5 sm:text-base sm:text-lg sm:leading-relaxed">
+            {videoHubCopy.subtitle}
+          </p>
         </div>
 
-        <div className="mt-10 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:mt-10 [&::-webkit-scrollbar]:hidden">
           {categories.map((c) => (
             <span
               key={c.slug}

@@ -150,10 +150,10 @@ export default async function HomePage() {
                   backgroundSize: "26px 26px",
                 }}
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-4 pt-12 max-sm:pb-4 max-sm:pt-11 max-lg:pb-3 max-lg:pt-8 sm:max-lg:px-5 sm:max-lg:pb-4 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
-                <div className="max-w-4xl pointer-events-auto">
-                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-lg:gap-1 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px]">
-                    <span className="rounded bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
+              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-4 pt-12 max-sm:px-4 max-sm:pb-5 max-sm:pt-14 max-lg:pb-3 max-lg:pt-8 sm:max-lg:px-5 sm:max-lg:pb-4 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
+                <div className="max-w-4xl pointer-events-auto max-sm:w-full">
+                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px] lg:tracking-widest">
+                    <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-sm:px-2.5 max-sm:py-1 sm:max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
                       {hero.homeBadge ?? "Материал дня"}
                     </span>
                     {hero.readMin ? (
@@ -161,17 +161,17 @@ export default async function HomePage() {
                         {hero.readMin} мин · без воды
                       </span>
                     ) : null}
-                    <span className="text-white/65">{formatTime(hero.publishedAt)}</span>
+                    <span className="text-white/60 max-sm:text-white/55">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref} className="block min-w-0">
-                    <h2 className="font-display mt-1.5 line-clamp-3 max-w-[min(100%,20ch)] text-[0.95rem] font-bold leading-[1.12] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-lg:max-w-[min(100%,18ch)] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:text-[1.05rem] sm:max-lg:leading-[1.1] md:max-lg:text-[1.15rem] lg:mt-4 lg:line-clamp-none lg:max-w-[22ch] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
+                    <h2 className="font-display mt-2 text-[0.95rem] font-bold leading-[1.2] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-sm:mt-2.5 max-sm:max-w-none max-sm:line-clamp-4 max-sm:text-[1.125rem] max-sm:leading-snug max-sm:tracking-[-0.02em] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:max-w-[min(100%,32ch)] sm:max-lg:text-[1.0625rem] sm:max-lg:leading-[1.18] md:max-lg:text-[1.125rem] lg:mt-4 lg:line-clamp-none lg:max-w-[22ch] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-1.5 line-clamp-2 max-w-[min(100%,36ch)] text-[11px] leading-snug text-white/92 max-lg:leading-snug sm:max-lg:mt-2 sm:max-lg:line-clamp-3 sm:max-lg:text-xs sm:max-lg:leading-relaxed lg:mt-4 lg:line-clamp-none lg:max-w-3xl lg:text-base lg:leading-relaxed xl:text-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)]">
+                  <p className="mt-2 line-clamp-2 max-w-[min(100%,36ch)] text-[11px] leading-relaxed text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)] max-sm:mt-2.5 max-sm:max-w-none max-sm:line-clamp-3 max-sm:text-sm max-sm:leading-relaxed max-sm:text-white/[0.86] max-lg:leading-snug sm:max-lg:mt-2 sm:max-lg:line-clamp-3 sm:max-lg:max-w-xl sm:max-lg:text-xs sm:max-lg:leading-relaxed lg:mt-4 lg:line-clamp-none lg:max-w-3xl lg:text-base lg:leading-relaxed xl:text-lg">
                     {hero.lead}
                   </p>
-                  <div className="mt-2.5 flex flex-nowrap items-center gap-1.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] max-lg:[&::-webkit-scrollbar]:hidden sm:max-lg:mt-3 sm:max-lg:gap-2 lg:mt-7 lg:gap-3 [&::-webkit-scrollbar]:hidden">
+                  <div className="mt-3 flex flex-nowrap items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] max-sm:mt-4 max-lg:[&::-webkit-scrollbar]:hidden sm:max-lg:mt-3 sm:max-lg:gap-2 lg:mt-7 lg:gap-3 [&::-webkit-scrollbar]:hidden">
                     <Link
                       href={heroHref}
                       className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3.5 py-2 text-xs font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.45)] transition hover:brightness-[1.06] sm:max-lg:px-4 lg:gap-2 lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm lg:shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)]"
@@ -182,7 +182,7 @@ export default async function HomePage() {
                     {heroVideoHref ? (
                       <HeroGlassVideoLink
                         href={heroVideoHref}
-                        className="min-h-[44px] shrink-0 rounded-lg px-3 py-2 text-[11px] sm:max-lg:px-4 sm:max-lg:text-xs lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
+                        className="min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs sm:max-lg:px-4 lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
                         {...(isExternalUrl(heroVideoHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       >
                         <IconPlay className="h-3.5 w-3.5 shrink-0 opacity-90 lg:h-4 lg:w-4" aria-hidden />
@@ -451,7 +451,7 @@ export default async function HomePage() {
             variant="dark"
           />
           <div className="mb-6 mt-2 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {["Сводки дня", "Разборы на доске", "Позиция", "Спецэфиры"].map((chip) => (
+            {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (
               <span
                 key={chip}
                 className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 text-xs font-semibold text-white/85 backdrop-blur-sm"
