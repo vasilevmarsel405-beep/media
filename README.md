@@ -33,6 +33,7 @@ npm run dev
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Верификация Google Search Console. |
 | `PODCAST_RSS_URL` | (Опционально) Публичный URL RSS подкаста с Mave или другого хостинга — страница `/podkasty` строит список выпусков из фида. |
 | `PODCAST_RSS_REVALIDATE_SECONDS` | (Опционально) Как часто сервер перезапрашивает RSS (кеш Data Cache), по умолчанию `600`, минимум `60`. |
+| `NEXT_PUBLIC_PODCAST_YANDEX_URL` | (Опционально) Ссылка на альбом в Яндекс.Музыке для кнопки на `/podkasty`; иначе используется URL по умолчанию в коде. |
 
 Файл **`.env.local` не коммитится**. На **Vercel** / другом хостинге задайте те же переменные в панели.
 

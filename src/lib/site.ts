@@ -26,6 +26,13 @@ export const commercialEmail = "ads@cryptomarsmedia.ru";
 export const socialTelegram = "https://t.me/+wvWKuimGT6lhNjhi";
 export const socialYoutube = "https://www.youtube.com/@cryptomars1";
 
+/** Страница подкаста на Яндекс.Музыке (можно переопределить `NEXT_PUBLIC_PODCAST_YANDEX_URL`). */
+const rawPodcastYandex = process.env.NEXT_PUBLIC_PODCAST_YANDEX_URL?.trim();
+export const podcastYandexMusicUrl =
+  rawPodcastYandex && (rawPodcastYandex.startsWith("https://") || rawPodcastYandex.startsWith("http://"))
+    ? rawPodcastYandex
+    : "https://music.yandex.ru/album/27001794";
+
 export function getMetadataBaseUrl(): URL {
   const base = siteUrl.startsWith("http") ? siteUrl : `https://${siteUrl}`;
   try {

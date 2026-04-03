@@ -17,7 +17,7 @@ const nav = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-[100] border-b border-slate-200/85 bg-mars-surface/94 shadow-[0_6px_24px_-12px_rgb(19_21_26/0.08)] backdrop-blur-md backdrop-saturate-150">
-      <div className="mx-auto flex min-w-0 max-w-[1400px] items-center gap-3 px-3 pb-2 pt-1 sm:px-5 sm:pb-2.5 sm:pt-1.5 lg:gap-5 lg:px-10">
+      <div className="mx-auto flex min-w-0 max-w-[1400px] items-center gap-3 px-3 pb-2 pt-1.5 sm:px-5 sm:pb-2.5 sm:pt-2 lg:gap-5 lg:px-10">
         <Link
           href="/"
           className="shrink-0 font-display text-[1.35rem] font-semibold tracking-tight text-mars-ink focus-ring rounded-sm sm:text-2xl"

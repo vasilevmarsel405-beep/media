@@ -62,6 +62,9 @@ const nextConfig: NextConfig = {
       /** Превью с YouTube (обложка после «Заполнить из YouTube») */
       { protocol: "https", hostname: "i.ytimg.com", pathname: "/**" },
       { protocol: "https", hostname: "img.youtube.com", pathname: "/**" },
+      /** Обложки подкаста из RSS (Mave и др.) */
+      { protocol: "https", hostname: "cdn.mave.digital", pathname: "/**" },
+      { protocol: "https", hostname: "api.mave.digital", pathname: "/**" },
       ...imageRemotePatternsFromEnv(),
     ],
   },

@@ -9,17 +9,29 @@ export type PodcastEpisodeDisplay = {
   durationLabel: string;
   dateLabel: string;
   listenUrl: string;
+  /** Обложка эпизода из RSS (`itunes:image`), иначе `null`. */
+  imageUrl: string | null;
+  /** Для сортировки по дате публикации. */
+  publishedAtMs: number;
+};
+
+export type PodcastFeedResult = {
+  episodes: PodcastEpisodeDisplay[];
+  /** Обложка шоу из канала RSS (`image` / `itunes:image`). */
+  channelImageUrl: string | null;
 };
 
 type RssItem = Parser.Item & {
   "itunes:duration"?: string;
   "itunes:episode"?: string;
-  itunes?: { duration?: string; episode?: string };
+  "itunes:image"?: unknown;
+  itunes?: { duration?: string; episode?: string; image?: string };
 };
 
 const parser = new Parser({
   customFields: {
-    item: ["itunes:duration", "itunes:episode"],
+    feed: ["itunes:image"],
+    item: ["itunes:duration", "itunes:episode", "itunes:image"],
   },
 });
 
@@ -51,7 +63,6 @@ function formatSeconds(total: number): string {
   return `${Math.max(1, m)} мин`;
 }
 
-/** iTunes-тег: секунды, MM:SS или H:MM:SS */
 function parseItunesDuration(raw: unknown): string {
   if (raw == null) return "";
   const s = String(raw).trim();
@@ -77,11 +88,44 @@ function itemDuration(item: RssItem): string {
   return parseItunesDuration(raw);
 }
 
+/** Извлекает URL из `itunes:image` (атрибут `href`) и похожих структур xml2js. */
+function pickImageHref(raw: unknown): string | null {
+  if (raw == null) return null;
+  if (typeof raw === "string") {
+    const t = raw.trim();
+    return t.startsWith("http") ? t : null;
+  }
+  if (typeof raw !== "object") return null;
+  const o = raw as Record<string, unknown>;
+  if (typeof o.href === "string" && o.href.startsWith("http")) return o.href;
+  const $ = o.$ as Record<string, unknown> | undefined;
+  if ($ && typeof $.href === "string" && $.href.startsWith("http")) return $.href;
+  return null;
+}
+
+function itemImageUrl(item: RssItem, channelFallback: string | null): string | null {
+  const fromItem = pickImageHref(item["itunes:image"]) ?? pickImageHref(item.itunes?.image);
+  if (fromItem) return fromItem;
+  return channelFallback;
+}
+
+function channelImageUrl(feed: Parser.Output<RssItem>): string | null {
+  const std = feed.image?.url;
+  if (typeof std === "string" && std.startsWith("http")) return std;
+  const feedRec = feed as unknown as Record<string, unknown>;
+  return pickImageHref(feedRec["itunes:image"]) ?? pickImageHref(feed.itunes?.image);
+}
+
+function itemPublishedMs(item: Parser.Item): number {
+  const t = Date.parse(item.isoDate || item.pubDate || "");
+  return Number.isNaN(t) ? 0 : t;
+}
+
 /**
- * Загружает и разбирает RSS. Кеш Next.js Data Cache: `revalidate` по `PODCAST_RSS_REVALIDATE_SECONDS` (по умолчанию 600 с).
- * При ошибке сети/разбора — `null` (страница покажет статический fallback).
+ * Загружает RSS, сортирует выпуски по дате (сначала новые), подтягивает обложки канала и эпизодов.
+ * Кеш Next.js: `PODCAST_RSS_REVALIDATE_SECONDS` (по умолчанию 600 с).
  */
-export async function fetchPodcastEpisodesFromRss(): Promise<PodcastEpisodeDisplay[] | null> {
+export async function fetchPodcastFeedFromRss(): Promise<PodcastFeedResult | null> {
   const url = getPodcastRssUrl();
   if (!url) return null;
 
@@ -102,9 +146,9 @@ export async function fetchPodcastEpisodesFromRss(): Promise<PodcastEpisodeDispl
     const items = (feed.items ?? []) as RssItem[];
     if (items.length === 0) return null;
 
-    const total = items.length;
+    const channelCover = channelImageUrl(feed);
 
-    return items.map((item, index) => {
+    const mapped: PodcastEpisodeDisplay[] = items.map((item, index) => {
       const title = item.title?.trim() || "Без названия";
       const descSource = item.contentSnippet || item.summary || item.content || "";
       const description =
@@ -112,6 +156,7 @@ export async function fetchPodcastEpisodesFromRss(): Promise<PodcastEpisodeDispl
 
       const durationLabel = itemDuration(item) || "—";
       const dateLabel = ruDateLabel(item.isoDate || item.pubDate);
+      const publishedAtMs = itemPublishedMs(item);
 
       const listenUrl =
         item.link?.trim() ||
@@ -120,7 +165,7 @@ export async function fetchPodcastEpisodesFromRss(): Promise<PodcastEpisodeDispl
 
       const epRaw = item["itunes:episode"] ?? item.itunes?.episode;
       const epStr = epRaw != null && String(epRaw).trim() ? String(epRaw).trim() : "";
-      const episodeLabel = epStr ? epStr.padStart(2, "0") : String(total - index).padStart(2, "0");
+      const episodeLabel = epStr ? epStr.padStart(2, "0") : String(index + 1).padStart(2, "0");
 
       const key = String(item.guid || item.link || `rss-${index}`);
 
@@ -132,8 +177,29 @@ export async function fetchPodcastEpisodesFromRss(): Promise<PodcastEpisodeDispl
         durationLabel,
         dateLabel,
         listenUrl,
+        imageUrl: itemImageUrl(item, channelCover),
+        publishedAtMs,
       };
     });
+
+    mapped.sort((a, b) => b.publishedAtMs - a.publishedAtMs);
+
+    // Перенумерация метки эпизода, если в фиде не было itunes:episode — по убыванию даты: новый = больший номер
+    const needsSynthetic = items.every((it) => {
+      const ep = (it as RssItem)["itunes:episode"] ?? (it as RssItem).itunes?.episode;
+      return ep == null || String(ep).trim() === "";
+    });
+    if (needsSynthetic && mapped.length > 0) {
+      const n = mapped.length;
+      mapped.forEach((ep, i) => {
+        ep.episodeLabel = String(n - i).padStart(2, "0");
+      });
+    }
+
+    return {
+      episodes: mapped,
+      channelImageUrl: channelCover,
+    };
   } catch (e) {
     console.error("[podcast-rss]", e);
     return null;
