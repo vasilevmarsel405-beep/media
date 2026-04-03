@@ -35,34 +35,35 @@ export default async function VideoHubPage() {
         className="pointer-events-none absolute inset-x-0 top-0 h-[min(55vh,520px)] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgb(196_0_28/0.35),transparent_55%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgb(43_62_247/0.2),transparent)]"
         aria-hidden
       />
-      <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-14 sm:px-6 sm:pt-16 lg:px-10">
-        <div className="max-w-3xl max-sm:max-w-none">
-          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/50 sm:tracking-[0.28em]">
-            {videoHubCopy.eyebrow}
-          </p>
-          <h1 className="font-display mt-3 text-[1.65rem] font-bold leading-snug tracking-tight text-pretty sm:text-5xl sm:leading-tight lg:text-[3.25rem]">
-            {videoHubCopy.title}
-          </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/70 text-pretty sm:mt-5 sm:text-base sm:text-lg sm:leading-relaxed">
-            {videoHubCopy.subtitle}
-          </p>
-        </div>
-
-        <div className="mt-8 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:mt-10 [&::-webkit-scrollbar]:hidden">
-          {categories.map((c) => (
-            <span
-              key={c.slug}
-              className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 text-xs font-semibold text-white/85 backdrop-blur-sm"
-            >
-              {c.label}
-            </span>
-          ))}
-        </div>
+      <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-10">
+        <header className="xl:flex xl:items-end xl:justify-between xl:gap-10">
+          <div className="min-w-0 max-w-3xl max-sm:max-w-none xl:max-w-[min(100%,52rem)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45 sm:text-[11px] sm:tracking-[0.24em]">
+              {videoHubCopy.eyebrow}
+            </p>
+            <h1 className="font-display mt-1.5 text-[1.5rem] font-bold leading-[1.2] tracking-tight text-pretty sm:mt-2 sm:text-[1.85rem] sm:leading-[1.18] md:text-4xl md:leading-[1.15] lg:text-[2.125rem] xl:text-[2.35rem]">
+              {videoHubCopy.title}
+            </h1>
+            <p className="mt-2 max-w-2xl text-[13px] leading-snug text-white/65 text-pretty sm:mt-2.5 sm:text-sm sm:leading-relaxed lg:text-[0.9375rem] lg:leading-relaxed">
+              {videoHubCopy.subtitle}
+            </p>
+          </div>
+          <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] max-xl:[&::-webkit-scrollbar]:hidden xl:mt-0 xl:max-w-[min(100%,26rem)] xl:flex-wrap xl:justify-end xl:overflow-visible xl:pb-0 [&::-webkit-scrollbar]:hidden">
+            {categories.map((c) => (
+              <span
+                key={c.slug}
+                className="shrink-0 rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm sm:px-3.5 sm:py-2 sm:text-xs"
+              >
+                {c.label}
+              </span>
+            ))}
+          </div>
+        </header>
 
         {featured ? (
           <Link
             href={`/video/${featured.slug}`}
-            className="group relative mt-12 block overflow-hidden rounded-2xl ring-1 ring-white/10"
+            className="group relative mt-7 block overflow-hidden rounded-2xl ring-1 ring-white/10 sm:mt-8 lg:mt-9"
           >
             <div className="relative aspect-[21/9] min-h-[220px]">
               <Image
