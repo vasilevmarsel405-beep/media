@@ -117,7 +117,7 @@ export default async function VideoHubPage() {
               }}
             />
             {/* Точечная сетка только на фоне страницы — на обложке только градиенты */}
-            <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-5 pt-14 max-sm:pb-5 max-sm:pt-12 max-lg:pb-4 max-lg:pt-8 sm:max-lg:px-5 lg:pointer-events-auto lg:relative lg:min-h-[min(72vh,620px)] lg:px-12 lg:pb-12 lg:pt-12">
+            <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-center px-4 py-8 sm:justify-end sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 lg:pointer-events-auto lg:relative lg:min-h-[min(72vh,620px)] lg:justify-end lg:px-12 lg:pb-12 lg:pt-12">
               <div className="max-w-4xl pointer-events-auto max-sm:w-full">
                 <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/85 max-sm:text-[10px] sm:max-lg:text-[10px] lg:text-[11px]">
                   <span className="rounded-md bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/35 ring-1 ring-white/15">
@@ -138,13 +138,13 @@ export default async function VideoHubPage() {
                 <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-white/[0.9] [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_28px_rgba(0,0,0,0.4)] max-sm:line-clamp-3 max-sm:text-sm sm:max-lg:line-clamp-3 sm:max-lg:text-xs lg:mt-4 lg:line-clamp-none lg:text-base lg:leading-relaxed xl:text-lg">
                   {featured.lead}
                 </p>
-                <div className="mt-4 sm:mt-5 lg:mt-8">
+                <div className="mt-3 max-sm:mt-3.5 sm:mt-5 lg:mt-8">
                   <Link
                     href={featuredHref}
-                    className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-2.5 text-xs font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.5)] transition hover:brightness-[1.07] lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
+                    className="focus-ring inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-md bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_10px_28px_-10px_rgb(196_0_28/0.45)] transition hover:brightness-[1.07] sm:min-h-[44px] sm:gap-1.5 sm:rounded-lg sm:px-4 sm:py-2.5 sm:text-xs sm:shadow-[0_12px_36px_-10px_rgb(196_0_28/0.5)] lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
                   >
                     <span className="leading-none">Смотреть выпуск</span>
-                    <ArrowRight className="size-[1.1em] shrink-0 opacity-95" strokeWidth={2.75} aria-hidden />
+                    <ArrowRight className="size-[1em] shrink-0 opacity-95 sm:size-[1.1em]" strokeWidth={2.75} aria-hidden />
                   </Link>
                 </div>
               </div>
@@ -163,10 +163,7 @@ export default async function VideoHubPage() {
         )}
 
         {rest.length > 0 ? (
-          <section
-            className="mt-14 rounded-2xl border border-white/[0.07] bg-[#0a0b10]/75 p-5 shadow-[0_24px_60px_-40px_rgb(0_0_0/0.85)] backdrop-blur-md sm:p-7 lg:mt-20 lg:rounded-3xl lg:p-8"
-            aria-labelledby="video-more-heading"
-          >
+          <section className="mt-14 lg:mt-20" aria-labelledby="video-more-heading">
             <div className="mb-8 flex flex-wrap items-end justify-between gap-4 lg:mb-10">
               <div>
                 <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-[#ff6b6b]">Каталог</p>
