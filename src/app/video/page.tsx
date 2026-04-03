@@ -44,15 +44,16 @@ export default async function VideoHubPage() {
             <h1 className="font-display mt-1.5 text-[1.5rem] font-bold leading-[1.2] tracking-tight text-pretty sm:mt-2 sm:text-[1.85rem] sm:leading-[1.18] md:text-4xl md:leading-[1.15] lg:text-[2.125rem] xl:text-[2.35rem]">
               {videoHubCopy.title}
             </h1>
-            <p className="mt-2 max-w-2xl text-[13px] leading-snug text-white/65 text-pretty sm:mt-2.5 sm:text-sm sm:leading-relaxed lg:text-[0.9375rem] lg:leading-relaxed">
-              {videoHubCopy.subtitle}
+            <p className="mt-2 max-w-2xl text-[13px] leading-snug text-white/65 sm:mt-2.5 sm:text-sm sm:leading-relaxed lg:text-[0.9375rem] lg:leading-relaxed">
+              <span className="block">{videoHubCopy.subtitleLine1}</span>
+              <span className="mt-0.5 block sm:mt-1">{videoHubCopy.subtitleLine2}</span>
             </p>
           </div>
-          <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] max-xl:[&::-webkit-scrollbar]:hidden xl:mt-0 xl:max-w-[min(100%,26rem)] xl:flex-wrap xl:justify-end xl:overflow-visible xl:pb-0 [&::-webkit-scrollbar]:hidden">
+          <div className="mt-4 flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:mt-0 xl:min-w-0 xl:flex-1 xl:justify-end">
             {categories.map((c) => (
               <span
                 key={c.slug}
-                className="shrink-0 rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm sm:px-3.5 sm:py-2 sm:text-xs"
+                className="shrink-0 whitespace-nowrap rounded-full border border-white/12 bg-white/[0.05] px-2.5 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm sm:px-3 sm:py-1.5 sm:text-xs"
               >
                 {c.label}
               </span>
