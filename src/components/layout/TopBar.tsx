@@ -8,16 +8,15 @@ function formatToday() {
 }
 
 /**
- * Дата: кегль как у меню; ровные отступы сверху/снизу (pt = pb при отсутствии safe-area),
- * flex items-center — дата по центру по вертикали внутри полосы pt/pb.
+ * Дата: компактная полоса (минимальные pt/pb), на sm+ кегль как у меню.
  */
 export function TopBar() {
   return (
     <div className="bg-transparent">
-      <div className="mx-auto flex max-w-[1400px] items-center px-3 pb-1.5 pt-[max(0.375rem,env(safe-area-inset-top))] sm:px-5 sm:pb-2 sm:pt-[max(0.5rem,env(safe-area-inset-top))] lg:px-10">
+      <div className="mx-auto flex max-w-[1400px] items-center px-3 pb-0.5 pt-[max(0.25rem,env(safe-area-inset-top))] sm:px-5 sm:pb-1 sm:pt-[max(0.375rem,env(safe-area-inset-top))] lg:px-10">
         <time
           dateTime={new Date().toISOString()}
-          className="text-[0.8125rem] font-medium capitalize leading-none tracking-normal text-mars-ink/88"
+          className="text-[0.75rem] font-medium capitalize leading-none tracking-normal text-mars-ink/88 sm:text-[0.8125rem]"
           suppressHydrationWarning
         >
           {formatToday()}

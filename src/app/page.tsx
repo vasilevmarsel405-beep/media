@@ -78,9 +78,9 @@ export default async function HomePage() {
 
       <section className="relative overflow-hidden mars-hero-mesh">
         <HeroGradualBlur />
-        <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-9 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
+        <div className="relative z-[2] mx-auto max-w-[1400px] px-4 py-6 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
           {hero ? (
-            <article className="mars-hero-frame mars-reveal group relative overflow-hidden rounded-[30px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)]">
+            <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-lg:aspect-[2.05/1] sm:max-lg:aspect-[2.15/1] lg:aspect-auto lg:min-h-[540px] lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
@@ -113,31 +113,31 @@ export default async function HomePage() {
                   backgroundSize: "26px 26px",
                 }}
               />
-              <div className="relative z-10 flex min-h-[min(52dvh,440px)] flex-col justify-end px-5 pb-8 pt-16 sm:min-h-[480px] sm:px-10 sm:pb-10 sm:pt-12 lg:min-h-[540px] lg:px-12 lg:pb-12">
-                <div className="max-w-4xl">
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/80">
-                    <span className="rounded-md bg-white/12 px-2.5 py-1 text-white ring-1 ring-white/20 backdrop-blur">
+              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-3.5 pt-10 max-lg:pb-3 max-lg:pt-8 sm:max-lg:px-5 sm:max-lg:pb-4 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
+                <div className="max-w-4xl pointer-events-auto">
+                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-lg:gap-1 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px]">
+                    <span className="rounded bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
                       {hero.homeBadge ?? "Материал дня"}
                     </span>
                     {hero.readMin ? (
-                      <span className="rounded-xl bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/30">
+                      <span className="hidden rounded-lg bg-[#FF3100] px-2 py-0.5 text-white shadow-lg shadow-orange-950/30 sm:inline-flex sm:rounded-xl sm:px-2.5 sm:py-1">
                         {hero.readMin} мин · без воды
                       </span>
                     ) : null}
                     <span className="text-white/65">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref} className="block min-w-0">
-                    <h2 className="font-display mt-4 max-w-[min(100%,22ch)] text-[1.9rem] font-bold leading-[1.05] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_14px_42px_rgba(0,0,0,0.6)] sm:max-w-[22ch] sm:text-[2.45rem] md:text-[2.65rem] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
+                    <h2 className="font-display mt-1.5 line-clamp-3 max-w-[min(100%,20ch)] text-[0.95rem] font-bold leading-[1.12] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-lg:max-w-[min(100%,18ch)] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:text-[1.05rem] sm:max-lg:leading-[1.1] md:max-lg:text-[1.15rem] lg:mt-4 lg:line-clamp-none lg:max-w-[22ch] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/93 sm:text-base lg:text-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)]">
+                  <p className="mt-1.5 line-clamp-2 max-w-[min(100%,36ch)] text-[11px] leading-snug text-white/92 max-lg:leading-snug sm:max-lg:mt-2 sm:max-lg:line-clamp-3 sm:max-lg:text-xs sm:max-lg:leading-relaxed lg:mt-4 lg:line-clamp-none lg:max-w-3xl lg:text-base lg:leading-relaxed xl:text-lg [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)]">
                     {hero.lead}
                   </p>
-                  <div className="mt-7 flex flex-nowrap items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-3 [&::-webkit-scrollbar]:hidden">
+                  <div className="mt-2.5 flex flex-nowrap items-center gap-1.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] max-lg:[&::-webkit-scrollbar]:hidden sm:max-lg:mt-3 sm:max-lg:gap-2 lg:mt-7 lg:gap-3 [&::-webkit-scrollbar]:hidden">
                     <Link
                       href={heroHref}
-                      className="focus-ring inline-flex min-h-[44px] shrink-0 items-center gap-2 whitespace-nowrap rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-3 text-xs font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06] sm:px-6 sm:text-sm"
+                      className="focus-ring inline-flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.45)] transition hover:brightness-[1.06] sm:max-lg:px-4 sm:max-lg:text-xs lg:gap-2 lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm lg:shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)]"
                     >
                       {hero.homeCta ?? "Читать сейчас"}
                       <span aria-hidden>→</span>
@@ -145,10 +145,10 @@ export default async function HomePage() {
                     {heroVideoHref ? (
                       <HeroGlassVideoLink
                         href={heroVideoHref}
-                        className="shrink-0 px-4 py-3 text-xs sm:px-6 sm:text-sm"
+                        className="min-h-[44px] shrink-0 rounded-lg px-3 py-2 text-[11px] sm:max-lg:px-4 sm:max-lg:text-xs lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
                         {...(isExternalUrl(heroVideoHref) ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       >
-                        <IconPlay className="h-4 w-4 shrink-0 opacity-90" aria-hidden />
+                        <IconPlay className="h-3.5 w-3.5 shrink-0 opacity-90 lg:h-4 lg:w-4" aria-hidden />
                         {heroVideoLabel}
                       </HeroGlassVideoLink>
                     ) : null}

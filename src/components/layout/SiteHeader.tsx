@@ -9,6 +9,7 @@ const nav = [
   { href: "/novosti", label: "Новости" },
   { href: "/analitika", label: "Аналитика" },
   { href: "/video", label: "Видео" },
+  { href: "/podkasty", label: "Подкасты" },
   { href: "/rubriki", label: "Рубрики" },
   { href: "/specproekty", label: "Спецпроекты" },
 ];

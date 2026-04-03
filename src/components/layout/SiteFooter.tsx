@@ -13,6 +13,7 @@ const sections = [
       { href: "/analitika", label: "Аналитика" },
       { href: "/intervyu", label: "Интервью" },
       { href: "/video", label: "Видео" },
+      { href: "/podkasty", label: "Подкасты" },
     ],
   },
   {

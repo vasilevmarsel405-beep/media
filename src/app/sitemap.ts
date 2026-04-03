@@ -13,6 +13,7 @@ const STATIC_PATHS = [
   "/analitika",
   "/intervyu",
   "/video",
+  "/podkasty",
   "/rubriki",
   "/specproekty",
   "/podpiska",

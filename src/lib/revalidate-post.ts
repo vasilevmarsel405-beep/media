@@ -54,7 +54,18 @@ export function revalidatePostPathsExact(post: Post | null, opts?: { slugDeleted
 export function revalidateAfterPostChange(post: Post | null, opts?: { slugDeleted?: string }) {
   invalidatePostsCache();
 
-  const roots = ["/", "/poisk", "/novosti", "/stati", "/analitika", "/intervyu", "/video", "/rubriki", "/teg"];
+  const roots = [
+    "/",
+    "/poisk",
+    "/novosti",
+    "/stati",
+    "/analitika",
+    "/intervyu",
+    "/video",
+    "/podkasty",
+    "/rubriki",
+    "/teg",
+  ];
 
   for (const p of roots) {
     revalidatePath(p);
