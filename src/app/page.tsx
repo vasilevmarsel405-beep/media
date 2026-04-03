@@ -7,6 +7,7 @@ import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 import { IconPlay } from "@/components/icons";
+import { Music2 } from "lucide-react";
 import { specialProjects } from "@/lib/content";
 import { homeCopy, podcastHubCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
@@ -22,6 +23,7 @@ import {
 } from "@/lib/posts-service";
 import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
+import { podcastYandexMusicUrl } from "@/lib/site";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 import { getAnalyticsSnapshot } from "@/lib/redis-analytics";
@@ -41,7 +43,6 @@ type HomePodcastCard = {
   durationLabel: string;
   dateLabel: string;
   imageUrl: string | null;
-  href: string;
 };
 
 function buildHomePodcastPreview(
@@ -55,7 +56,6 @@ function buildHomePodcastPreview(
       durationLabel: ep.durationLabel,
       dateLabel: ep.dateLabel,
       imageUrl: ep.imageUrl,
-      href: ep.listenUrl,
     }));
   }
   return podcastHubCopy.episodes.slice(0, 3).map((ep) => ({
@@ -65,7 +65,6 @@ function buildHomePodcastPreview(
     durationLabel: ep.duration,
     dateLabel: ep.dateLabel,
     imageUrl: null,
-    href: "/podkasty",
   }));
 }
 
@@ -501,58 +500,93 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="border-t border-slate-200/90 bg-gradient-to-b from-[#f8f7f5] via-white to-white">
-        <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
+      <section className="relative overflow-hidden border-t border-white/10 bg-[#0b0d12] text-white">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.55] bg-[radial-gradient(ellipse_85%_55%_at_12%_-5%,rgb(196_0_28/0.32),transparent_52%),radial-gradient(ellipse_50%_45%_at_100%_105%,rgb(43_62_247/0.18),transparent)]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.12]"
+          style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.2) 1px, transparent 0)`,
+            backgroundSize: "20px 20px",
+          }}
+          aria-hidden
+        />
+        <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10 lg:py-14">
           <SectionHeading
+            variant="dark"
+            titlePrefix={
+              <span
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-mars-accent/35 to-white/5 ring-1 ring-white/15"
+                aria-hidden
+              >
+                <Music2 className="h-[1.15rem] w-[1.15rem] text-[#ffb3bc]" strokeWidth={2} />
+              </span>
+            }
             title={homeCopy.sections.podcast.title}
             subtitle={homeCopy.sections.podcast.subtitle}
             href="/podkasty"
             actionLabel={homeCopy.sections.podcast.action}
           />
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {podcastPreview.map((card) => {
-              const external = isExternalUrl(card.href);
-              return (
-                <Link
-                  key={card.key}
-                  href={card.href}
-                  {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="group flex flex-row gap-4 overflow-hidden rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-[0_8px_30px_-18px_rgb(15_23_42/0.12)] ring-1 ring-slate-900/[0.02] transition duration-300 hover:-translate-y-0.5 hover:border-mars-accent/30 hover:shadow-[0_16px_40px_-24px_rgb(196_0_28/0.18)] sm:flex-col sm:gap-0 sm:p-0"
-                >
-                  <div className="relative h-[88px] w-[88px] shrink-0 overflow-hidden rounded-xl bg-slate-100 sm:h-auto sm:w-full sm:rounded-none sm:aspect-[4/3] sm:min-h-[140px]">
-                    {card.imageUrl ? (
-                      <Image
-                        src={card.imageUrl}
-                        alt={`Обложка подкаста: ${card.title}`}
-                        fill
-                        className="object-cover transition duration-500 group-hover:scale-[1.04]"
-                        sizes="(max-width:640px) 88px, (max-width:1024px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <div className="flex h-full min-h-[88px] w-full items-center justify-center bg-gradient-to-br from-mars-accent-soft via-white to-mars-accent/10 sm:min-h-0">
-                        <span className="rounded-lg bg-mars-accent px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-sm">
-                          FM
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex min-w-0 flex-1 flex-col justify-center sm:justify-start sm:p-5">
-                    <h3 className="font-display line-clamp-2 text-base font-semibold leading-snug text-slate-900 group-hover:text-mars-accent sm:text-lg">
-                      {card.title}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">{card.lead}</p>
-                    <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-slate-500">
-                      <span className="tabular-nums">{card.durationLabel}</span>
-                      <span className="text-slate-300" aria-hidden>
-                        ·
-                      </span>
-                      <span>{card.dateLabel}</span>
+          <div className="mx-auto mt-2 max-w-3xl space-y-3 sm:mt-4 sm:space-y-4">
+            {podcastPreview.map((card, i) => (
+              <a
+                key={card.key}
+                href={podcastYandexMusicUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex gap-3.5 rounded-2xl border border-white/[0.09] bg-white/[0.04] p-3 shadow-[0_20px_50px_-38px_rgb(0_0_0/0.9)] backdrop-blur-[2px] transition duration-300 hover:border-mars-accent/45 hover:bg-white/[0.07] sm:gap-5 sm:p-4"
+              >
+                <div className="relative aspect-square w-[4.75rem] shrink-0 overflow-hidden rounded-xl bg-slate-800 ring-2 ring-white/10 shadow-[0_12px_28px_-12px_rgb(0_0_0/0.75)] transition group-hover:ring-mars-accent/50 sm:w-[6.75rem]">
+                  {card.imageUrl ? (
+                    <Image
+                      src={card.imageUrl}
+                      alt={`Обложка: ${card.title}`}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-[1.05]"
+                      sizes="108px"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-mars-accent/90 via-[#9e0016] to-[#1a0508]">
+                      <span className="font-display text-lg font-bold tabular-nums text-white/95">FM</span>
                     </div>
+                  )}
+                  <span className="absolute bottom-1.5 left-1.5 rounded bg-black/65 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-white/90 backdrop-blur-sm">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col justify-center py-0.5">
+                  <span className="inline-flex w-max items-center gap-1.5 rounded-full border border-[#fc3f1e]/35 bg-[#fc3f1e]/10 px-2.5 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-[#ff9a8a]">
+                    Яндекс Музыка
+                  </span>
+                  <h3 className="font-display mt-2 line-clamp-2 text-[0.95rem] font-semibold leading-snug text-white transition group-hover:text-[#ffc2c9] sm:text-lg">
+                    {card.title}
+                  </h3>
+                  <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-white/55 sm:line-clamp-3 sm:text-sm">
+                    {card.lead}
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-2 text-[11px] font-semibold tabular-nums text-white/38">
+                    <span>{card.durationLabel}</span>
+                    <span aria-hidden>·</span>
+                    <span>{card.dateLabel}</span>
                   </div>
-                </Link>
-              );
-            })}
+                </div>
+                <div className="hidden shrink-0 items-center pr-1 sm:flex">
+                  <span className="rounded-full border border-white/10 bg-white/[0.06] p-2.5 text-white/35 transition group-hover:border-mars-accent/40 group-hover:text-[#ffb3bc]">
+                    <Music2 className="h-5 w-5" strokeWidth={1.75} aria-hidden />
+                  </span>
+                </div>
+              </a>
+            ))}
           </div>
+          <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-relaxed text-white/40">
+            Карточки открывают альбом «КриптоМарс» в Яндекс.Музыке. Полный каталог и обложки — на{" "}
+            <Link href="/podkasty" className="font-semibold text-[#ffb3bc] underline-offset-2 hover:underline">
+              странице подкастов
+            </Link>
+            .
+          </p>
         </div>
       </section>
 

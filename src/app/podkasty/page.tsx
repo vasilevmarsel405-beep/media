@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink, MessageCircle, Mic2, Music2, Radio } from "lucide-react";
+import { Calendar, Clock, ExternalLink, MessageCircle, Mic2, Music2, Radio } from "lucide-react";
 import { hubPageMeta, podcastHubCopy } from "@/lib/copy";
 import { cn } from "@/lib/cn";
 import type { PodcastEpisodeDisplay } from "@/lib/podcast-rss";
@@ -74,7 +74,7 @@ export default async function PodcastHubPage() {
   const featuredTitle = newest?.title ?? c.featuredTitle;
   const featuredLead = newest?.description.slice(0, 280) ?? c.featuredLead;
   const featuredDuration = newest?.durationLabel ?? c.featuredDuration;
-  const featuredListenUrl = newest?.listenUrl ?? socialTelegram;
+  const featuredListenUrl = hasRss ? podcastYandexMusicUrl : socialTelegram;
   const featuredBadge = newest ? c.featuredBadgeFresh : c.featuredBadge;
   const featuredCardLine = newest ? c.featuredCardLineFresh : c.featuredCardLineStatic;
   const featuredCoverUrl = newest?.imageUrl ?? null;
@@ -99,7 +99,7 @@ export default async function PodcastHubPage() {
               <p className="mt-5 max-w-2xl text-base leading-relaxed text-mars-muted sm:text-lg">{c.subtitle}</p>
 
               <div className="mt-8">
-                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">{c.platformsEyebrow}</p>
+                <p className="text-xs font-bold tracking-wide text-slate-600">{c.platformsEyebrow}</p>
                 <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600">{c.platformsNote}</p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <a
@@ -140,17 +140,19 @@ export default async function PodcastHubPage() {
                       priority
                     />
                   ) : (
-                    <div className="flex h-full min-h-[260px] flex-col items-center justify-center bg-gradient-to-br from-mars-accent-soft via-white to-slate-50 p-10">
+                    <div className="flex h-full min-h-0 flex-col items-center justify-center bg-gradient-to-br from-mars-accent-soft via-white to-slate-50 p-10">
                       <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-mars-accent-soft text-mars-accent">
                         <Mic2 className="h-8 w-8" strokeWidth={1.75} aria-hidden />
                       </div>
                       <HeroEqualizer className="mt-8 max-w-[200px]" />
                     </div>
                   )}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1a1020]/88 via-[#1a1020]/45 to-transparent px-4 pb-4 pt-12">
+                    <p className="text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-white/95 drop-shadow-sm">
+                      {c.visualCardTagline}
+                    </p>
+                  </div>
                 </div>
-                <p className="border-t border-slate-100 bg-white/95 px-4 py-3 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  {c.visualCardTagline}
-                </p>
               </div>
             </div>
           </div>
@@ -163,7 +165,7 @@ export default async function PodcastHubPage() {
           aria-hidden
         />
         <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10 lg:py-16">
-          <div className="grid gap-10 lg:grid-cols-[1fr_minmax(280px,400px)] lg:items-stretch lg:gap-12">
+          <div className="grid gap-10 lg:grid-cols-[1fr_minmax(280px,400px)] lg:items-center lg:gap-12">
             <div className="flex flex-col justify-center">
               <span className="inline-flex w-max rounded-full border border-white/15 bg-white/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-white/80">
                 {featuredBadge}
@@ -191,7 +193,7 @@ export default async function PodcastHubPage() {
               href={featuredListenUrl}
               target="_blank"
               rel="noreferrer"
-              className="focus-ring group relative flex min-h-[240px] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_24px_60px_-20px_rgb(0_0_0/0.5)] transition hover:border-mars-accent/45 hover:shadow-[0_0_0_1px_rgb(196_0_28/0.35)] lg:min-h-[300px]"
+              className="focus-ring group relative mx-auto aspect-square w-full max-w-[min(100%,400px)] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_24px_60px_-20px_rgb(0_0_0/0.5)] transition hover:border-mars-accent/45 hover:shadow-[0_0_0_1px_rgb(196_0_28/0.35)] lg:mx-0 lg:ml-auto"
             >
               {featuredCoverUrl ? (
                 <>
@@ -218,7 +220,7 @@ export default async function PodcastHubPage() {
                   <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.14] transition group-hover:opacity-[0.22]">
                     <HeroEqualizer tone="ghost" className="h-36 w-full max-w-xs" />
                   </div>
-                  <div className="relative mt-auto flex w-full items-end gap-4 p-6 sm:p-8">
+                  <div className="absolute inset-x-0 bottom-0 flex items-end gap-4 bg-gradient-to-t from-[#0b0c10] via-[#0b0c10]/85 to-transparent p-6 sm:p-8">
                     <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-mars-accent text-white shadow-[0_0_0_6px_rgb(255_255_255/0.08)] transition group-hover:scale-105">
                       <Radio className="h-6 w-6" aria-hidden />
                     </span>
@@ -235,61 +237,73 @@ export default async function PodcastHubPage() {
       </section>
 
       <section className="relative mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-16 lg:px-10 lg:py-20" aria-labelledby="episodes-heading">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
             <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.24em] text-mars-accent">{c.episodesEyebrow}</p>
             <h2 id="episodes-heading" className="font-display mt-2 text-2xl font-bold tracking-tight text-mars-ink sm:text-3xl">
               {c.episodesSectionTitle}
             </h2>
+            {!hasRss ? <p className="mt-3 text-sm leading-relaxed text-mars-muted">{c.listNoteStatic}</p> : null}
           </div>
-          <p className="max-w-md text-sm text-mars-muted">{hasRss ? c.listNoteRss : c.listNoteStatic}</p>
         </div>
 
-        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:gap-6 xl:grid-cols-2">
-          {episodes.map((ep, index) => (
-            <li key={ep.key} id={`podcast-ep-${index}`}>
-              <article className="group flex h-full gap-4 rounded-2xl border border-slate-200/90 bg-white/90 p-4 shadow-[0_2px_24px_-12px_rgb(15_23_42/0.08)] backdrop-blur-[2px] transition hover:-translate-y-0.5 hover:border-mars-accent/25 hover:shadow-[0_16px_40px_-20px_rgb(196_0_28/0.18)] sm:gap-5 sm:p-5">
-                <div className="relative h-[104px] w-[104px] shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-inner sm:h-[118px] sm:w-[118px]">
-                  {ep.imageUrl ? (
-                    <Image
-                      src={ep.imageUrl}
-                      alt={`Обложка: ${ep.title}`}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-[1.05]"
-                      sizes="(max-width: 640px) 104px, 118px"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-mars-accent to-[#9e0016] p-2 text-center">
-                      <span className="font-display text-lg font-bold tabular-nums text-white sm:text-xl">{ep.episodeLabel}</span>
-                      <span className="mt-1 text-[9px] font-bold uppercase tracking-wider text-white/80">эп.</span>
-                    </div>
-                  )}
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <h3 className="font-display text-base font-semibold leading-snug text-mars-ink transition group-hover:text-mars-accent sm:text-lg">
-                    {ep.title}
-                  </h3>
-                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-mars-muted">{ep.description}</p>
-                  <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-500">
-                    <span className="tabular-nums">{ep.durationLabel}</span>
-                    <span className="text-slate-300" aria-hidden>
-                      ·
+        <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:gap-10">
+          {episodes.map((ep, index) => {
+            const listenHref = hasRss ? podcastYandexMusicUrl : ep.listenUrl;
+            return (
+              <li key={ep.key} id={`podcast-ep-${index}`}>
+                <article className="group flex h-full flex-col overflow-hidden rounded-[1.35rem] border border-slate-200/80 bg-white shadow-[0_4px_32px_-16px_rgb(15_23_42/0.12)] transition duration-300 hover:-translate-y-1 hover:border-mars-accent/30 hover:shadow-[0_20px_48px_-24px_rgb(196_0_28/0.22)]">
+                  <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
+                    {ep.imageUrl ? (
+                      <Image
+                        src={ep.imageUrl}
+                        alt={`Обложка: ${ep.title}`}
+                        fill
+                        className="object-cover transition duration-700 group-hover:scale-[1.06]"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-mars-accent via-[#b80020] to-[#5c0010] p-6 text-center">
+                        <span className="font-display text-4xl font-bold tabular-nums text-white sm:text-5xl">{ep.episodeLabel}</span>
+                        <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.35em] text-white/75">выпуск</span>
+                      </div>
+                    )}
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0f172a]/55 via-transparent to-transparent opacity-80 transition group-hover:opacity-100" aria-hidden />
+                    <span className="absolute left-4 top-4 inline-flex items-center rounded-full bg-white/92 px-3 py-1 text-[11px] font-black tabular-nums uppercase tracking-wider text-mars-ink shadow-sm backdrop-blur-sm">
+                      №{ep.episodeLabel}
                     </span>
-                    <span>{ep.dateLabel || "—"}</span>
-                    <a
-                      href={ep.listenUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="focus-ring ml-auto inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-mars-accent hover:bg-mars-accent-soft/60"
-                    >
-                      Слушать
-                      <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                    </a>
                   </div>
-                </div>
-              </article>
-            </li>
-          ))}
+                  <div className="flex flex-1 flex-col p-5 sm:p-6">
+                    <h3 className="font-display text-lg font-semibold leading-snug text-mars-ink transition group-hover:text-mars-accent sm:text-xl">
+                      {ep.title}
+                    </h3>
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-mars-muted">{ep.description}</p>
+                    <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-5 text-xs text-slate-600">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 font-semibold tabular-nums text-slate-700">
+                        <Clock className="h-3.5 w-3.5 text-slate-500" aria-hidden />
+                        {ep.durationLabel}
+                      </span>
+                      {ep.dateLabel ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 font-medium text-slate-600">
+                          <Calendar className="h-3.5 w-3.5 text-slate-400" aria-hidden />
+                          {ep.dateLabel}
+                        </span>
+                      ) : null}
+                      <a
+                        href={listenHref}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="focus-ring ml-auto inline-flex items-center gap-2 rounded-full bg-mars-accent px-4 py-2 text-xs font-bold text-white shadow-[0_8px_20px_-8px_rgb(196_0_28/0.55)] transition hover:bg-mars-accent-hover"
+                      >
+                        {hasRss ? c.listenYandexLabel : "Слушать"}
+                        <ExternalLink className="h-3.5 w-3.5 opacity-90" aria-hidden />
+                      </a>
+                    </div>
+                  </div>
+                </article>
+              </li>
+            );
+          })}
         </ul>
       </section>
 

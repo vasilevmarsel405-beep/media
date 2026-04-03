@@ -55,6 +55,35 @@ function stripHtml(s: string): string {
     .trim();
 }
 
+/** Если в фиде описание дублирует заголовок — показываем нейтральный лид вместо повтора. */
+const EPISODE_DESC_FALLBACK =
+  "Разговорный выпуск: больше контекста и интонации, чем в текстовой ленте — без пересказа статей.";
+
+function normalizeComparable(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isDescriptionRedundant(title: string, description: string): boolean {
+  const t = normalizeComparable(title);
+  const d = normalizeComparable(description);
+  if (!d || d.length < 10) return true;
+  if (t === d) return true;
+  const n = Math.min(72, t.length, d.length);
+  if (n >= 18 && t.slice(0, n) === d.slice(0, n)) return true;
+  if (d.length <= t.length + 12 && t.startsWith(d.slice(0, Math.min(48, d.length)))) return true;
+  return false;
+}
+
+function buildEpisodeDescription(title: string, rawSource: string): string {
+  const stripped = stripHtml(rawSource).slice(0, 420);
+  if (isDescriptionRedundant(title, stripped)) return EPISODE_DESC_FALLBACK;
+  return stripped || EPISODE_DESC_FALLBACK;
+}
+
 function formatSeconds(total: number): string {
   if (!Number.isFinite(total) || total <= 0) return "";
   const h = Math.floor(total / 3600);
@@ -151,8 +180,7 @@ export async function fetchPodcastFeedFromRss(): Promise<PodcastFeedResult | nul
     const mapped: PodcastEpisodeDisplay[] = items.map((item, index) => {
       const title = item.title?.trim() || "Без названия";
       const descSource = item.contentSnippet || item.summary || item.content || "";
-      const description =
-        stripHtml(descSource).slice(0, 420) || "Описание доступно на странице выпуска.";
+      const description = buildEpisodeDescription(title, descSource);
 
       const durationLabel = itemDuration(item) || "—";
       const dateLabel = ruDateLabel(item.isoDate || item.pubDate);
