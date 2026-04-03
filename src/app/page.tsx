@@ -7,7 +7,7 @@ import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
 import { SectionHeading } from "@/components/SectionHeading";
 import { IconPlay } from "@/components/icons";
-import { Clock, ExternalLink, Music2 } from "lucide-react";
+import { ArrowRight, Clock, ExternalLink, Music2 } from "lucide-react";
 import { specialProjects } from "@/lib/content";
 import { homeCopy, podcastHubCopy } from "@/lib/copy";
 import { formatDateTime, formatTime } from "@/lib/format";
@@ -117,7 +117,7 @@ export default async function HomePage() {
         <HeroGradualBlur />
         <div className="relative z-[2] mx-auto max-w-[1400px] px-3 py-5 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
           {hero ? (
-            <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.72/1] sm:max-lg:aspect-[1.88/1] lg:aspect-auto lg:min-h-[540px] lg:rounded-[30px]">
+            <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.2/1] sm:max-lg:aspect-[1.88/1] lg:aspect-auto lg:min-h-[540px] lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
@@ -150,7 +150,7 @@ export default async function HomePage() {
                   backgroundSize: "26px 26px",
                 }}
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-3.5 pt-10 max-lg:pb-3 max-lg:pt-8 sm:max-lg:px-5 sm:max-lg:pb-4 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
+              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-4 pt-12 max-sm:pb-4 max-sm:pt-11 max-lg:pb-3 max-lg:pt-8 sm:max-lg:px-5 sm:max-lg:pb-4 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
                 <div className="max-w-4xl pointer-events-auto">
                   <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-lg:gap-1 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px]">
                     <span className="rounded bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
@@ -174,10 +174,10 @@ export default async function HomePage() {
                   <div className="mt-2.5 flex flex-nowrap items-center gap-1.5 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] max-lg:[&::-webkit-scrollbar]:hidden sm:max-lg:mt-3 sm:max-lg:gap-2 lg:mt-7 lg:gap-3 [&::-webkit-scrollbar]:hidden">
                     <Link
                       href={heroHref}
-                      className="focus-ring inline-flex min-h-[44px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.45)] transition hover:brightness-[1.06] sm:max-lg:px-4 sm:max-lg:text-xs lg:gap-2 lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm lg:shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)]"
+                      className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3.5 py-2 text-xs font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.45)] transition hover:brightness-[1.06] sm:max-lg:px-4 lg:gap-2 lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm lg:shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)]"
                     >
-                      {hero.homeCta ?? "Читать сейчас"}
-                      <span aria-hidden>→</span>
+                      <span className="leading-none">{hero.homeCta ?? "Читать сейчас"}</span>
+                      <ArrowRight className="size-[1.1em] shrink-0 opacity-95" strokeWidth={2.75} aria-hidden />
                     </Link>
                     {heroVideoHref ? (
                       <HeroGlassVideoLink
@@ -206,10 +206,10 @@ export default async function HomePage() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href="/novosti"
-                  className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
+                  className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-6 py-3 text-sm font-bold text-white shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)] transition hover:brightness-[1.06]"
                 >
-                  Перейти к новостям
-                  <span aria-hidden>→</span>
+                  <span className="leading-none">Перейти к новостям</span>
+                  <ArrowRight className="size-[1.1em] shrink-0 opacity-95" strokeWidth={2.75} aria-hidden />
                 </Link>
                 <Link
                   href="/admin/posts"
