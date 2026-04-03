@@ -30,9 +30,21 @@ export default async function VideoHubPage() {
   const [featured, ...rest] = videos;
 
   return (
-    <div className="relative bg-[#050508] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-[#050508] text-white">
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[min(55vh,520px)] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgb(196_0_28/0.35),transparent_55%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgb(43_62_247/0.2),transparent)]"
+        aria-hidden
+      />
+      {/* Мелкая белая «решётка» на всю страницу — как раньше в визуале раздела */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.16] sm:opacity-[0.2]"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)
+          `,
+          backgroundSize: "20px 20px",
+        }}
         aria-hidden
       />
       <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-10">
@@ -49,11 +61,11 @@ export default async function VideoHubPage() {
               <span className="mt-0.5 block sm:mt-1">{videoHubCopy.subtitleLine2}</span>
             </p>
           </div>
-          <div className="mt-4 flex flex-nowrap items-center gap-1.5 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:mt-0 xl:min-w-0 xl:flex-1 xl:justify-end">
+          <div className="mt-4 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:mt-0 xl:min-w-0 xl:flex-1 xl:justify-end">
             {categories.map((c) => (
               <span
                 key={c.slug}
-                className="shrink-0 whitespace-nowrap rounded-full border border-white/12 bg-white/[0.05] px-2.5 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm sm:px-3 sm:py-1.5 sm:text-xs"
+                className="shrink-0 whitespace-nowrap rounded-full border border-white/20 bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_8px_22px_-10px_rgb(196_0_28/0.55)] transition hover:brightness-[1.08] sm:px-4 sm:py-2.5 sm:text-xs"
               >
                 {c.label}
               </span>
