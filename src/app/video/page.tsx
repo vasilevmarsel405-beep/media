@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 import { IconPlay } from "@/components/icons";
 import { hubPageMeta, videoHubCopy } from "@/lib/copy";
 import { getPostsByKind } from "@/lib/posts-service";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
-import { formatDateTime } from "@/lib/format";
+import { formatDateTime, formatTime } from "@/lib/format";
 import { resolvePostImage } from "@/lib/youtube-thumbnail";
 
 export const metadata: Metadata = {
@@ -28,44 +29,56 @@ export default async function VideoHubPage() {
     (a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt)
   );
   const [featured, ...rest] = videos;
+  const featuredHref = featured ? `/video/${featured.slug}` : "";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050508] text-white">
+    <main className="relative min-h-screen overflow-hidden bg-[#050508] text-white">
+      {/* Атмосфера: блики + точечная сетка как в hero на главной */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[min(55vh,520px)] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgb(196_0_28/0.35),transparent_55%),radial-gradient(ellipse_50%_40%_at_80%_20%,rgb(43_62_247/0.2),transparent)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[min(60vh,560px)] bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgb(196_0_28/0.38),transparent_55%),radial-gradient(ellipse_50%_42%_at_92%_18%,rgb(43_62_247/0.22),transparent)]"
         aria-hidden
       />
-      {/* Мелкая белая «решётка» на всю страницу — как раньше в визуале раздела */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.16] sm:opacity-[0.2]"
+        className="pointer-events-none absolute inset-0 opacity-[0.11] sm:opacity-[0.14]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.65) 1px, transparent 0)",
+          backgroundSize: "26px 26px",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(255,255,255,0.07) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(255,255,255,0.07) 1px, transparent 1px)
+            linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)
           `,
           backgroundSize: "20px 20px",
         }}
         aria-hidden
       />
-      <div className="relative mx-auto max-w-[1400px] px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-10">
-        <header className="xl:flex xl:items-end xl:justify-between xl:gap-10">
+
+      <div className="relative z-[1] mx-auto max-w-[1400px] px-3 py-8 sm:px-6 sm:py-10 lg:px-10 lg:py-12">
+        {/* Вводная полоса: позиционирование раздела + темы */}
+        <header className="mb-8 lg:mb-10 xl:flex xl:items-end xl:justify-between xl:gap-10">
           <div className="min-w-0 max-w-3xl max-sm:max-w-none xl:max-w-[min(100%,52rem)]">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45 sm:text-[11px] sm:tracking-[0.24em]">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 sm:text-[11px] sm:tracking-[0.24em]">
               {videoHubCopy.eyebrow}
             </p>
-            <h1 className="font-display mt-1.5 text-[1.5rem] font-bold leading-[1.2] tracking-tight text-pretty sm:mt-2 sm:text-[1.85rem] sm:leading-[1.18] md:text-4xl md:leading-[1.15] lg:text-[2.125rem] xl:text-[2.35rem]">
+            <h1 className="font-display mt-2 text-[1.55rem] font-bold leading-[1.18] tracking-tight text-white [text-shadow:0_1px_24px_rgba(0,0,0,0.45)] sm:text-[1.85rem] md:text-4xl lg:text-[2.25rem] xl:text-[2.5rem]">
               {videoHubCopy.title}
             </h1>
-            <p className="mt-2 max-w-2xl text-[13px] leading-snug text-white/65 sm:mt-2.5 sm:text-sm sm:leading-relaxed lg:text-[0.9375rem] lg:leading-relaxed">
+            <p className="mt-2.5 max-w-2xl text-[13px] leading-snug text-white/70 sm:text-sm lg:text-[0.9375rem] lg:leading-relaxed">
               <span className="block">{videoHubCopy.subtitleLine1}</span>
-              <span className="mt-0.5 block sm:mt-1">{videoHubCopy.subtitleLine2}</span>
+              <span className="mt-1 block">{videoHubCopy.subtitleLine2}</span>
             </p>
           </div>
-          <div className="mt-4 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:mt-0 xl:min-w-0 xl:flex-1 xl:justify-end">
+          <div className="mt-5 flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden xl:mt-0 xl:min-w-0 xl:flex-1 xl:justify-end">
             {categories.map((c) => (
               <span
                 key={c.slug}
-                className="shrink-0 whitespace-nowrap rounded-full border border-white/20 bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_8px_22px_-10px_rgb(196_0_28/0.55)] transition hover:brightness-[1.08] sm:px-4 sm:py-2.5 sm:text-xs"
+                className="shrink-0 whitespace-nowrap rounded-full border border-white/20 bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_8px_22px_-10px_rgb(196_0_28/0.55)] sm:px-4 sm:py-2.5 sm:text-xs"
               >
                 {c.label}
               </span>
@@ -74,82 +87,155 @@ export default async function VideoHubPage() {
         </header>
 
         {featured ? (
-          <Link
-            href={`/video/${featured.slug}`}
-            className="group relative mt-7 block overflow-hidden rounded-2xl ring-1 ring-white/10 sm:mt-8 lg:mt-9"
-          >
-            <div className="relative aspect-[21/9] min-h-[220px]">
+          <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.18/1] sm:max-lg:aspect-[1.85/1] lg:aspect-auto lg:min-h-[min(72vh,620px)] lg:rounded-[30px]">
+            <Link href={featuredHref} aria-label={`Смотреть: ${featured.title}`} className="absolute inset-0 z-0">
               <Image
                 src={resolvePostImage(featured)}
                 alt={postCoverImageAlt(featured.title, featured.imageAlt)}
                 fill
-                className="object-cover opacity-95 transition duration-700 group-hover:scale-[1.03] group-hover:opacity-100"
-                sizes="(max-width:1400px) 100vw, 1400px"
                 priority
+                className="object-cover transition duration-700 group-hover:scale-[1.02]"
+                sizes="(max-width:1400px) 100vw, 1400px"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#050508] via-[#050508]/55 to-transparent" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="flex h-20 w-20 items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_0_0_8px_rgb(255_255_255/0.12),0_24px_48px_rgb(0_0_0/0.5)] transition group-hover:scale-110">
-                  <IconPlay className="ml-1 h-9 w-9" />
-                </span>
-              </div>
-              {featured.durationLabel ? (
-                <span className="absolute bottom-4 right-4 rounded-lg bg-black/70 px-2.5 py-1 text-xs font-bold tabular-nums text-white backdrop-blur">
-                  {featured.durationLabel}
-                </span>
-              ) : null}
-              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#ff6b6b]">Смотреть сейчас</span>
-                <h2 className="font-display mt-2 max-w-3xl text-2xl font-bold leading-tight sm:text-3xl lg:text-4xl">
-                  {featured.title}
-                </h2>
-                <p className="mt-3 max-w-2xl line-clamp-2 text-sm text-white/75 sm:text-base">{featured.lead}</p>
+            </Link>
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,11,22,0.25)_0%,rgba(7,11,22,0.52)_38%,rgba(7,11,22,0.9)_100%)]" />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(105deg, rgba(4,7,16,0.94) 0%, rgba(4,7,16,0.72) 22%, rgba(4,7,16,0.38) 40%, rgba(4,7,16,0.12) 56%, rgba(4,7,16,0) 70%)",
+              }}
+            />
+            <div
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(120% 80% at 12% 88%, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.3) 38%, rgba(0,0,0,0) 62%)",
+              }}
+            />
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.12]"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.75) 1px, transparent 0)",
+                backgroundSize: "26px 26px",
+              }}
+            />
+            <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-4 pb-5 pt-14 max-sm:pb-5 max-sm:pt-12 max-lg:pb-4 max-lg:pt-8 sm:max-lg:px-5 lg:pointer-events-auto lg:relative lg:min-h-[min(72vh,620px)] lg:px-12 lg:pb-12 lg:pt-12">
+              <div className="max-w-4xl pointer-events-auto max-sm:w-full">
+                <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-widest text-white/85 max-sm:text-[10px] sm:max-lg:text-[10px] lg:text-[11px]">
+                  <span className="rounded-md bg-[#FF3100] px-2.5 py-1 text-white shadow-lg shadow-orange-950/35 ring-1 ring-white/15">
+                    Свежий выпуск
+                  </span>
+                  {featured.durationLabel ? (
+                    <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur">
+                      {featured.durationLabel}
+                    </span>
+                  ) : null}
+                  <span className="text-white/55">{formatTime(featured.publishedAt)}</span>
+                </div>
+                <Link href={featuredHref} className="mt-2 block min-w-0 sm:mt-3 lg:mt-4">
+                  <h2 className="font-display text-[1.05rem] font-bold leading-[1.15] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_12px_32px_rgba(0,0,0,0.55)] max-sm:max-w-none max-sm:line-clamp-4 max-sm:text-[1.15rem] max-sm:leading-snug sm:max-lg:line-clamp-4 sm:max-lg:text-[1.2rem] sm:max-lg:leading-tight md:max-lg:text-2xl lg:line-clamp-none lg:max-w-[22ch] lg:text-[2.5rem] lg:leading-[1.06] xl:text-[2.85rem]">
+                    {featured.title}
+                  </h2>
+                </Link>
+                <p className="mt-2 max-w-3xl text-[12px] leading-relaxed text-white/[0.9] [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_28px_rgba(0,0,0,0.4)] max-sm:line-clamp-3 max-sm:text-sm sm:max-lg:line-clamp-3 sm:max-lg:text-xs lg:mt-4 lg:line-clamp-none lg:text-base lg:leading-relaxed xl:text-lg">
+                  {featured.lead}
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-5 lg:mt-8 lg:gap-3">
+                  <Link
+                    href={featuredHref}
+                    className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-4 py-2.5 text-xs font-bold text-white shadow-[0_12px_36px_-10px_rgb(196_0_28/0.5)] transition hover:brightness-[1.07] lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm"
+                  >
+                    <span className="leading-none">Смотреть выпуск</span>
+                    <ArrowRight className="size-[1.1em] shrink-0 opacity-95" strokeWidth={2.75} aria-hidden />
+                  </Link>
+                  <Link
+                    href="/podkasty"
+                    className="focus-ring inline-flex min-h-[44px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-[#ff5c33]/40 bg-gradient-to-r from-white/[0.08] via-[#ff3100]/[0.12] to-[#c4001c]/[0.15] px-4 py-2.5 text-xs font-bold text-white shadow-[0_10px_28px_-12px_rgb(196_0_28/0.35)] backdrop-blur-[2px] transition hover:border-[#ff704d]/55 hover:brightness-[1.05] lg:rounded-xl lg:px-5 lg:py-3 lg:text-sm"
+                  >
+                    Подкасты
+                    <ArrowRight className="size-[1em] shrink-0 opacity-90" strokeWidth={2.5} aria-hidden />
+                  </Link>
+                </div>
               </div>
             </div>
-          </Link>
-        ) : null}
+          </article>
+        ) : (
+          <div className="mars-hero-frame relative overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16]/90 px-6 py-16 text-center lg:rounded-[30px] lg:py-20">
+            <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.22em] text-white/45">Видео</p>
+            <p className="font-display mx-auto mt-4 max-w-lg text-xl font-bold text-white sm:text-2xl">
+              Пока нет опубликованных видео в ленте
+            </p>
+            <p className="mx-auto mt-3 max-w-md text-sm text-white/60">
+              Добавьте материалы с типом «видео» — они появятся здесь с обложкой и плеером.
+            </p>
+          </div>
+        )}
 
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {rest.map((v) => (
-            <Link
-              key={v.slug}
-              href={`/video/${v.slug}`}
-              className="group overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/[0.08] transition hover:ring-[#ff3100]/40"
-            >
-              <div className="relative aspect-video">
-                <Image
-                  src={resolvePostImage(v)}
-                  alt={postCoverImageAlt(v.title, v.imageAlt)}
-                  fill
-                  className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
-                  sizes="400px"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl transition group-hover:scale-110">
-                    <IconPlay className="ml-0.5 h-6 w-6" />
-                  </span>
+        {rest.length > 0 ? (
+          <section className="mt-14 lg:mt-20" aria-labelledby="video-more-heading">
+            <div className="mb-8 flex flex-wrap items-end justify-between gap-4 lg:mb-10">
+              <div>
+                <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-[#ff6b6b]">Каталог</p>
+                <div className="mt-2 flex items-center gap-4">
+                  <h2 id="video-more-heading" className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+                    Ещё выпуски
+                  </h2>
+                  <span
+                    className="hidden h-px min-w-[4rem] flex-1 bg-gradient-to-r from-[#ff3100]/60 to-transparent sm:block sm:min-w-[6rem]"
+                    aria-hidden
+                  />
                 </div>
-                {v.durationLabel ? (
-                  <span className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2 py-1 text-xs font-bold text-white">
-                    {v.durationLabel}
-                  </span>
-                ) : null}
               </div>
-              <div className="p-5">
-                <h3 className="font-display text-lg font-semibold leading-snug text-white group-hover:text-orange-200">
-                  {v.title}
-                </h3>
-                <p className="mt-2 line-clamp-2 text-sm text-white/60">{v.lead}</p>
-                <time className="mt-3 block text-xs text-white/45 tabular-nums" dateTime={v.publishedAt}>
-                  {formatDateTime(v.publishedAt)}
-                </time>
-              </div>
-            </Link>
-          ))}
-        </div>
+            </div>
+
+            <ul className="grid list-none gap-6 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3 lg:gap-8">
+              {rest.map((v) => (
+                <li key={v.slug}>
+                  <Link
+                    href={`/video/${v.slug}`}
+                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_8px_40px_-24px_rgb(0_0_0/0.85)] ring-1 ring-white/[0.04] transition duration-300 hover:-translate-y-1 hover:border-[#ff3100]/35 hover:shadow-[0_20px_48px_-28px_rgb(196_0_28/0.25)]"
+                  >
+                    <div className="relative aspect-video w-full overflow-hidden">
+                      <Image
+                        src={resolvePostImage(v)}
+                        alt={postCoverImageAlt(v.title, v.imageAlt)}
+                        fill
+                        className="object-cover opacity-92 transition duration-500 group-hover:scale-[1.05] group-hover:opacity-100"
+                        sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/90 via-[#050508]/25 to-transparent" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-900 shadow-[0_0_0_6px_rgb(255_255_255/0.12)] transition group-hover:scale-110 group-hover:shadow-[0_0_0_10px_rgb(255_255_255/0.08)]">
+                          <IconPlay className="ml-0.5 h-6 w-6" aria-hidden />
+                        </span>
+                      </div>
+                      {v.durationLabel ? (
+                        <span className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2 py-1 text-xs font-bold tabular-nums text-white backdrop-blur-sm">
+                          {v.durationLabel}
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="font-display text-lg font-semibold leading-snug text-white transition group-hover:text-orange-200">
+                        {v.title}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-white/55">{v.lead}</p>
+                      <time
+                        className="mt-4 border-t border-white/[0.08] pt-3 text-xs font-medium tabular-nums text-white/40"
+                        dateTime={v.publishedAt}
+                      >
+                        {formatDateTime(v.publishedAt)}
+                      </time>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
       </div>
-    </div>
+    </main>
   );
 }
-
