@@ -147,11 +147,6 @@ export default async function PodcastHubPage() {
                       <HeroEqualizer className="mt-8 max-w-[200px]" />
                     </div>
                   )}
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1a1020]/88 via-[#1a1020]/45 to-transparent px-4 pb-4 pt-12">
-                    <p className="text-center text-[10px] font-semibold uppercase tracking-[0.22em] text-white/95 drop-shadow-sm">
-                      {c.visualCardTagline}
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

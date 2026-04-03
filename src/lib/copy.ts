@@ -229,7 +229,6 @@ export const podcastHubCopy = {
     "Сейчас показан примерный набор. Укажите PODCAST_RSS_URL на сервере — подтянем реальные эпизоды из фида.",
   listenYandexLabel: "Слушать на Яндекс.Музыка",
   listenTelegramLabel: "Telegram",
-  visualCardTagline: "Рынки, экономика и крипта — в разговоре",
   digestEyebrow: "Раз в неделю",
   digestTitle: "Главное письмом",
   digestLead: "Коротко по фактам — без ежедневной почты и лишнего шума.",
