@@ -121,7 +121,7 @@ export default async function HomePage() {
         <div className="relative z-[2] mx-auto max-w-[1400px] px-3 py-5 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
           {hero ? (
             <HomeHeroPixelCard>
-            <article className="mars-hero-frame mars-reveal group relative h-full min-h-full w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300 ease-out group-hover/card:border-white/18 group-hover/card:shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_49_0/0.12),0_28px_64px_-32px_rgb(196_0_28/0.18)] lg:min-h-[540px] lg:rounded-[30px]">
+            <article className="mars-hero-frame mars-reveal group relative h-full min-h-full w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300 ease-out group-hover/card:border-white/18 group-hover/card:shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_49_0/0.12),0_28px_64px_-32px_rgb(196_0_28/0.18)] lg:min-h-0 lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
@@ -154,7 +154,7 @@ export default async function HomePage() {
                   backgroundSize: "26px 26px",
                 }}
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:relative lg:min-h-[540px] lg:px-12 lg:pb-12 lg:pt-12">
+              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:px-12 lg:pb-10 lg:pt-10">
                 <div className="max-w-4xl pointer-events-auto max-sm:w-full max-sm:pl-0.5">
                   <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px] lg:tracking-widest">
                     <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-sm:ml-0 max-sm:px-2.5 max-sm:py-1 sm:max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
@@ -468,15 +468,26 @@ export default async function HomePage() {
                 actionLabel={homeCopy.sections.video.action}
                 variant="dark"
               />
-              <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-sm:-mx-0.5 max-sm:px-0.5">
-                {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (
-                  <span
-                    key={chip}
-                    className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm sm:px-4 sm:py-2.5"
-                  >
-                    {chip}
-                  </span>
-                ))}
+              <div className="relative min-w-0 w-full max-sm:-mx-1">
+                <div
+                  className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain pb-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [touch-action:pan-x] snap-x snap-mandatory max-sm:px-1 sm:flex-wrap sm:overflow-visible sm:pb-0 sm:snap-none [&::-webkit-scrollbar]:hidden"
+                  role="list"
+                  aria-label="Рубрики видео"
+                >
+                  {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (
+                    <span
+                      key={chip}
+                      role="listitem"
+                      className="snap-start shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[11px] font-semibold leading-tight text-white/90 backdrop-blur-sm sm:px-4 sm:py-2.5 sm:text-xs"
+                    >
+                      {chip}
+                    </span>
+                  ))}
+                </div>
+                <div
+                  className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-8 bg-gradient-to-l from-[#111116] to-transparent sm:hidden"
+                  aria-hidden
+                />
               </div>
               <div className="grid w-full min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
                 {videos.slice(0, 3).map((p) => (
