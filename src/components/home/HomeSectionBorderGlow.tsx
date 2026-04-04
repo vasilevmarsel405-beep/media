@@ -69,7 +69,14 @@ export function HomeSectionBorderGlow({
         glowColor={v.glowColor}
         colors={[...v.colors]}
       >
-        <div className={cn("min-w-0", innerClassName ?? "p-4 sm:p-5 lg:p-6")}>{children}</div>
+        <div
+          className={cn(
+            "min-w-0 overflow-hidden rounded-2xl",
+            innerClassName ?? "p-4 sm:p-5 lg:p-6"
+          )}
+        >
+          {children}
+        </div>
       </BorderGlow>
     </div>
   );
