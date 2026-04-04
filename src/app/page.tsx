@@ -151,8 +151,8 @@ export default async function HomePage() {
                 className="pointer-events-none absolute inset-0 z-[1] [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.72)_1px,transparent_0)] [background-size:15px_15px] opacity-[0.14] max-sm:opacity-[0.16] sm:max-lg:opacity-[0.1] sm:[background-size:22px_22px] lg:opacity-[0.14]"
                 aria-hidden
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:px-12 lg:pb-10 lg:pt-10">
-                <div className="max-w-4xl pointer-events-auto max-sm:w-full max-sm:pl-0.5">
+              <div className="pointer-events-none absolute inset-0 z-10 flex min-h-0 flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:px-12 lg:pb-12 lg:pt-14">
+                <div className="max-w-4xl min-h-0 pointer-events-auto max-sm:w-full max-sm:pl-0.5 lg:max-w-5xl">
                   <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px] lg:tracking-widest">
                     <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-sm:ml-0 max-sm:px-2.5 max-sm:py-1 sm:max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
                       {hero.homeBadge ?? "Материал дня"}
@@ -165,7 +165,7 @@ export default async function HomePage() {
                     <span className="text-white/60 max-sm:text-white/55">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref} className="block min-w-0">
-                    <h2 className="font-display mt-2 text-[0.95rem] font-bold leading-[1.2] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-sm:mt-2 max-sm:max-w-none max-sm:line-clamp-3 max-sm:text-[0.98rem] max-sm:leading-[1.25] max-sm:tracking-[-0.01em] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:max-w-[min(100%,32ch)] sm:max-lg:text-[1.0625rem] sm:max-lg:leading-[1.18] md:max-lg:text-[1.125rem] lg:mt-4 lg:line-clamp-none lg:max-w-[22ch] lg:text-[2.75rem] lg:leading-[1.04] xl:text-[3.15rem]">
+                    <h2 className="font-display mt-2 text-[0.95rem] font-bold leading-[1.2] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-sm:mt-2 max-sm:max-w-none max-sm:line-clamp-3 max-sm:text-[0.98rem] max-sm:leading-[1.25] max-sm:tracking-[-0.01em] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:max-w-[min(100%,32ch)] sm:max-lg:text-[1.0625rem] sm:max-lg:leading-[1.18] md:max-lg:text-[1.125rem] lg:mt-4 lg:line-clamp-none lg:max-w-[min(100%,40ch)] lg:text-[2.5rem] lg:leading-[1.08] xl:max-w-[min(100%,44ch)] xl:text-[2.85rem] xl:leading-[1.06]">
                       {hero.title}
                     </h2>
                   </Link>
