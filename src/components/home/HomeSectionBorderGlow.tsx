@@ -51,7 +51,7 @@ export function HomeSectionBorderGlow({
       className={cn("w-full max-w-full", v.glowClass, className)}
       backgroundColor={v.bg}
       borderRadius={16}
-      glowRadius={32}
+      glowRadius={18}
       glowIntensity={0.9}
       edgeSensitivity={26}
       coneSpread={24}

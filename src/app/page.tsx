@@ -291,7 +291,7 @@ export default async function HomePage() {
 
       <div className="mx-auto max-w-[1400px] space-y-8 px-4 pb-12 pt-2 sm:space-y-10 sm:px-6 sm:pb-14 lg:px-10">
         <section aria-label="Главное сейчас">
-          <HomeSectionBorderGlow className="overflow-hidden ring-1 ring-slate-900/[0.03]" innerClassName="bg-gradient-to-b from-slate-50/90 via-white to-white p-0">
+          <HomeSectionBorderGlow className="ring-1 ring-slate-900/[0.03]" innerClassName="overflow-hidden rounded-2xl bg-gradient-to-b from-slate-50/90 via-white to-white p-0">
             <div className="relative">
               <div
                 className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-[3px] bg-gradient-to-r from-mars-accent via-[#ff5c33] to-orange-200/45"
@@ -317,8 +317,8 @@ export default async function HomePage() {
         <section aria-label="Выбор редакции">
           <HomeSectionBorderGlow
             variant="blue"
-            className="overflow-hidden ring-1 ring-slate-900/[0.03]"
-            innerClassName="bg-gradient-to-b from-mars-blue-soft/40 via-white to-white p-0"
+            className="ring-1 ring-slate-900/[0.03]"
+            innerClassName="overflow-hidden rounded-2xl bg-gradient-to-b from-mars-blue-soft/40 via-white to-white p-0"
           >
             <div className="relative">
               <div

@@ -168,3 +168,30 @@
     0 0 0 1px rgb(255 255 255 / 0.05),
     0 18px 44px -22px rgb(0 0 0 / 0.75);
 }
+
+/*
+ * Главная (Mars): .edge-light с inset: -Npx и внешними box-shadow вылезает за скругление.
+ * Без overflow:hidden на карточке (иначе режется box-shadow секции). Интерактив — ::before/::after.
+ */
+.border-glow-card.border-glow-mars-aside,
+.border-glow-card.border-glow-mars-dark {
+  transform: none;
+}
+
+.border-glow-card.border-glow-mars-aside > .edge-light,
+.border-glow-card.border-glow-mars-dark > .edge-light {
+  display: none;
+}
+
+.border-glow-card.border-glow-mars-aside .border-glow-inner,
+.border-glow-card.border-glow-mars-dark .border-glow-inner {
+  overflow: visible;
+}
+
+/* Слой с z-index:-1 даёт субпиксельный «сдвиг» границы относительно рамки в Chromium */
+.border-glow-card.border-glow-mars-aside::before,
+.border-glow-card.border-glow-mars-aside::after,
+.border-glow-card.border-glow-mars-dark::before,
+.border-glow-card.border-glow-mars-dark::after {
+  z-index: 0;
+}
