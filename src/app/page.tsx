@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { HeroGlassVideoLink } from "@/components/home/HeroGlassVideoLink";
+import { HomeAsideStoriesGlow } from "@/components/home/HomeAsideStoriesGlow";
 import { HomeHeroPixelCard } from "@/components/home/HomeHeroPixelCard";
 import { HeroGradualBlur } from "@/components/home/HeroGradualBlur";
 import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
@@ -225,45 +226,47 @@ export default async function HomePage() {
           )}
 
           <div className="mt-6">
-            <div className="mb-3 flex items-end justify-between gap-3">
-              <div>
-                <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-mars-accent">
-                  {homeCopy.heroAsideEyebrow}
-                </p>
-                <h2 className="font-display mt-1.5 text-2xl font-bold leading-tight text-slate-900 sm:text-[2rem]">
-                  {homeCopy.heroAsideTitle}
-                </h2>
+            <HomeAsideStoriesGlow>
+              <div className="mb-3 flex items-end justify-between gap-3">
+                <div>
+                  <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-mars-accent">
+                    {homeCopy.heroAsideEyebrow}
+                  </p>
+                  <h2 className="font-display mt-1.5 text-2xl font-bold leading-tight text-slate-900 sm:text-[2rem]">
+                    {homeCopy.heroAsideTitle}
+                  </h2>
+                </div>
               </div>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {sec.map((p) => (
-                <Link
-                  key={p.slug}
-                  href={postHref(p)}
-                  className="group overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg"
-                >
-                  <div className="relative aspect-[16/9] overflow-hidden">
-                    <Image
-                      src={resolvePostImage(p)}
-                      alt={postCoverImageAlt(p.title, p.imageAlt)}
-                      fill
-                      className="object-cover transition duration-500 group-hover:scale-[1.04]"
-                      sizes="(max-width:1280px) 50vw, 25vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
-                    <span className="absolute left-2.5 top-2.5 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
-                      {formatDateTime(p.publishedAt)}
-                    </span>
-                  </div>
-                  <div className="p-3.5">
-                    <h3 className="line-clamp-2 font-display text-base font-semibold leading-snug text-slate-900 group-hover:text-mars-accent">
-                      {p.title}
-                    </h3>
-                    <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-600">{p.lead}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {sec.map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={postHref(p)}
+                    className="group overflow-hidden rounded-2xl border border-slate-200/85 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg"
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <Image
+                        src={resolvePostImage(p)}
+                        alt={postCoverImageAlt(p.title, p.imageAlt)}
+                        fill
+                        className="object-cover transition duration-500 group-hover:scale-[1.04]"
+                        sizes="(max-width:1280px) 50vw, 25vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" />
+                      <span className="absolute left-2.5 top-2.5 rounded-md bg-black/60 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur">
+                        {formatDateTime(p.publishedAt)}
+                      </span>
+                    </div>
+                    <div className="p-3.5">
+                      <h3 className="line-clamp-2 font-display text-base font-semibold leading-snug text-slate-900 group-hover:text-mars-accent">
+                        {p.title}
+                      </h3>
+                      <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-slate-600">{p.lead}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </HomeAsideStoriesGlow>
           </div>
         </div>
       </section>

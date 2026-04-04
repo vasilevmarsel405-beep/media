@@ -139,3 +139,11 @@
   overflow: auto;
   z-index: 1;
 }
+
+/* Светлая секция на главной: без тяжёлой «карточной» тени из дефолта */
+.border-glow-card.border-glow-mars-aside {
+  border-color: rgb(226 232 240 / 0.92);
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.04),
+    0 10px 28px -14px rgb(15 23 42 / 0.1);
+}
