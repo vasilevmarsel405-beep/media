@@ -35,11 +35,12 @@
   opacity: 1;
 }
 
-/* Hero shell: не задаём aspect-ratio/min-height — их задаёт Tailwind (иначе на мобиле высота 0) */
+/* Hero shell: сбрасываем базовый .pixel-card (4/5), иначе Tailwind aspect на том же div не применяется — hero остаётся «портретным» на ПК */
 .pixel-card.pixel-card--hero {
   width: 100%;
   max-width: 100%;
   height: auto;
+  aspect-ratio: unset;
   display: block;
   border: none;
   background: transparent;

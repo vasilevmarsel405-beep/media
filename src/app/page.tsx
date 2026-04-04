@@ -148,11 +148,8 @@ export default async function HomePage() {
                 }}
               />
               <div
-                className="pointer-events-none absolute inset-0 opacity-[0.14] max-sm:hidden sm:max-lg:opacity-[0.1] lg:opacity-[0.14]"
-                style={{
-                  backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.7) 1px, transparent 0)",
-                  backgroundSize: "26px 26px",
-                }}
+                className="pointer-events-none absolute inset-0 z-[1] [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.72)_1px,transparent_0)] [background-size:15px_15px] opacity-[0.14] max-sm:opacity-[0.16] sm:max-lg:opacity-[0.1] sm:[background-size:22px_22px] lg:opacity-[0.14]"
+                aria-hidden
               />
               <div className="pointer-events-none absolute inset-0 z-10 flex flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:px-12 lg:pb-10 lg:pt-10">
                 <div className="max-w-4xl pointer-events-auto max-sm:w-full max-sm:pl-0.5">

@@ -13,7 +13,7 @@ export function HomeHeroPixelCard({ children }: Props) {
       speed={34}
       colors="#ff310088,#c4001c72,#ffffff5c"
       noFocus
-      className="pixel-card--hero group/card relative w-full max-sm:aspect-[1.15/1] max-sm:min-h-[min(92vw,420px)] sm:max-lg:aspect-[1.88/1] lg:aspect-[2.15/1] lg:min-h-0"
+      className="pixel-card--hero group/card relative w-full max-sm:aspect-[1.32/1] max-sm:min-h-[min(86vw,340px)] sm:max-lg:aspect-[2.05/1] lg:aspect-[2.85/1] lg:min-h-0 lg:max-h-[min(400px,38vw)]"
     >
       {children}
     </PixelCard>
