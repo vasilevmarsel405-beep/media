@@ -144,16 +144,16 @@ export default async function HomePage() {
                 className="pointer-events-none absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(120% 80% at 12% 88%, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.28) 38%, rgba(0,0,0,0) 62%)",
+                    "radial-gradient(125% 95% at 18% 92%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.42) 42%, rgba(0,0,0,0.12) 68%, rgba(0,0,0,0) 82%)",
                 }}
               />
               <div
                 className="pointer-events-none absolute inset-0 z-[1] [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.72)_1px,transparent_0)] [background-size:15px_15px] opacity-[0.14] max-sm:opacity-[0.16] sm:max-lg:opacity-[0.1] sm:[background-size:22px_22px] lg:opacity-[0.14]"
                 aria-hidden
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex min-h-0 flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:px-12 lg:pb-12 lg:pt-14">
-                <div className="max-w-4xl min-h-0 pointer-events-auto max-sm:w-full max-sm:pl-0.5 lg:max-w-5xl">
-                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2 lg:text-[11px] lg:tracking-widest">
+              <div className="pointer-events-none absolute inset-0 z-10 flex min-h-0 flex-col justify-end px-5 pb-6 pt-5 sm:px-5 sm:pb-5 sm:pt-10 md:pt-12 max-lg:pb-5 max-lg:pt-9 lg:pointer-events-auto lg:px-12 lg:pb-14 lg:pt-14 xl:pb-16">
+                <div className="max-w-4xl min-h-0 pointer-events-auto max-sm:w-full max-sm:pl-0.5 lg:max-w-5xl lg:rounded-2xl lg:bg-gradient-to-t lg:from-black/45 lg:via-black/18 lg:to-transparent lg:p-5 lg:ring-1 lg:ring-white/[0.08] xl:p-6">
+                  <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2.5 lg:text-[11px] lg:tracking-[0.18em]">
                     <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-sm:ml-0 max-sm:px-2.5 max-sm:py-1 sm:max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
                       {hero.homeBadge ?? "Материал дня"}
                     </span>
@@ -165,14 +165,14 @@ export default async function HomePage() {
                     <span className="text-white/60 max-sm:text-white/55">{formatTime(hero.publishedAt)}</span>
                   </div>
                   <Link href={heroHref} className="block min-w-0">
-                    <h2 className="font-display mt-2 text-[0.95rem] font-bold leading-[1.2] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-sm:mt-2 max-sm:max-w-none max-sm:line-clamp-3 max-sm:text-[0.98rem] max-sm:leading-[1.25] max-sm:tracking-[-0.01em] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:max-w-[min(100%,32ch)] sm:max-lg:text-[1.0625rem] sm:max-lg:leading-[1.18] md:max-lg:text-[1.125rem] lg:mt-4 lg:line-clamp-none lg:max-w-[min(100%,40ch)] lg:text-[2.5rem] lg:leading-[1.08] xl:max-w-[min(100%,44ch)] xl:text-[2.85rem] xl:leading-[1.06]">
+                    <h2 className="font-display mt-2 text-[0.95rem] font-bold leading-[1.2] tracking-tight text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.75),0_10px_28px_rgba(0,0,0,0.55)] max-sm:mt-2 max-sm:max-w-none max-sm:line-clamp-3 max-sm:text-[0.98rem] max-sm:leading-[1.25] max-sm:tracking-[-0.01em] sm:max-lg:mt-2 sm:max-lg:line-clamp-4 sm:max-lg:max-w-[min(100%,32ch)] sm:max-lg:text-[1.0625rem] sm:max-lg:leading-[1.18] md:max-lg:text-[1.125rem] lg:mt-5 lg:line-clamp-none lg:max-w-[min(100%,40ch)] lg:text-[2.5rem] lg:leading-[1.11] xl:mt-6 xl:max-w-[min(100%,44ch)] xl:text-[2.85rem] xl:leading-[1.09]">
                       {hero.title}
                     </h2>
                   </Link>
-                  <p className="mt-2 line-clamp-2 max-w-[min(100%,36ch)] text-[11px] leading-relaxed text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)] max-sm:mt-1.5 max-sm:max-w-none max-sm:line-clamp-2 max-sm:text-[13px] max-sm:leading-snug max-sm:text-white/[0.82] max-lg:leading-snug sm:max-lg:mt-2 sm:max-lg:line-clamp-3 sm:max-lg:max-w-xl sm:max-lg:text-xs sm:max-lg:leading-relaxed lg:mt-4 lg:line-clamp-none lg:max-w-3xl lg:text-base lg:leading-relaxed xl:text-lg">
+                  <p className="mt-2 line-clamp-2 max-w-[min(100%,36ch)] text-[11px] leading-relaxed text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.65),0_10px_32px_rgba(0,0,0,0.45)] max-sm:mt-1.5 max-sm:max-w-none max-sm:line-clamp-2 max-sm:text-[13px] max-sm:leading-snug max-sm:text-white/[0.82] max-lg:leading-snug sm:max-lg:mt-2 sm:max-lg:line-clamp-3 sm:max-lg:max-w-xl sm:max-lg:text-xs sm:max-lg:leading-relaxed lg:mt-5 lg:line-clamp-none lg:max-w-3xl lg:text-base lg:leading-[1.62] xl:mt-6 xl:text-lg xl:leading-[1.58]">
                     {hero.lead}
                   </p>
-                  <div className="mt-3 flex flex-nowrap items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] max-sm:mt-3 max-lg:[&::-webkit-scrollbar]:hidden sm:max-lg:mt-3 sm:max-lg:gap-2 lg:mt-7 lg:gap-3 [&::-webkit-scrollbar]:hidden">
+                  <div className="mt-3 flex flex-nowrap items-center gap-2 overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] max-sm:mt-3 max-lg:[&::-webkit-scrollbar]:hidden sm:max-lg:mt-3 sm:max-lg:gap-2 lg:mt-9 lg:gap-3 xl:mt-10 [&::-webkit-scrollbar]:hidden">
                     <Link
                       href={heroHref}
                       className="focus-ring inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-md bg-gradient-to-r from-[#c4001c] via-[#ff3100] to-[#ff5c33] px-3 py-2 text-[11px] font-bold text-white shadow-[0_10px_28px_-10px_rgb(196_0_28/0.45)] transition hover:brightness-[1.06] sm:min-h-[44px] sm:gap-1.5 sm:rounded-lg sm:px-3.5 sm:py-2 sm:text-xs sm:shadow-[0_12px_36px_-10px_rgb(196_0_28/0.45)] sm:max-lg:px-4 lg:gap-2 lg:rounded-xl lg:px-6 lg:py-3 lg:text-sm lg:shadow-[0_16px_48px_-12px_rgb(196_0_28/0.5)]"
