@@ -194,6 +194,9 @@
 .border-glow-card.border-glow-mars-tuned {
   transform: none;
   box-shadow: none !important;
+  /* flex вместо grid: на мобиле стабильнее поток с абсолютным .edge-light */
+  display: flex;
+  flex-direction: column;
 }
 
 .border-glow-card.border-glow-mars-tuned > .edge-light {
@@ -205,6 +208,11 @@
 }
 
 .border-glow-card.border-glow-mars-tuned .border-glow-inner {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
   overflow: visible;
 }
 

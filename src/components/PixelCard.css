@@ -35,13 +35,11 @@
   opacity: 1;
 }
 
-/* Hero shell: без собственной рамки/фона — визуал на внутреннем .mars-hero-frame */
+/* Hero shell: не задаём aspect-ratio/min-height — их задаёт Tailwind (иначе на мобиле высота 0) */
 .pixel-card.pixel-card--hero {
   width: 100%;
   max-width: 100%;
   height: auto;
-  min-height: 0;
-  aspect-ratio: auto;
   display: block;
   border: none;
   background: transparent;

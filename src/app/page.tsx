@@ -121,7 +121,7 @@ export default async function HomePage() {
         <div className="relative z-[2] mx-auto max-w-[1400px] px-3 py-5 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
           {hero ? (
             <HomeHeroPixelCard>
-            <article className="mars-hero-frame mars-reveal group relative h-full min-h-0 w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300 ease-out group-hover/card:border-white/18 group-hover/card:shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_49_0/0.12),0_28px_64px_-32px_rgb(196_0_28/0.18)] lg:min-h-[540px] lg:rounded-[30px]">
+            <article className="mars-hero-frame mars-reveal group relative h-full min-h-full w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300 ease-out group-hover/card:border-white/18 group-hover/card:shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_49_0/0.12),0_28px_64px_-32px_rgb(196_0_28/0.18)] lg:min-h-[540px] lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
@@ -458,38 +458,40 @@ export default async function HomePage() {
           aria-hidden
         />
         <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-          <HomeSectionBorderGlow variant="dark" innerClassName="p-5 sm:p-6 lg:p-8">
-            <SectionHeading
-              title={homeCopy.sections.video.title}
-              subtitle={homeCopy.sections.video.subtitle}
-              href="/video"
-              actionLabel={homeCopy.sections.video.action}
-              variant="dark"
-            />
-            <div className="mb-6 mt-2 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (
-                <span
-                  key={chip}
-                  className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 text-xs font-semibold text-white/85 backdrop-blur-sm"
-                >
-                  {chip}
-                </span>
-              ))}
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {videos.slice(0, 3).map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`/video/${p.slug}`}
-                  className="group overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/[0.08] transition hover:ring-[#ff3100]/40"
-                >
-                  <div className="relative aspect-video">
+          <HomeSectionBorderGlow variant="dark" innerClassName="p-4 sm:p-6 lg:p-8">
+            <div className="flex w-full min-w-0 flex-col gap-5 max-sm:gap-4">
+              <SectionHeading
+                className="mb-0 sm:mb-8"
+                title={homeCopy.sections.video.title}
+                subtitle={homeCopy.sections.video.subtitle}
+                href="/video"
+                actionLabel={homeCopy.sections.video.action}
+                variant="dark"
+              />
+              <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-sm:-mx-0.5 max-sm:px-0.5">
+                {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (
+                  <span
+                    key={chip}
+                    className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3.5 py-2 text-xs font-semibold text-white/85 backdrop-blur-sm sm:px-4 sm:py-2.5"
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+              <div className="grid w-full min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+                {videos.slice(0, 3).map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={`/video/${p.slug}`}
+                    className="group w-full max-w-full overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/[0.08] transition hover:ring-[#ff3100]/40"
+                  >
+                  <div className="relative aspect-video w-full overflow-hidden">
                     <Image
                       src={resolvePostImage(p)}
                       alt={postCoverImageAlt(p.title, p.imageAlt)}
                       fill
                       className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
-                      sizes="400px"
+                      sizes="(max-width:640px) 100vw, 400px"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -503,8 +505,10 @@ export default async function HomePage() {
                       </span>
                     ) : null}
                   </div>
-                  <div className="p-5">
-                    <h3 className="font-display text-lg font-semibold leading-snug text-white group-hover:text-orange-200">{p.title}</h3>
+                  <div className="p-4 sm:p-5">
+                    <h3 className="font-display text-base font-semibold leading-snug text-white group-hover:text-orange-200 sm:text-lg">
+                      {p.title}
+                    </h3>
                     <p className="mt-2 line-clamp-2 text-sm text-white/60">{p.lead}</p>
                     <time className="mt-3 block text-xs tabular-nums text-white/45" dateTime={p.publishedAt}>
                       {formatDateTime(p.publishedAt)}
@@ -512,6 +516,7 @@ export default async function HomePage() {
                   </div>
                 </Link>
               ))}
+              </div>
             </div>
           </HomeSectionBorderGlow>
         </div>
