@@ -151,7 +151,7 @@ export default async function HomePage() {
                 className="pointer-events-none absolute inset-0 z-[1] [background-image:radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.72)_1px,transparent_0)] [background-size:15px_15px] opacity-[0.14] max-sm:opacity-[0.16] sm:max-lg:opacity-[0.1] sm:[background-size:22px_22px] lg:opacity-[0.14]"
                 aria-hidden
               />
-              <div className="pointer-events-none absolute inset-0 z-10 flex min-h-0 flex-col justify-end px-5 pb-6 pt-5 max-sm:pb-[min(5.25rem,14svh)] max-sm:pt-6 sm:px-5 sm:pb-5 sm:pt-10 sm:max-lg:pb-5 sm:max-lg:pt-9 md:pt-12 lg:pointer-events-auto lg:px-12 lg:pb-14 lg:pt-14 xl:pb-16">
+              <div className="pointer-events-none absolute inset-0 z-10 flex min-h-0 flex-col justify-end px-5 pb-6 pt-5 max-sm:pb-[min(3.25rem,9svh)] max-sm:pt-5 sm:px-5 sm:pb-5 sm:pt-10 sm:max-lg:pb-5 sm:max-lg:pt-9 md:pt-12 lg:pointer-events-auto lg:px-12 lg:pb-14 lg:pt-14 xl:pb-16">
                 <div className="max-w-4xl min-h-0 pointer-events-auto max-sm:w-full max-sm:pl-0.5 lg:max-w-5xl">
                   <div className="flex flex-wrap items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-white/80 max-sm:gap-2 max-sm:text-[10px] max-sm:tracking-[0.12em] sm:max-lg:gap-1.5 sm:max-lg:text-[10px] lg:gap-2.5 lg:text-[11px] lg:tracking-[0.18em]">
                     <span className="rounded-md bg-white/12 px-2 py-0.5 text-white ring-1 ring-white/20 backdrop-blur max-sm:ml-0 max-sm:px-2.5 max-sm:py-1 sm:max-lg:px-1.5 lg:rounded-md lg:px-2.5 lg:py-1">
