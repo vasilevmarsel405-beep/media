@@ -140,58 +140,75 @@
   z-index: 1;
 }
 
-/* Светлая секция на главной: без тяжёлой «карточной» тени из дефолта */
+/* Рамка секций главной (тень вынесена на .home-section-glow-shell — не режется overflow) */
 .border-glow-card.border-glow-mars-aside {
   border-color: rgb(226 232 240 / 0.92);
-  box-shadow:
-    0 1px 2px rgb(15 23 42 / 0.04),
-    0 10px 28px -14px rgb(15 23 42 / 0.1);
 }
 
 .border-glow-card.border-glow-mars-aside.border-glow-mars-warm {
   border-color: rgb(254 202 182 / 0.55);
-  box-shadow:
-    0 1px 2px rgb(196 0 28 / 0.05),
-    0 12px 32px -16px rgb(196 0 28 / 0.12);
 }
 
 .border-glow-card.border-glow-mars-aside.border-glow-mars-blue {
   border-color: rgb(186 210 255 / 0.5);
-  box-shadow:
-    0 1px 2px rgb(43 62 247 / 0.06),
-    0 12px 32px -16px rgb(43 62 247 / 0.14);
 }
 
 .border-glow-card.border-glow-mars-dark {
   border-color: rgb(255 255 255 / 0.12);
+}
+
+/* Оболочка HomeSectionBorderGlow: глубина карточки без конфликта с внутренним свечением */
+.home-section-glow-shell {
+  width: 100%;
+}
+
+.home-section-glow-shell--default {
   box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.05),
-    0 18px 44px -22px rgb(0 0 0 / 0.75);
+    0 1px 2px rgb(15 23 42 / 0.05),
+    0 12px 32px -16px rgb(15 23 42 / 0.11);
+}
+
+.home-section-glow-shell--warm {
+  box-shadow:
+    0 1px 2px rgb(196 0 28 / 0.06),
+    0 14px 36px -18px rgb(196 0 28 / 0.14);
+}
+
+.home-section-glow-shell--blue {
+  box-shadow:
+    0 1px 2px rgb(43 62 247 / 0.07),
+    0 14px 36px -18px rgb(43 62 247 / 0.16);
+}
+
+.home-section-glow-shell--dark {
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 20px 48px -20px rgb(0 0 0 / 0.78);
 }
 
 /*
- * Главная (Mars): .edge-light с inset: -Npx и внешними box-shadow вылезает за скругление.
- * Без overflow:hidden на карточке (иначе режется box-shadow секции). Интерактив — ::before/::after.
+ * Главная: concentric radius для .edge-light (расширен на --glow-padding),
+ * иначе inherit даёт тот же px-radius на большем прямоугольнике — «ломается» угол.
+ * transform: none — без субпиксельного сдвига маски от translate3d.
  */
-.border-glow-card.border-glow-mars-aside,
-.border-glow-card.border-glow-mars-dark {
+.border-glow-card.border-glow-mars-tuned {
   transform: none;
+  box-shadow: none !important;
 }
 
-.border-glow-card.border-glow-mars-aside > .edge-light,
-.border-glow-card.border-glow-mars-dark > .edge-light {
-  display: none;
+.border-glow-card.border-glow-mars-tuned > .edge-light {
+  border-radius: calc(var(--border-radius) + var(--glow-padding));
 }
 
-.border-glow-card.border-glow-mars-aside .border-glow-inner,
-.border-glow-card.border-glow-mars-dark .border-glow-inner {
+.border-glow-card.border-glow-mars-tuned > .edge-light::before {
+  border-radius: var(--border-radius);
+}
+
+.border-glow-card.border-glow-mars-tuned .border-glow-inner {
   overflow: visible;
 }
 
-/* Слой с z-index:-1 даёт субпиксельный «сдвиг» границы относительно рамки в Chromium */
-.border-glow-card.border-glow-mars-aside::before,
-.border-glow-card.border-glow-mars-aside::after,
-.border-glow-card.border-glow-mars-dark::before,
-.border-glow-card.border-glow-mars-dark::after {
+.border-glow-card.border-glow-mars-tuned::before,
+.border-glow-card.border-glow-mars-tuned::after {
   z-index: 0;
 }

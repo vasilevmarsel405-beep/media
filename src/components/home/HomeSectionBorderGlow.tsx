@@ -47,19 +47,30 @@ export function HomeSectionBorderGlow({
 }: Props) {
   const v = VARIANT[variant];
   return (
-    <BorderGlow
-      className={cn("w-full max-w-full", v.glowClass, className)}
-      backgroundColor={v.bg}
-      borderRadius={16}
-      glowRadius={18}
-      glowIntensity={0.9}
-      edgeSensitivity={26}
-      coneSpread={24}
-      fillOpacity={variant === "dark" ? 0.22 : 0.28}
-      glowColor={v.glowColor}
-      colors={[...v.colors]}
+    <div
+      className={cn(
+        "home-section-glow-shell max-w-full rounded-2xl",
+        variant === "default" && "home-section-glow-shell--default",
+        variant === "warm" && "home-section-glow-shell--warm",
+        variant === "blue" && "home-section-glow-shell--blue",
+        variant === "dark" && "home-section-glow-shell--dark",
+        className
+      )}
     >
-      <div className={cn("min-w-0", innerClassName ?? "p-4 sm:p-5 lg:p-6")}>{children}</div>
-    </BorderGlow>
+      <BorderGlow
+        className={cn("border-glow-mars-tuned w-full max-w-full", v.glowClass)}
+        backgroundColor={v.bg}
+        borderRadius={16}
+        glowRadius={26}
+        glowIntensity={0.95}
+        edgeSensitivity={24}
+        coneSpread={26}
+        fillOpacity={variant === "dark" ? 0.3 : 0.34}
+        glowColor={v.glowColor}
+        colors={[...v.colors]}
+      >
+        <div className={cn("min-w-0", innerClassName ?? "p-4 sm:p-5 lg:p-6")}>{children}</div>
+      </BorderGlow>
+    </div>
   );
 }
