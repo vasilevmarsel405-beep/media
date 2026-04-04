@@ -54,7 +54,6 @@ export default async function AuthorPage({ params }: Props) {
 
       <div className="mt-10">
         <h2 className="font-display text-2xl font-semibold text-slate-900">Материалы</h2>
-        <p className="mt-2 text-sm text-slate-500">Фильтр по типу можно добавить на уровне CMS.</p>
         <div className="mt-8 grid gap-6 sm:grid-cols-2">
           {materials.map((p) => (
             <PostCard key={p.slug} post={p} />

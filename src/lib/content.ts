@@ -9,9 +9,9 @@ export const authors: Author[] = [
     slug: "marsel-vasilyev",
     name: "Васильев Марсель",
     role: "CEO КриптоМарс Медиа",
-    bio: "Руководит редакцией КриптоМарс Медиа: экономика, технологии и медиа — с фокусом на ясность и проверяемые факты.",
+    bio: "КриптоИнфлюенсер | Ed-Tech предприниматель | Креативный продюссер | 5 лет в Крипте | Автор экспертных статей на РБК и Cointelegraph",
     photo: "/authors/marsel-vasilyev.jpg",
-    social: [{ label: "Telegram", href: "#" }],
+    social: [{ label: "Telegram", href: "https://t.me/marselv1" }],
   },
 ];
 

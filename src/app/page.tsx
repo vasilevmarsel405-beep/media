@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PostCard } from "@/components/cards/PostCard";
 import { HeroGlassVideoLink } from "@/components/home/HeroGlassVideoLink";
+import { HomeHeroPixelCard } from "@/components/home/HomeHeroPixelCard";
 import { HeroGradualBlur } from "@/components/home/HeroGradualBlur";
 import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
@@ -117,7 +118,8 @@ export default async function HomePage() {
         <HeroGradualBlur />
         <div className="relative z-[2] mx-auto max-w-[1400px] px-3 py-5 sm:px-6 sm:py-9 lg:px-10 lg:py-12">
           {hero ? (
-            <article className="mars-hero-frame mars-reveal group relative w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.2/1] sm:max-lg:aspect-[1.88/1] lg:aspect-auto lg:min-h-[540px] lg:rounded-[30px]">
+            <HomeHeroPixelCard>
+            <article className="mars-hero-frame mars-reveal group relative h-full min-h-0 w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300 ease-out group-hover/card:border-white/18 group-hover/card:shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_49_0/0.12),0_28px_64px_-32px_rgb(196_0_28/0.18)] lg:min-h-[540px] lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
                 <Image
                   src={resolvePostImage(hero)}
@@ -193,6 +195,7 @@ export default async function HomePage() {
                 </div>
               </div>
             </article>
+            </HomeHeroPixelCard>
           ) : (
             <article className="mars-hero-frame mars-reveal flex min-w-0 flex-col justify-center overflow-hidden bg-slate-950 px-6 py-14 shadow-2xl sm:px-10 sm:py-16">
               <p className="font-eyebrow text-[11px] font-black uppercase tracking-[0.2em] text-white/50">Материалы</p>
