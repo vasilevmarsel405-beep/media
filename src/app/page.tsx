@@ -4,6 +4,7 @@ import { PostCard } from "@/components/cards/PostCard";
 import { HeroGlassVideoLink } from "@/components/home/HeroGlassVideoLink";
 import { HomeAsideStoriesGlow } from "@/components/home/HomeAsideStoriesGlow";
 import { HomeHeroPixelCard } from "@/components/home/HomeHeroPixelCard";
+import { HomeSectionBorderGlow } from "@/components/home/HomeSectionBorderGlow";
 import { HeroGradualBlur } from "@/components/home/HeroGradualBlur";
 import { HomeTrendingTicker } from "@/components/HomeTrendingTicker";
 import { NewsletterBlock } from "@/components/NewsletterBlock";
@@ -272,7 +273,7 @@ export default async function HomePage() {
       </section>
 
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-        <div className="rounded-2xl border border-mars-line/70 bg-gradient-to-b from-mars-accent-soft/40 via-white/90 to-mars-paper/30 p-5 shadow-sm sm:p-8">
+        <HomeSectionBorderGlow variant="warm" innerClassName="bg-gradient-to-b from-mars-accent-soft/35 via-white/95 to-mars-paper/25 p-5 sm:p-8">
           <SectionHeading
             className="mb-6"
             title={homeCopy.sections.urgent.title}
@@ -285,79 +286,86 @@ export default async function HomePage() {
               <PostCard key={p.slug} post={p} variant="urgent" />
             ))}
           </div>
-        </div>
+        </HomeSectionBorderGlow>
       </div>
 
       <div className="mx-auto max-w-[1400px] space-y-8 px-4 pb-12 pt-2 sm:space-y-10 sm:px-6 sm:pb-14 lg:px-10">
-        <section
-          className="relative overflow-hidden rounded-2xl border border-mars-line/70 bg-gradient-to-b from-slate-50/90 via-white to-white shadow-sm ring-1 ring-slate-900/[0.03]"
-          aria-label="Главное сейчас"
-        >
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-mars-accent via-[#ff5c33] to-orange-200/45"
-            aria-hidden
-          />
-          <div className="p-5 pt-7 sm:p-8 sm:pt-9">
-            <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Лента дня</p>
-            <SectionHeading
-              className="mb-6 sm:mb-8"
-              title={homeCopy.sections.now.title}
-              titlePrefix={<span className="mars-live-dot" />}
-            />
-            <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-              {mainNowList.map((p) => (
-                <PostCard key={p.slug} post={p} />
-              ))}
+        <section aria-label="Главное сейчас">
+          <HomeSectionBorderGlow className="overflow-hidden ring-1 ring-slate-900/[0.03]" innerClassName="bg-gradient-to-b from-slate-50/90 via-white to-white p-0">
+            <div className="relative">
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-[3px] bg-gradient-to-r from-mars-accent via-[#ff5c33] to-orange-200/45"
+                aria-hidden
+              />
+              <div className="p-5 pt-7 sm:p-8 sm:pt-9">
+                <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Лента дня</p>
+                <SectionHeading
+                  className="mb-6 sm:mb-8"
+                  title={homeCopy.sections.now.title}
+                  titlePrefix={<span className="mars-live-dot" />}
+                />
+                <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+                  {mainNowList.map((p) => (
+                    <PostCard key={p.slug} post={p} />
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          </HomeSectionBorderGlow>
         </section>
 
-        <section
-          className="relative overflow-hidden rounded-2xl border border-mars-line/70 bg-gradient-to-b from-mars-blue-soft/40 via-white to-white shadow-sm ring-1 ring-slate-900/[0.03]"
-          aria-label="Выбор редакции"
-        >
-          <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-mars-blue via-sky-500/75 to-sky-200/35"
-            aria-hidden
-          />
-          <div className="p-5 pt-7 sm:p-8 sm:pt-9">
-            <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Самое важное</p>
-            <SectionHeading
-              className="mb-6 sm:mb-8"
-              title={homeCopy.sections.picks.title}
-              titlePrefix={<span className="mars-analytics-dot" />}
-              href="/stati"
-              actionLabel={homeCopy.sections.picks.action}
-            />
-            <div className="grid gap-5 sm:gap-6 lg:grid-cols-2">
-              {editorialPicks.length ? (
-                editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
-              ) : (
-                <p className="col-span-full text-sm font-medium text-slate-500">
-                  Пока редакция не отметила материалы для этого блока.
-                </p>
-              )}
+        <section aria-label="Выбор редакции">
+          <HomeSectionBorderGlow
+            variant="blue"
+            className="overflow-hidden ring-1 ring-slate-900/[0.03]"
+            innerClassName="bg-gradient-to-b from-mars-blue-soft/40 via-white to-white p-0"
+          >
+            <div className="relative">
+              <div
+                className="pointer-events-none absolute inset-x-0 top-0 z-[2] h-[3px] bg-gradient-to-r from-mars-blue via-sky-500/75 to-sky-200/35"
+                aria-hidden
+              />
+              <div className="p-5 pt-7 sm:p-8 sm:pt-9">
+                <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Самое важное</p>
+                <SectionHeading
+                  className="mb-6 sm:mb-8"
+                  title={homeCopy.sections.picks.title}
+                  titlePrefix={<span className="mars-analytics-dot" />}
+                  href="/stati"
+                  actionLabel={homeCopy.sections.picks.action}
+                />
+                <div className="grid gap-5 sm:gap-6 lg:grid-cols-2">
+                  {editorialPicks.length ? (
+                    editorialPicks.map((p) => <PostCard key={p.slug} post={p} />)
+                  ) : (
+                    <p className="col-span-full text-sm font-medium text-slate-500">
+                      Пока редакция не отметила материалы для этого блока.
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+          </HomeSectionBorderGlow>
         </section>
       </div>
 
       <section className="bg-white" aria-label={homeCopy.sections.analytics.title}>
         <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-6 sm:py-16 lg:px-10">
-          <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
-            Цифры и сценарии
-          </p>
-          <SectionHeading
-            className="mb-8 sm:mb-10"
-            title={homeCopy.sections.analytics.title}
-            href="/analitika"
-            actionLabel={homeCopy.sections.analytics.action}
-          />
+          <HomeSectionBorderGlow variant="blue" innerClassName="p-6 sm:p-8 lg:p-10">
+            <p className="font-eyebrow text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">
+              Цифры и сценарии
+            </p>
+            <SectionHeading
+              className="mb-8 sm:mb-10"
+              title={homeCopy.sections.analytics.title}
+              href="/analitika"
+              actionLabel={homeCopy.sections.analytics.action}
+            />
 
-          {!analyticsFeatured ? (
-            <p className="text-sm font-medium text-slate-500">Пока нет материалов в рубрике аналитики.</p>
-          ) : (
-            <>
+            {!analyticsFeatured ? (
+              <p className="text-sm font-medium text-slate-500">Пока нет материалов в рубрике аналитики.</p>
+            ) : (
+              <>
               <article className="card-hover group relative overflow-hidden rounded-[1.75rem] border border-mars-blue/22 bg-white shadow-[0_28px_70px_-40px_rgb(43_62_247/0.35)] ring-1 ring-slate-900/[0.03] transition duration-300 hover:border-mars-blue/40">
                 <Link
                   href={`/analitika/${analyticsFeatured.slug}`}
@@ -431,7 +439,8 @@ export default async function HomePage() {
                 </div>
               ) : null}
             </>
-          )}
+            )}
+          </HomeSectionBorderGlow>
         </div>
       </section>
 
@@ -449,59 +458,62 @@ export default async function HomePage() {
           aria-hidden
         />
         <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-          <SectionHeading
-            title={homeCopy.sections.video.title}
-            subtitle={homeCopy.sections.video.subtitle}
-            href="/video"
-            actionLabel={homeCopy.sections.video.action}
-            variant="dark"
-          />
-          <div className="mb-6 mt-2 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (              <span
-                key={chip}
-                className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 text-xs font-semibold text-white/85 backdrop-blur-sm"
-              >
-                {chip}
-              </span>
-            ))}
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {videos.slice(0, 3).map((p) => (
-              <Link
-                key={p.slug}
-                href={`/video/${p.slug}`}
-                className="group overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/[0.08] transition hover:ring-[#ff3100]/40"
-              >
-                <div className="relative aspect-video">
-                  <Image
-                    src={resolvePostImage(p)}
-                    alt={postCoverImageAlt(p.title, p.imageAlt)}
-                    fill
-                    className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
-                    sizes="400px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl transition group-hover:scale-110">
-                      <IconPlay className="ml-0.5 h-6 w-6" />
-                    </span>
+          <HomeSectionBorderGlow variant="dark" innerClassName="p-5 sm:p-6 lg:p-8">
+            <SectionHeading
+              title={homeCopy.sections.video.title}
+              subtitle={homeCopy.sections.video.subtitle}
+              href="/video"
+              actionLabel={homeCopy.sections.video.action}
+              variant="dark"
+            />
+            <div className="mb-6 mt-2 flex gap-2 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {["Криптовалюта", "Экономика", "Политика", "Подкасты", "Эфиры"].map((chip) => (
+                <span
+                  key={chip}
+                  className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-4 py-2.5 text-xs font-semibold text-white/85 backdrop-blur-sm"
+                >
+                  {chip}
+                </span>
+              ))}
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {videos.slice(0, 3).map((p) => (
+                <Link
+                  key={p.slug}
+                  href={`/video/${p.slug}`}
+                  className="group overflow-hidden rounded-2xl bg-slate-900/80 ring-1 ring-white/[0.08] transition hover:ring-[#ff3100]/40"
+                >
+                  <div className="relative aspect-video">
+                    <Image
+                      src={resolvePostImage(p)}
+                      alt={postCoverImageAlt(p.title, p.imageAlt)}
+                      fill
+                      className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
+                      sizes="400px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-slate-900 shadow-xl transition group-hover:scale-110">
+                        <IconPlay className="ml-0.5 h-6 w-6" />
+                      </span>
+                    </div>
+                    {p.durationLabel ? (
+                      <span className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2 py-1 text-xs font-bold text-white">
+                        {p.durationLabel}
+                      </span>
+                    ) : null}
                   </div>
-                  {p.durationLabel ? (
-                    <span className="absolute bottom-3 right-3 rounded-md bg-black/75 px-2 py-1 text-xs font-bold text-white">
-                      {p.durationLabel}
-                    </span>
-                  ) : null}
-                </div>
-                <div className="p-5">
-                  <h3 className="font-display text-lg font-semibold leading-snug text-white group-hover:text-orange-200">{p.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-white/60">{p.lead}</p>
-                  <time className="mt-3 block text-xs tabular-nums text-white/45" dateTime={p.publishedAt}>
-                    {formatDateTime(p.publishedAt)}
-                  </time>
-                </div>
-              </Link>
-            ))}
-          </div>
+                  <div className="p-5">
+                    <h3 className="font-display text-lg font-semibold leading-snug text-white group-hover:text-orange-200">{p.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm text-white/60">{p.lead}</p>
+                    <time className="mt-3 block text-xs tabular-nums text-white/45" dateTime={p.publishedAt}>
+                      {formatDateTime(p.publishedAt)}
+                    </time>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </HomeSectionBorderGlow>
         </div>
       </div>
 
@@ -519,23 +531,24 @@ export default async function HomePage() {
           aria-hidden
         />
         <div className="relative mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10 lg:py-16">
-          <SectionHeading
-            titlePrefix={
-              <span
-                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mars-accent-soft text-mars-accent ring-1 ring-mars-accent/15 shadow-sm"
-                aria-hidden
-              >
-                <Music2 className="h-[1.15rem] w-[1.15rem]" strokeWidth={2} />
-              </span>
-            }
-            title={homeCopy.sections.podcast.title}
-            subtitle={homeCopy.sections.podcast.subtitle}
-            subtitleClassName="mt-2 text-base leading-relaxed text-slate-600 sm:max-w-4xl"
-            href="/podkasty"
-            actionLabel={homeCopy.sections.podcast.action}
-          />
-          <ul className="mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {podcastPreview.map((card, i) => (
+          <HomeSectionBorderGlow innerClassName="bg-white/80 p-6 shadow-sm backdrop-blur-sm sm:p-8 lg:p-10">
+            <SectionHeading
+              titlePrefix={
+                <span
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mars-accent-soft text-mars-accent ring-1 ring-mars-accent/15 shadow-sm"
+                  aria-hidden
+                >
+                  <Music2 className="h-[1.15rem] w-[1.15rem]" strokeWidth={2} />
+                </span>
+              }
+              title={homeCopy.sections.podcast.title}
+              subtitle={homeCopy.sections.podcast.subtitle}
+              subtitleClassName="mt-2 text-base leading-relaxed text-slate-600 sm:max-w-4xl"
+              href="/podkasty"
+              actionLabel={homeCopy.sections.podcast.action}
+            />
+            <ul className="mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+              {podcastPreview.map((card, i) => (
               <li key={card.key}>
                 <a
                   href={podcastYandexMusicUrl}
@@ -590,60 +603,66 @@ export default async function HomePage() {
                   </div>
                 </a>
               </li>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          </HomeSectionBorderGlow>
         </div>
       </section>
 
       <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-        <SectionHeading title={homeCopy.sections.popular.title} subtitle={homeCopy.sections.popular.subtitle} />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {popular.slice(0, 4).map((p) => (
-            <PostCard key={`pop-${p.slug}`} post={p} />
-          ))}
-        </div>
+        <HomeSectionBorderGlow innerClassName="p-5 sm:p-6 lg:p-8">
+          <SectionHeading title={homeCopy.sections.popular.title} subtitle={homeCopy.sections.popular.subtitle} />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {popular.slice(0, 4).map((p) => (
+              <PostCard key={`pop-${p.slug}`} post={p} />
+            ))}
+          </div>
+        </HomeSectionBorderGlow>
       </div>
 
       <div className="bg-white">
         <div className="mx-auto max-w-[1400px] px-4 py-12 sm:px-6 lg:px-10">
-          <SectionHeading
-            title={homeCopy.sections.topics.title}
-            subtitle={homeCopy.sections.topics.subtitle}
-            href="/rubriki"
-            actionLabel={homeCopy.sections.topics.action}
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {rubrics.map((r) => (
-              <Link
-                key={r.slug}
-                href={`/rubriki/${r.slug}`}
-                className="group relative overflow-hidden rounded-2xl ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-lg"
-              >
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={r.cover}
-                    alt={`Иллюстрация рубрики: ${r.name}`}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-[1.06]"
-                    sizes="300px"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
-                  <span className="absolute bottom-4 left-4 font-display text-xl font-bold text-white">{r.name}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <HomeSectionBorderGlow innerClassName="p-5 sm:p-6 lg:p-8">
+            <SectionHeading
+              title={homeCopy.sections.topics.title}
+              subtitle={homeCopy.sections.topics.subtitle}
+              href="/rubriki"
+              actionLabel={homeCopy.sections.topics.action}
+            />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {rubrics.map((r) => (
+                <Link
+                  key={r.slug}
+                  href={`/rubriki/${r.slug}`}
+                  className="group relative overflow-hidden rounded-2xl ring-1 ring-slate-200/80 shadow-sm transition hover:shadow-lg"
+                >
+                  <div className="relative aspect-[4/3]">
+                    <Image
+                      src={r.cover}
+                      alt={`Иллюстрация рубрики: ${r.name}`}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-[1.06]"
+                      sizes="300px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                    <span className="absolute bottom-4 left-4 font-display text-xl font-bold text-white">{r.name}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </HomeSectionBorderGlow>
         </div>
       </div>
 
       <div className="mx-auto max-w-[1400px] px-4 pb-16 sm:px-6 lg:px-10">
-        <SectionHeading
-          title={homeCopy.sections.projects.title}
-          subtitle={homeCopy.sections.projects.subtitle}
-          href="/specproekty"
-          actionLabel={homeCopy.sections.projects.action}
-        />
-        <div className="grid gap-6 lg:grid-cols-2">
+        <HomeSectionBorderGlow innerClassName="p-5 sm:p-6 lg:pb-10 lg:pt-6">
+          <SectionHeading
+            title={homeCopy.sections.projects.title}
+            subtitle={homeCopy.sections.projects.subtitle}
+            href="/specproekty"
+            actionLabel={homeCopy.sections.projects.action}
+          />
+          <div className="grid gap-6 lg:grid-cols-2">
           {homeProjects.length
             ? homeProjects.map((p) => (
                 <Link
@@ -689,11 +708,12 @@ export default async function HomePage() {
                   </div>
                 </Link>
               ))}
-        </div>
+          </div>
+        </HomeSectionBorderGlow>
       </div>
 
       <div className="mx-auto max-w-[1400px] px-4 pb-10 sm:px-6 lg:px-10">
-        <section className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 shadow-sm sm:p-8">
+        <HomeSectionBorderGlow innerClassName="bg-slate-50/90 p-6 sm:p-8">
           <h2 className="font-display text-2xl font-bold text-slate-900">Прозрачность редакции и документы</h2>
           <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-600 sm:text-base">
             Сайт публикует редакционные материалы и не является витриной услуг. Правила публикаций, обработка данных,
@@ -723,7 +743,7 @@ export default async function HomePage() {
               Контакты и реквизиты
             </Link>
           </div>
-        </section>
+        </HomeSectionBorderGlow>
       </div>
 
       <div className="bg-gradient-to-b from-white to-slate-100/90">
