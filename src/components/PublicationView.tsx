@@ -208,7 +208,7 @@ export function PublicationView({
 
       <div className="mx-auto max-w-[1180px] px-4 pb-16 pt-6 sm:px-6 sm:pt-8 lg:px-12">
         <div className="relative sm:-mt-1">
-          <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-100 shadow-[0_28px_80px_-32px_rgb(15_23_42/0.45)] ring-1 ring-slate-900/[0.07] sm:aspect-[2.05/1] sm:rounded-3xl lg:aspect-[21/9]">
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-[0_28px_80px_-32px_rgb(15_23_42/0.45)] ring-1 ring-slate-900/[0.07] sm:rounded-3xl">
             <Image
               src={resolvePostImage(post)}
               alt={postCoverImageAlt(post.title)}
