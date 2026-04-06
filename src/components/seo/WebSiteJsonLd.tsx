@@ -20,6 +20,7 @@ export function WebSiteJsonLd() {
   const logoUrl = `${siteUrl}/icon`;
 
   const homePageId = `${siteUrl}/#webpage`;
+  const breadcrumbId = `${siteUrl}/#breadcrumb`;
 
   const knowsAbout = [...metaCopy.topics];
 
@@ -42,6 +43,15 @@ export function WebSiteJsonLd() {
       privacyPolicy: `${siteUrl}/politika-konfidencialnosti`,
       termsOfService: `${siteUrl}/polzovatelskoe-soglashenie`,
       knowsAbout,
+      legalName: siteName,
+      hasPart: [
+        `${siteUrl}/politika-konfidencialnosti`,
+        `${siteUrl}/polzovatelskoe-soglashenie`,
+        `${siteUrl}/redaktsionnaya-politika`,
+        `${siteUrl}/politika-faylov-cookie`,
+        `${siteUrl}/pravovaya-informatsiya`,
+        `${siteUrl}/kontakty`,
+      ],
       areaServed: {
         "@type": "Country",
         name: "RU",
@@ -87,6 +97,27 @@ export function WebSiteJsonLd() {
       inLanguage: "ru-RU",
       isPartOf: { "@id": webId },
       about: { "@id": orgId },
+      breadcrumb: { "@id": breadcrumbId },
+      significantLink: [
+        `${siteUrl}/politika-konfidencialnosti`,
+        `${siteUrl}/polzovatelskoe-soglashenie`,
+        `${siteUrl}/redaktsionnaya-politika`,
+        `${siteUrl}/politika-faylov-cookie`,
+        `${siteUrl}/pravovaya-informatsiya`,
+        `${siteUrl}/kontakty`,
+      ],
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": breadcrumbId,
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Главная",
+          item: siteUrl,
+        },
+      ],
     },
   ];
 

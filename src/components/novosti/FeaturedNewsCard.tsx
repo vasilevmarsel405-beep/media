@@ -21,6 +21,7 @@ export function FeaturedNewsCard({ post }: { post: Post }) {
     <article className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[0_20px_50px_-28px_rgb(15_23_42/0.18)] ring-1 ring-black/[0.03]">
       <div className="grid lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
         <Link href={href} aria-label={`Открыть материал: ${post.title}`} className="group relative block aspect-[16/10] min-h-[220px] lg:aspect-auto lg:min-h-[300px]">
+          <span className="sr-only">Открыть материал: {post.title}</span>
           <Image
             src={cover}
             alt={postCoverImageAlt(post.title, post.imageAlt)}

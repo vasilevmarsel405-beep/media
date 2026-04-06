@@ -92,6 +92,7 @@ export default async function VideoHubPage() {
         {featured ? (
           <article className="mars-hero-frame mars-reveal isolate group relative z-0 w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] max-sm:aspect-[1.18/1] sm:max-lg:aspect-[1.85/1] lg:aspect-auto lg:min-h-[min(72vh,620px)] lg:rounded-[30px]">
             <Link href={featuredHref} aria-label={`Смотреть: ${featured.title}`} className="absolute inset-0 z-0">
+              <span className="sr-only">Смотреть: {featured.title}</span>
               <Image
                 src={resolvePostImage(featured)}
                 alt={postCoverImageAlt(featured.title, featured.imageAlt)}

@@ -123,6 +123,7 @@ export default async function HomePage() {
             <HomeHeroPixelCard>
             <article className="mars-hero-frame mars-reveal group relative h-full min-h-full w-full overflow-hidden rounded-[22px] border border-white/10 bg-[#070b16] shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9)] transition-[border-color,box-shadow] duration-300 ease-out group-hover/card:border-white/18 group-hover/card:shadow-[0_36px_80px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_49_0/0.12),0_28px_64px_-32px_rgb(196_0_28/0.18)] lg:min-h-0 lg:rounded-[30px]">
               <Link href={heroHref} aria-label={`Открыть материал: ${hero.title}`} className="absolute inset-0 z-0">
+                <span className="sr-only">Открыть материал: {hero.title}</span>
                 <Image
                   src={resolvePostImage(hero)}
                   alt={postCoverImageAlt(hero.title, hero.imageAlt)}
