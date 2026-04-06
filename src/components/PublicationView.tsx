@@ -27,6 +27,26 @@ function MarkdownParagraph({ text, className }: { text: string; className?: stri
         // поэтому форматирование безопасно: поддерживаем markdown-синтаксис.
         components={{
           p: ({ children }) => <>{children}</>,
+          h1: ({ children }) => (
+            <h2 className="font-display mt-9 text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:mt-10 sm:text-3xl">
+              {children}
+            </h2>
+          ),
+          h2: ({ children }) => (
+            <h3 className="font-display mt-8 text-[1.375rem] font-bold leading-snug tracking-tight text-slate-900 sm:mt-9 sm:text-[1.55rem]">
+              {children}
+            </h3>
+          ),
+          h3: ({ children }) => (
+            <h4 className="mt-7 text-xl font-bold leading-snug text-slate-900 sm:mt-8 sm:text-[1.22rem]">
+              {children}
+            </h4>
+          ),
+          h4: ({ children }) => (
+            <h5 className="mt-6 text-lg font-semibold leading-snug text-slate-900 sm:mt-7 sm:text-[1.06rem]">
+              {children}
+            </h5>
+          ),
           a: ({ href, children }) => (
             <a
               href={href}
