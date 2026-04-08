@@ -60,6 +60,8 @@ const nextConfig: NextConfig = {
       /** Генерация обложек (Make / MCP) */
       { protocol: "https", hostname: "mcp-kv.ru", pathname: "/**" },
       /** Превью с YouTube (обложка после «Заполнить из YouTube») */
+      { protocol: "https", hostname: "ytimg.com", pathname: "/**" },
+      { protocol: "https", hostname: "*.ytimg.com", pathname: "/**" },
       { protocol: "https", hostname: "i.ytimg.com", pathname: "/**" },
       { protocol: "https", hostname: "img.youtube.com", pathname: "/**" },
       /** Обложки подкаста из RSS (Mave и др.) */

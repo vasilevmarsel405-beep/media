@@ -1,6 +1,6 @@
 import type { Post } from "@/lib/types";
 
-const YT_THUMB_HOST_RE = /^https?:\/\/(?:i\.ytimg\.com|img\.youtube\.com)\//i;
+const YT_THUMB_HOST_RE = /^https?:\/\/(?:(?:[a-z0-9-]+\.)?ytimg\.com|img\.youtube\.com)\//i;
 
 /** Локальный плейсхолдер: пустой/битый `image` ломает next/image (fetch(undefined)). */
 const FALLBACK_COVER = "/globe.svg";
