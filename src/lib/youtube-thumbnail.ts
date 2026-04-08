@@ -1,4 +1,5 @@
 import type { Post } from "@/lib/types";
+import { extractYoutubeVideoId } from "@/lib/youtube-id";
 
 const YT_THUMB_HOST_RE = /^https?:\/\/(?:(?:[a-z0-9-]+\.)?ytimg\.com|img\.youtube\.com)\//i;
 const YT_ANY_RE = /(ytimg\.com|youtube\.com)/i;
@@ -16,7 +17,8 @@ export function youtubeThumbUrl(videoId: string, quality: "maxresdefault" | "hqd
  */
 export function resolvePostImage(post: Post): string {
   let image = post.image?.trim() ?? "";
-  const videoId = post.youtubeId?.trim() ?? "";
+  const rawYoutube = post.youtubeId?.trim() ?? "";
+  const videoId = extractYoutubeVideoId(rawYoutube) ?? (rawYoutube.match(/^[a-zA-Z0-9_-]{11}$/) ? rawYoutube : "");
 
   if (image.startsWith("/uploads/covers/")) {
     const file = image.split("/").pop() ?? "";
