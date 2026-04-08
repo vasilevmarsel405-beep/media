@@ -28,7 +28,7 @@ import type { Post } from "@/lib/types";
 import { postHref } from "@/lib/routes";
 import { podcastYandexMusicUrl } from "@/lib/site";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
-import { resolvePostImage } from "@/lib/youtube-thumbnail";
+import { resolvePostImage, shouldBypassNextImageOptimization } from "@/lib/youtube-thumbnail";
 import { getAnalyticsSnapshot } from "@/lib/redis-analytics";
 import { getRubrics } from "@/lib/remote-rubrics";
 import { fetchPodcastFeedFromRss } from "@/lib/podcast-rss";
@@ -128,6 +128,7 @@ export default async function HomePage() {
                   src={resolvePostImage(hero)}
                   alt={postCoverImageAlt(hero.title, hero.imageAlt)}
                   fill
+                  unoptimized={shouldBypassNextImageOptimization(resolvePostImage(hero))}
                   priority
                   className="object-cover transition duration-700 group-hover:scale-[1.02]"
                   sizes="(max-width:1400px) 100vw, 1400px"
@@ -248,6 +249,7 @@ export default async function HomePage() {
                         src={resolvePostImage(p)}
                         alt={postCoverImageAlt(p.title, p.imageAlt)}
                         fill
+                        unoptimized={shouldBypassNextImageOptimization(resolvePostImage(p))}
                         className="object-cover transition duration-500 group-hover:scale-[1.04]"
                         sizes="(max-width:1280px) 50vw, 25vw"
                       />
@@ -374,6 +376,7 @@ export default async function HomePage() {
                       src={resolvePostImage(analyticsFeatured)}
                       alt={postCoverImageAlt(analyticsFeatured.title, analyticsFeatured.imageAlt)}
                       fill
+                      unoptimized={shouldBypassNextImageOptimization(resolvePostImage(analyticsFeatured))}
                       className="object-cover transition duration-700 ease-out group-hover:scale-[1.045]"
                       sizes="(max-width:1024px) 100vw, 52vw"
                     />
@@ -412,6 +415,7 @@ export default async function HomePage() {
                             src={resolvePostImage(p)}
                             alt={postCoverImageAlt(p.title, p.imageAlt)}
                             fill
+                            unoptimized={shouldBypassNextImageOptimization(resolvePostImage(p))}
                             className="object-cover transition duration-500 group-hover:scale-[1.05]"
                             sizes="(max-width:640px) 100vw, 400px"
                           />
@@ -499,6 +503,7 @@ export default async function HomePage() {
                       src={resolvePostImage(p)}
                       alt={postCoverImageAlt(p.title, p.imageAlt)}
                       fill
+                      unoptimized={shouldBypassNextImageOptimization(resolvePostImage(p))}
                       className="object-cover opacity-90 transition duration-500 group-hover:scale-[1.04] group-hover:opacity-100"
                       sizes="(max-width:640px) 100vw, 400px"
                     />
@@ -689,6 +694,7 @@ export default async function HomePage() {
                       src={resolvePostImage(p)}
                       alt={postCoverImageAlt(p.title, p.imageAlt)}
                       fill
+                      unoptimized={shouldBypassNextImageOptimization(resolvePostImage(p))}
                       className="object-cover"
                       sizes="(max-width:1024px) 100vw, 50vw"
                     />

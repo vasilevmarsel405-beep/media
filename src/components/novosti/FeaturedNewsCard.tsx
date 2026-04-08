@@ -5,7 +5,7 @@ import { formatDateTime } from "@/lib/format";
 import { postHref } from "@/lib/routes";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import type { Post } from "@/lib/types";
-import { resolvePostImage } from "@/lib/youtube-thumbnail";
+import { resolvePostImage, shouldBypassNextImageOptimization } from "@/lib/youtube-thumbnail";
 import { TagPill } from "@/components/TagPill";
 
 export function FeaturedNewsCard({ post }: { post: Post }) {
@@ -26,6 +26,7 @@ export function FeaturedNewsCard({ post }: { post: Post }) {
             src={cover}
             alt={postCoverImageAlt(post.title, post.imageAlt)}
             fill
+            unoptimized={shouldBypassNextImageOptimization(cover)}
             className="object-cover transition duration-700 ease-out group-hover:scale-[1.02]"
             sizes="(max-width:1024px) 100vw, 55vw"
             priority

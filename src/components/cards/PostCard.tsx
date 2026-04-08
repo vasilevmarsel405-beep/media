@@ -5,7 +5,7 @@ import { formatDateTime } from "@/lib/format";
 import { postCoverImageAlt } from "@/lib/seo/image-alt";
 import { postHref } from "@/lib/routes";
 import type { Post } from "@/lib/types";
-import { resolvePostImage } from "@/lib/youtube-thumbnail";
+import { resolvePostImage, shouldBypassNextImageOptimization } from "@/lib/youtube-thumbnail";
 import { TagPill } from "@/components/TagPill";
 import { IconPlay } from "@/components/icons";
 
@@ -44,6 +44,7 @@ export function PostCard({
             src={cover}
             alt={postCoverImageAlt(post.title, post.imageAlt)}
             fill
+            unoptimized={shouldBypassNextImageOptimization(cover)}
             className="object-cover transition duration-300 group-hover:scale-[1.03]"
             sizes="200px"
           />
@@ -159,6 +160,7 @@ export function PostCard({
             src={cover}
             alt={postCoverImageAlt(post.title)}
             fill
+            unoptimized={shouldBypassNextImageOptimization(cover)}
             className="object-cover transition duration-500 group-hover:scale-[1.02]"
             sizes="(max-width:768px) 100vw, 380px"
           />
@@ -223,6 +225,7 @@ export function PostCard({
             src={cover}
             alt={postCoverImageAlt(post.title)}
             fill
+            unoptimized={shouldBypassNextImageOptimization(cover)}
             className="object-cover transition duration-500 group-hover:scale-[1.02]"
             sizes="(max-width:768px) 100vw, 400px"
           />
@@ -287,6 +290,7 @@ export function PostCard({
           src={cover}
           alt={postCoverImageAlt(post.title)}
           fill
+          unoptimized={shouldBypassNextImageOptimization(cover)}
           className="object-cover transition duration-500 group-hover:scale-[1.02]"
           sizes="(max-width:768px) 100vw, 400px"
         />

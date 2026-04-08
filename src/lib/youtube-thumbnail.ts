@@ -11,6 +11,11 @@ export function youtubeThumbUrl(videoId: string, quality: "maxresdefault" | "hqd
   return `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/${quality}.jpg`;
 }
 
+/** На VPS может быть заблокирован исходящий доступ к ytimg; в этом случае next/image оптимизатор даёт 504. */
+export function shouldBypassNextImageOptimization(src: string): boolean {
+  return YT_THUMB_HOST_RE.test(src);
+}
+
 /**
  * Для видео-материалов даем стабильный URL превью.
  * maxresdefault у части роликов отсутствует, поэтому используем hqdefault.
