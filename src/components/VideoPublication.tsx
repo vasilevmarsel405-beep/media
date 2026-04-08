@@ -230,9 +230,7 @@ export function VideoPublication({
 
         {post.paragraphs.some((p) => p.trim()) ? (
           <section className="mt-12 rounded-2xl border border-white/12 bg-white/[0.05] px-5 py-6 shadow-[0_20px_50px_-36px_rgb(0_0_0_/_0.88)] backdrop-blur-sm sm:px-7 sm:py-8">
-            <h2 className="font-display text-xl font-bold text-white sm:text-2xl">
-              {videoPublicationCopy.editorialTitle}
-            </h2>
+            <h2 className="font-display text-xl font-bold text-white sm:text-2xl">Описание видео</h2>
             <div className="mt-5 min-w-0">
               <YoutubeDescription
                 text={post.paragraphs.filter((p) => p.trim()).join("\n\n")}
@@ -240,17 +238,14 @@ export function VideoPublication({
                 className="space-y-4"
               />
             </div>
-            {showYoutubeDescription ? (
-              <p className="mt-5 text-xs text-white/45">
-                Источник текста: описание ролика YouTube.
-              </p>
-            ) : null}
           </section>
         ) : null}
 
         <section className="mt-16 border-t border-white/15 pt-12">
-          <h2 className="font-display text-2xl font-bold text-white">{videoPublicationCopy.relatedMixedTitle}</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">{videoPublicationCopy.relatedMixedSub}</p>
+          <h2 className="font-display text-2xl font-bold text-white">Могут заинтересовать</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/65">
+            Новости и аналитика - разбираемся во всём по фактам
+          </p>
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
             {relatedAll.slice(0, 4).map((p) => (
               <PostCard key={p.slug} post={p} variant="horizontal-dark" />
