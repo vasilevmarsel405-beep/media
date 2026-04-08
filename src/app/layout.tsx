@@ -16,7 +16,7 @@ const inter = Inter({
   adjustFontFallback: true,
 });
 
-const yandexVerify = process.env.NEXT_PUBLIC_YANDEX_VERIFICATION?.trim();
+const yandexVerify = process.env.NEXT_PUBLIC_YANDEX_VERIFICATION?.trim() || "716e316e6668c24e";
 const googleVerify = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
 const verification =
   yandexVerify || googleVerify
